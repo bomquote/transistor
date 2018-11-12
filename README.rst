@@ -143,7 +143,16 @@ Transistor can be used with the whichever data persistence model you choose to i
 Quickstart
 ----------
 
-First, setup Splash. Then, follow the minimal abbreviated example ``books_to_scrape`` as detailed below.  This example is explained in more detail in the source code found in the ``examples/books_to_scrape`` folder, including fully implementing object persistence with ``newt.db``.
+
+First, install from pypi:
+
+.. code-block:: python
+
+    pip install transistor
+
+Next, setup Splash, following the Quickstart instructions. Finally, follow the minimal abbreviated Quickstart example ``books_to_scrape`` as detailed below.
+
+This example is explained in more detail in the source code found in the ``examples/books_to_scrape`` folder, including fully implementing object persistence with ``newt.db``.
 
 Quickstart: Setup Splash
 -------------------------
