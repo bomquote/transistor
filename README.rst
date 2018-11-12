@@ -14,8 +14,8 @@
    :target: https://codeclimate.com/github/bomquote/transistor/maintainability
    :alt: Maintainability
 
-.. image:: https://codecov.io/gh/bomquote/aoscrdb_app/branch/master/graph/badge.svg?token=MqwIKlW1S3
-  :target: https://codecov.io/gh/bomquote/aoscrdb_app
+.. image:: https://codecov.io/gh/bomquote/transistor/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/bomquote/transistor
 
 ===============================
 *transistor*
