@@ -1,0 +1,32 @@
+---
+engines:
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - python
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+  radon:
+    enabled: true
+    config:
+      threshold: "B"
+  pep8:
+    enabled: true
+ratings:
+  paths:
+  - "**.css"
+  - "**.inc"
+  - "**.js"
+  - "**.jsx"
+  - "**.module"
+  - "**.py"
+exclude_paths:
+- docs/
+- tests/
+- requirements/
+- transistor/utility/browsercookie.py

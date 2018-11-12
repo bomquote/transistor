@@ -1,0 +1,13 @@
+codecov:
+  token:
+  branch: master
+
+comment:
+  layout: header, changes, diff
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+  status:
+    patch: false

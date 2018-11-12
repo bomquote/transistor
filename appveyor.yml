@@ -1,0 +1,126 @@
+# transistor.appveyor.yml
+# ~~~~~~~~~~~~
+# Configuration file for testing Transistor with appveyor CI.
+#
+# :copyright: Copyright (C) 2018 by BOM Quote Limited
+# :license: The MIT License, see LICENSE for more details.
+# ~~~~~~~~~~~~
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf input
+  - SET PATH=C:\Program Files\PostgreSQL\10\bin\;C:\Users\root\repos\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
+
+# clone directory
+clone_folder: c:\Users\root\repos\transistor
+
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+# setting up etc\hosts file
+hosts:
+    local: 127.0.0.1
+
+# environment variables
+environment:
+  PYTHONUNBUFFERED: 1
+  PYTHON_EXE: 'C:\Miniconda36-x64\envs\python36\python.exe'
+  PYTHON_LIB: 'C:\Miniconda36-x64\envs\python36\Lib\site-packages'
+  BASE_PATH: 'C:\Users\root\repos\transistor\transistor\'
+  APP_DIR: 'C:\Users\root\repos\transistor\transistor'
+  PROJECT_ROOT: 'C:\Users\root\repos\transistor'
+  TEMP: 'C:\tmp\'
+
+  matrix:
+  - TARGET_ARCH: x64
+    CONDA_PY: 3.6
+    PY_CONDITION: python >=3.6
+    CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
+    db: postgresql101
+
+  global:
+      # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
+      # /E:ON and /V:ON options are not enabled in the batch script interpreter
+      # See: http://stackoverflow.com/a/13751649/163740
+      # CMD_IN_ENV: "cmd /E:ON /V:ON /C obvci_appveyor_python_build_env.cmd"
+      CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
+
+# cache:
+    #- C:\ProgramData\chocolatey\lib -> appveyor.yml
+    #- C:\Users\appveyor\pip\wheels -> appveyor.yml
+
+# enable service required for build/tests
+services:
+    - postgresql10       # start PostgreSQL 10.1 service
+    - iis                 # start IIS
+
+install:
+    # If there is a newer build queued for the same PR, cancel this one.
+    # The AppVeyor 'rollout builds' option is supposed to serve the same
+    # purpose but it is problematic because it tends to cancel builds pushed
+    # directly to master instead of just PR builds (or the converse).
+    # credits: JuliaLang developers.
+    - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
+        https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
+        Where-Object pullRequestId -eq $env:APPVEYOR_PULL_REQUEST_NUMBER)[0].buildNumber) { `
+          throw "There are newer queued builds for this pull request, failing early." }
+
+    # Use the pre-installed Miniconda3 for the desired arch
+    - ps: if($env:TARGET_ARCH -eq 'x86')
+            {$root = "C:\Miniconda36"}
+          else
+            {$root = "C:\Miniconda36-x64"}
+          $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
+    - cmd: mkdir c:\tmp
+    # download and install redis for windows
+    - cmd: cd c:\ && mkdir c:\redis-3.2.100
+    - ps: c:\Users\root\repos\transistor\appveyor\redis.ps1
+    # install rabbitmq
+    - ps: c:\Users\root\repos\transistor\appveyor\rabbitmq.ps1
+    # Load the conda root environment, configure and install packages
+    - cmd: conda config --set show_channel_urls true
+    - cmd: conda config --set always_yes yes --set changeps1 no
+    - cmd: conda update --yes --quiet conda
+    - cmd: conda create -n python36 --file=C:\Users\root\repos\transistor\conda_list_explicit.txt
+    - cmd: activate python36
+    - cmd: set PYTHONUNBUFFERED=1
+    - cmd: set PYTHONPATH=C:\Miniconda36-x64\envs\python36
+    # upgrade pip
+    - cmd: python -m pip install --upgrade pip
+
+    # install packages from pip
+    - cmd: pip install mechanicalsoup==0.11.0
+    - cmd: pip install requests==2.20.1
+    - cmd: pip install urllib3==1.24.1
+    - cmd: pip install keyring==16.0.2
+    - cmd: pip install lxml==4.2.5
+    - cmd: pip install lz4==2.1.2
+    - cmd: pip install pyexcel==0.5.9.1
+    - cmd: pip install pyexcel-io==0.5.9.1
+    - cmd: pip install pyexcel-ods3==0.5.2
+    - cmd: pip install pyexcel-webio==0.1.4
+    - cmd: pip install pyexcel-xls==0.5.8
+    - cmd: pip install pyexcel-xlsx==0.5.6
+    - cmd: pip install pycryptodome==3.7.0
+    - cmd: pip install pytest==3.10.1
+    - cmd: pip install pytest-cov==2.6.0
+    - cmd: pip install coverage==4.5.1
+    - cmd: pip install mock==2.0.0
+    - cmd: pip install gevent==1.3.7
+    - cmd: pip install newt.db==0.9.0
+    - cmd: pip install zodbpickle==1.0.2
+    - cmd: pip install persistent==4.4.3
+    - cmd: pip install zodb==5.5.1
+    - cmd: pip install w3lib==1.19.0
+
+
+# Skip .NET project specific build phase.
+build: off
+
+test_script:
+    - cmd: python -m pytest c:\Users\root\repos\transistor\tests
+
+
+# after_test:
+    # Upload coverage reports
+#    - 'codecov -f "%HOMEPATH%\coverage.xml"'

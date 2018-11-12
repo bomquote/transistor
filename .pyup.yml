@@ -1,0 +1,25 @@
+# turn off the updates for this repo
+update: insecure
+# set the default branch
+# default: empty, the default branch on GitHub
+# branch: development
+
+# update schedule
+# default: empty
+# allowed: "every day", "every week", ..
+schedule: ""
+
+requirements:
+  - requirements/dev.txt:
+       # update all dependencies and pin them
+      update: all
+      pin: True
+  - requirements/prod.txt:
+       # update all dependencies and pin them
+      update: all
+      pin: True
+
+# add a label to pull requests, default is not set
+# requires private repo permissions, even on public repos
+# default: empty
+label_prs: update
