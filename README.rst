@@ -3,15 +3,15 @@
 
 **Web data collection and storage for intelligent use cases.**
 
-.. image:: https://ci.appveyor.com/api/projects/status/ugamtblvdtx7dsrk/branch/master?svg=true
-    :target: https://ci.appveyor.com/project/bmjjr/transistor
+.. image:: https://ci.appveyor.com/api/projects/status/xfg2yedwyrbyxysy/branch/master?svg=true
+    :target: https://ci.appveyor.com/project/bomquote/transistor
 
-.. image:: https://pyup.io/repos/github/bmjjr/transistor/shield.svg?token=2a592584-6169-41bf-8b3b-19217b5e640c
-    :target: https://pyup.io/account/repos/github/bmjjr/transistor/
+.. image:: https://pyup.io/repos/github/bomquote/transistor/shield.svg?t=1542037265283
+    :target: https://pyup.io/account/repos/github/bomquote/transistor/
     :alt: Updates
 
-.. image:: https://api.codeclimate.com/v1/badges/3b02409f0f324d6d6544/maintainability
-   :target: https://codeclimate.com/repos/5bc22e26751336334100109c/maintainability
+.. image:: https://api.codeclimate.com/v1/badges/0c34950c38db4f38aea6/maintainability
+   :target: https://codeclimate.com/github/bomquote/transistor/maintainability
    :alt: Maintainability
 
 .. image:: https://codecov.io/gh/bomquote/aoscrdb_app/branch/master/graph/badge.svg?token=MqwIKlW1S3
