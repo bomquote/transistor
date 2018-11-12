@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.io.books.taskstate
+transistor.books.taskstate
 ~~~~~~~~~~~~
 This module creates task tracking objects, used to assign and monitor task state on
 a per WorkGroup basis.

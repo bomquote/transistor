@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.io.workers.baseworker_abc
+transistor.io.workers.baseworker
 ~~~~~~~~~~~~
 This module implements BaseWorker. See transistor.io.workers.__init__
 for more notes on this module.

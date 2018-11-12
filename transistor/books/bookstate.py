@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.io.books.bookstate
+transistor.books.bookstate
 ~~~~~~~~~~~~
 This module opens an excel workbook, reads an 'item' column to ingest an arbitrary
 number of rows of search terms. It then transforms each search term into a task.
@@ -15,7 +15,7 @@ from collections import deque
 from pathlib import Path
 from os.path import dirname as d
 from os.path import abspath
-from transistor.io.books.taskstate import TaskTracker
+from transistor.books.taskstate import TaskTracker
 
 root_dir = d(d(abspath(__file__)))
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.io.books
+transistor.books
 ~~~~~~~~~~~~
 This module implements classes, functions, and methods for Transistor to ingest and
 export data.  During ingest, it should provide a facility to transform target data

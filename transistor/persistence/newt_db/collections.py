@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Some newt.db classes for Program IO.
+transistor.persistence.newt_db.collections
+~~~~~~~~~~~~
+This module implements container classes for storing python objects in newt.db.
 
+:copyright: Copyright (C) 2018 by BOM Quote Limited
+:license: The MIT License, see LICENSE for more details.
+~~~~~~~~~~~~
 """
 import newt.db
 

@@ -11,7 +11,7 @@ concurrency, and ability to scale an arbitrary number of Scraper WorkGroups.
 ~~~~~~~~~~~~
 """
 import gevent
-from transistor.io.managers.base_manager import BaseWorkGroupManager
+from transistor import BaseWorkGroupManager
 
 
 class BooksWorkGroupManager(BaseWorkGroupManager):

@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-This module contains classes to encapsulate a scrape object after a scrape in a format
-that is able to be pickled and saved in newt.db.
+transistor.persistence.newt_db.shell
+~~~~~~~~~~~~
+This module contains classes to encapsulate data returned from a SplashScraper object
+after a scrape in a format that is able to be pickled and saved in newt.db.
 
-These classes are intended to be used as a data wrapper instanciated inside a worker
-Extractor class, which is basically just a middlelayer serializer itself, transforming
-the data contained inside the executed scraper into a pickleable format, able to be
-cleanly saved in newt.db as an object. (except, right now there is an error being raised
-by newt.db.jsonpickle, it doesn't seem to corrupt any JSON data, I expect it just
-doesn't serialize the offending data as JSON, but since JSON serialization is inherently
-lossy, it is somewhat expected to deal with these issues. See the open issue at
-https://github.com/newtdb/db/issues/29#issuecomment-432059576).
+Any changes to this module should also be checked against the ScrapedDataExtractor
+in the extractor.py file. The attributes here must match up to the
+ScrapedDataExtractor.extract and ScrapedDataExtractor.write methods.
 
-Bottom line is, any changes to this module should also be checked against the
-workers/toolbox for the class in the extraction.py file. The attributes here must
-match up to the extractors `extract` and `write` methods.
-
+:copyright: Copyright (C) 2018 by BOM Quote Limited
+:license: The MIT License, see LICENSE for more details.
+~~~~~~~~~~~~
 """
 
 import newt.db

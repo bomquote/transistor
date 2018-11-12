@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-This module contains an abstract base class that must be implemented to
-extract (serialize) the data we want the worker from a scraper to gather
-from a scraper object, for persistence.
+transistor.persistence.newt_db.extractor
+~~~~~~~~~~~~
+This module implements an abstract base class that must be implemented to
+extract (serialize) the data inside a BaseWorker from a SplashScraper for
+persistence in newt.db.
+
+:copyright: Copyright (C) 2018 by BOM Quote Limited
+:license: The MIT License, see LICENSE for more details.
+~~~~~~~~~~~~
 """
 
 from abc import ABC, abstractmethod

@@ -46,8 +46,7 @@ from os.path import dirname as d
 from pathlib import Path
 from os.path import abspath
 # finally, the core of what we need to launch the scrape job
-from transistor.io.workers import WorkGroup
-from transistor.io.books import StatefulBook
+from transistor import WorkGroup, StatefulBook
 from examples.books_to_scrape.workgroup import BooksToScrapeGroup
 from examples.books_to_scrape.manager import BooksWorkGroupManager
 

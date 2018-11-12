@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.io.managers.base_manager
+transistor.managers.base_manager
 ~~~~~~~~~~~~
 This module implements BaseWorkGroupManager as a fully functional base class
 which can assign tasks and conduct a scrape job across an

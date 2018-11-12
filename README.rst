@@ -314,7 +314,7 @@ Setting up a ``BaseGroup`` is all that is required for the minimal example.
 .. code-block:: python
 
     import gevent
-    from transistor.io.workers import BaseWorker, BaseGroup
+    from transistor import BaseWorker, BaseGroup
     from examples.books_to_scrape.scraper import BooksToScrapeScraper
 
     class BooksToScrapeGroup(BaseGroup):
@@ -366,10 +366,9 @@ The first thing we need to do is perform some imports.
     from gevent import monkey
     monkey.patch_all()
     # next, import other need objects to launch the scrape job
-    from transistor.io.books import StatefulBook
+    from transistor import StatefulBook, WorkGroup
     from examples.books_to_scrape.workgroup import BooksToScrapeGroup
     from examples.books_to_scrape.manager import BooksWorkGroupManager
-    from transistor.io.workers import WorkGroup
 
 Second, setup a ``StatefulBook`` which will read the ``book_titles.xlsx`` file and transform the book titles from the spreadsheet into task queues for our ``WorkGroups``.
 
@@ -507,7 +506,7 @@ with one column of search terms, *part numbers* in the below example, which we w
 
 .. code-block:: python
 
-    >>> from transistor.io.books import StatefulBook
+    >>> from transistor import StatefulBook
 
     >>> filepath = '/path/to/your/file.xlsx'
     >>> trackers = ['mousekey.cn', 'mousekey.com', 'digidog.com.cn', 'digidog.com']

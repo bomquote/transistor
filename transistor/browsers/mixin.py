@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-A mixin to factor out all the properties that we will reuse in other classes
+transistor.browsers.mixin
+~~~~~~~~~~~~
+This module implements a mixin to for SplashBrowser properties and methods
+that will be useful in multiple classes.
 
+:copyright: Copyright (C) 2018 by BOM Quote Limited
+:license: The MIT License, see LICENSE for more details.
+~~~~~~~~~~~~
 """
 import json
 

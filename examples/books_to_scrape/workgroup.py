@@ -9,7 +9,7 @@ This module implements a working example of a BaseWorker and BaseGroup.
 ~~~~~~~~~~~~
 """
 import gevent
-from transistor.io.workers import BaseWorker, BaseGroup
+from transistor import BaseWorker, BaseGroup
 from examples.books_to_scrape.scraper import BooksToScrapeScraper
 from examples.books_to_scrape.persistence import BookDataExtractor, ndb
 from transistor.persistence.newt_db.collections import ScrapeList

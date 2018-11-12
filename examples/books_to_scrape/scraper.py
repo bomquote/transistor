@@ -11,7 +11,7 @@ to navigate the html tree. This example does not use Crawlera.
 ~~~~~~~~~~~~
 """
 
-from transistor.scrapers import SplashScraper
+from transistor import SplashScraper
 
 
 class BooksToScrapeScraper(SplashScraper):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.io.managers
+transistor.managers
 ~~~~~~~~~~~~
 This module implements classes, functions, and methods for Transistor to
 scale scrape jobs with gevent based asynchronous I/O execution.
