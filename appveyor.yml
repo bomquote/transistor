@@ -30,14 +30,13 @@ environment:
   APP_DIR: 'C:\Users\root\repos\transistor\transistor'
   PROJECT_ROOT: 'C:\Users\root\repos\transistor'
   TEMP: 'C:\tmp\'
-  TRANSISTOR_DEBUG: 1
 
   matrix:
   - TARGET_ARCH: x64
     CONDA_PY: 3.6
     PY_CONDITION: python >=3.6
     CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
-    db: postgresql101
+    db: postgresql10
 
   global:
       # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
