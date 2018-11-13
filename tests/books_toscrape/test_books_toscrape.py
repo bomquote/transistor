@@ -193,3 +193,5 @@ class TestLiveBooksToScrape:
         assert 'In stock' in stocks
 
         delete_job('books_scrape')
+        del ndb.root._scrapes
+        ndb.commit()

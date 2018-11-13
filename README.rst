@@ -426,7 +426,7 @@ NOTE: If you do try to follow the more detailed example  in ``examples/books_to_
     TRANSISTOR_DEBUG = 1
 
 Whether or not you actually need to set this ``TRANSISTOR_DEBUG`` environment variable will depend on how you setup your settings.py and newt_db.py files.
-If you copy the files verbatim as shown in the ``examples/books_to_scrape`` folder, then you will need to set it. 
+If you copy the files verbatim as shown in the ``examples/books_to_scrape`` folder, then you will need to set it.
 
 Directly Using A SplashScraper
 --------------------------------
