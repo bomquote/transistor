@@ -78,6 +78,7 @@ install:
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
     - cmd: docker version
     - cmd: cd c:\Program Files\Docker\Docker\
+    - ps: Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
     - ps: ./DockerCli.exe -SwitchDaemon
     - cmd: docker version
     - cmd: cd c:\Users\root\repos\transistor\appveyor\aquarium
