@@ -82,8 +82,6 @@ install:
     - ps: gcim Win32_Processor | % { "$($_.NumberOfCores) cores" }
     - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
     - cmd: docker-switch-linux
-    # share the Drive X
-    - cmd: docker run --rm -v x:/host:/host ubuntu ls /host
     # start aquarium
     - cmd: cd c:\Users\root\repos\transistor\appveyor\aquarium
     - cmd: docker-compose up
