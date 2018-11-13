@@ -12,9 +12,9 @@ This module installs aquarium with cookiecutter on appveyor.
 if __name__ == "__main__":
 
     import delegator
-    delegator.run('cookiecutter', 'gh:TeamHG-Memex/aquarium')
-    delegator.run('cd', './aquarium')
-    c = delegator.run('docker-compose', 'up')
+    delegator.run('cookiecutter gh:TeamHG-Memex/aquarium')
+    delegator.run('cd ./aquarium')
+    c = delegator.run('docker-compose up')
     c.expect('folder_name')
     c.send('aquarium')
     c.expect('num_splashes')
