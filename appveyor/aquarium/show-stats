@@ -1,2 +1,0 @@
-#!/bin/sh
-docker-compose ps -q | xargs docker stats

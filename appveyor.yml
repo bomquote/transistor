@@ -32,8 +32,8 @@ environment:
   APP_DIR: 'C:\Users\root\repos\transistor\transistor'
   PROJECT_ROOT: 'C:\Users\root\repos\transistor'
   TEMP: 'C:\tmp\'
-  SPLASH_USERNAME: 'me'
-  SPLASH_PASSWORD: 'password'
+  SPLASH_USERNAME: 'user'
+  SPLASH_PASSWORD: 'userpass'
 
 
   matrix:
@@ -78,11 +78,11 @@ install:
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
     - cmd: mkdir c:\tmp
     - cmd: pip install cookiecutter
+    - cmd: pip install delegator
     - cmd: mkdir c:\repos && cd c:\repos
-    - cmd: cookiecutter gh:TeamHG-Memex/aquarium
+    - cmd: python c:\Users\root\repos\transistor\appveyor\aquarium.py
     - cmd: cd ./aquarium
     - cmd: docker-compose up
-    
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: c:\Users\root\repos\transistor\appveyor\redis.ps1
