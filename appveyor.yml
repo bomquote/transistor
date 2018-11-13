@@ -78,7 +78,7 @@ install:
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
     - cmd: mkdir c:\tmp
     - cmd: pip install cookiecutter
-    - cmd: pip install delegator
+    - cmd: pip install delegator.py
     - cmd: mkdir c:\repos && cd c:\repos
     - cmd: python c:\Users\root\repos\transistor\appveyor\aquarium.py
     - cmd: cd ./aquarium
