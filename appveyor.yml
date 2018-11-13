@@ -76,6 +76,7 @@ install:
           else
             {$root = "C:\Miniconda36-x64"}
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
+    - cmd: choco install docker-compose
     - cmd: mkdir c:\tmp
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
