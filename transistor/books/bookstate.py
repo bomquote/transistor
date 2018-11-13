@@ -80,12 +80,15 @@ class StatefulBook:
 
         :param file_name: "clock_bom.xlsx"
         :param tracker: a list of strings for names assigned to each TaskTracker
-        stored in thE queue in the _BookState()
+        :param keywords: the spreadsheet column heading name from which to load
+         the tasks.  It should be set like 'keywords'='<column heading>', for example
+         'keywords'='part_numbers'.  Default is 'item'.
         """
         self.file_name = file_name
         self.__state = _BookState()
         self.SOURCE = get_file_path(self.file_name)
         self.trackers = trackers
+        self.keywords = kwargs.get('keywords', 'item')
         if autorun:
             self.open_book()
 

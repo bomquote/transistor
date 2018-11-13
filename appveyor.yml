@@ -17,7 +17,7 @@ init:
 clone_folder: c:\Users\root\repos\transistor
 
 # Build worker image (VM template)
-image: Visual Studio 2015
+image: Visual Studio 2017
 
 # setting up etc\hosts file
 hosts:
@@ -32,6 +32,8 @@ environment:
   APP_DIR: 'C:\Users\root\repos\transistor\transistor'
   PROJECT_ROOT: 'C:\Users\root\repos\transistor'
   TEMP: 'C:\tmp\'
+  SPLASH_USERNAME: 'me'
+  SPLASH_PASSWORD: 'password'
 
 
   matrix:
@@ -90,7 +92,9 @@ install:
     - cmd: set PYTHONPATH=C:\Miniconda36-x64\envs\python36
     # upgrade pip
     - cmd: python -m pip install --upgrade pip
-
+    - cmd: docker version
+    - cmd: cd c:\Users\root\repos\transistor\appveyor\aquarium
+    - cmd: docker-compose up
     # install packages from pip
     - cmd: pip install mechanicalsoup==0.11.0
     - cmd: pip install requests==2.20.1
@@ -115,7 +119,6 @@ install:
     - cmd: pip install persistent==4.4.3
     - cmd: pip install zodb==5.5.1
     - cmd: pip install w3lib==1.19.0
-
 
 # Skip .NET project specific build phase.
 build: off
