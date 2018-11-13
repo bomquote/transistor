@@ -8,13 +8,14 @@ This module installs aquarium with cookiecutter on appveyor.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
-import delegator
+from delegator import run
 
 if __name__ == "__main__":
 
-    delegator.run('cookiecutter gh:TeamHG-Memex/aquarium')
-    delegator.run('cd ./aquarium')
-    c = delegator.run('docker-compose up')
+
+    run('cookiecutter gh:TeamHG-Memex/aquarium')
+    run('cd ./aquarium')
+    c = run('docker-compose up')
     c.expect('folder_name')
     c.send('aquarium')
     c.expect('num_splashes')
