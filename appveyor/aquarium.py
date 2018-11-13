@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     delegator.run('cookiecutter gh:TeamHG-Memex/aquarium')
     delegator.run('cd ./aquarium')
-    c = delegator.run('docker-compose up')
+    c = delegator.run('docker-compose up', block=False)
     c.expect('folder_name')
     c.send('aquarium')
     c.expect('num_splashes')
