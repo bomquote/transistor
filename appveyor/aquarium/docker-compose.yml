@@ -16,11 +16,11 @@ services:
             - splash3
             - splash4
         volumes:
-            - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+            - x:./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
 
     splash0:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
@@ -29,12 +29,12 @@ services:
         links:
             - tor
         volumes:
-            - ./proxy-profiles:/etc/splash/proxy-profiles:ro
-            - ./filters:/etc/splash/filters:ro
+            - x:./proxy-profiles:/etc/splash/proxy-profiles:ro
+            - x:./filters:/etc/splash/filters:ro
 
     splash1:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
@@ -43,12 +43,12 @@ services:
         links:
             - tor
         volumes:
-            - ./proxy-profiles:/etc/splash/proxy-profiles:ro
-            - ./filters:/etc/splash/filters:ro
+            - x:./proxy-profiles:/etc/splash/proxy-profiles:ro
+            - x:./filters:/etc/splash/filters:ro
 
     splash2:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
@@ -57,12 +57,12 @@ services:
         links:
             - tor
         volumes:
-            - ./proxy-profiles:/etc/splash/proxy-profiles:ro
-            - ./filters:/etc/splash/filters:ro
+            - x:./proxy-profiles:/etc/splash/proxy-profiles:ro
+            - x:./filters:/etc/splash/filters:ro
 
     splash3:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
@@ -71,12 +71,12 @@ services:
         links:
             - tor
         volumes:
-            - ./proxy-profiles:/etc/splash/proxy-profiles:ro
-            - ./filters:/etc/splash/filters:ro
+            - x:./proxy-profiles:/etc/splash/proxy-profiles:ro
+            - x:./filters:/etc/splash/filters:ro
 
     splash4:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
@@ -85,8 +85,8 @@ services:
         links:
             - tor
         volumes:
-            - ./proxy-profiles:/etc/splash/proxy-profiles:ro
-            - ./filters:/etc/splash/filters:ro
+            - x:./proxy-profiles:/etc/splash/proxy-profiles:ro
+            - x:./filters:/etc/splash/filters:ro
 
     tor:
         image: jess/tor-proxy
