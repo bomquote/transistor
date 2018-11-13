@@ -77,6 +77,7 @@ install:
             {$root = "C:\Miniconda36-x64"}
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
     - cmd: cd c:\Users\root\repos\transistor\appveyor\aquarium
+    - ps: Get-NetNat | Remove-NetNat
     - cmd: docker-compose up
     - cmd: mkdir c:\tmp
     # download and install redis for windows
