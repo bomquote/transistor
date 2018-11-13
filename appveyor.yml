@@ -76,7 +76,6 @@ install:
           else
             {$root = "C:\Miniconda36-x64"}
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
-    - cmd: choco install docker-for-windows
     - cmd: cd c:\Users\root\repos\transistor\appveyor\aquarium
     - cmd: docker-compose up
     - cmd: mkdir c:\tmp
