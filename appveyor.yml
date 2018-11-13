@@ -77,6 +77,8 @@ install:
             {$root = "C:\Miniconda36-x64"}
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
     - cmd: docker version
+    - ps: C:\Program Files\Docker\Docker\DockerCli.exe -SwitchDaemon
+    - cmd: docker version
     - cmd: cd c:\Users\root\repos\transistor\appveyor\aquarium
     - cmd: docker-compose up
     - cmd: mkdir c:\tmp
