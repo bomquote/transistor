@@ -30,6 +30,7 @@ environment:
   APP_DIR: 'C:\Users\root\repos\transistor\transistor'
   PROJECT_ROOT: 'C:\Users\root\repos\transistor'
   TEMP: 'C:\tmp\'
+  TRANSISTOR_DEBUG: True
 
   matrix:
   - TARGET_ARCH: x64
