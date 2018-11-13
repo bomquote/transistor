@@ -62,7 +62,7 @@ def delete_job(job_id:str):
 
     `Packing` the database should be done periodically in production, based on
     a celery task cron job or similar method.  To pack the database, all you need to
-    do is run ndb.pack(days=<int()>). Usually, I use 3 days, ndb.pack(days=3)
+    do is run ndb.db().pack(days=<int()>). Usually, I use 3 days, ndb.db().pack(days=3).
 
     :return: a print statement
     """

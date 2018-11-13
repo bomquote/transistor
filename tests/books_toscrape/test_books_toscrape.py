@@ -9,15 +9,20 @@ check Transistor source code.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
-
+from gevent import monkey
+monkey.patch_all()
 import pytest
 from bs4 import BeautifulSoup
 from pkgutil import get_data
 from pathlib import Path
 from os.path import dirname as d
 from os.path import abspath
+from transistor import StatefulBook, WorkGroup
+from transistor.persistence.newt_db.collections import ScrapeLists
+from ..conftest import get_job_results, delete_job
+from examples.books_to_scrape.persistence.newt_db import ndb
 from examples.books_to_scrape.scraper import BooksToScrapeScraper
-
+from examples.books_to_scrape.manager import BooksWorkGroupManager
 
 root_dir = d(d(abspath(__file__)))
 
@@ -35,6 +40,16 @@ def get_html(filename):
     return f.read()
 
 
+def get_file_path(filename):
+    """
+    Find the book_title excel file path.
+    """
+    root_dir = d(d(abspath(__file__)))
+    root = Path(root_dir)
+    filepath = root / 'books_toscrape' / filename
+    return r'{}'.format(filepath)
+
+
 @pytest.fixture(scope='function')
 def bts_scraper(test_dict):
     """
@@ -47,6 +62,26 @@ def bts_scraper(test_dict):
     scraper = BooksToScrapeScraper(book_title=book_title, **test_dict)
     scraper.start_http_session()
     return scraper
+
+
+@pytest.fixture(scope='function')
+def bts_manager(_BooksToScrapeGroup):
+    """
+    A BooksToScrape Manager test fixture for live network call.
+    """
+    file = get_file_path('book_titles.xlsx')
+    trackers = ['books.toscrape.com']
+    stateful_book = StatefulBook(file, trackers, autorun=True)
+    groups = [
+        WorkGroup(
+            class_=_BooksToScrapeGroup,
+            workers=3,  # this creates 3 scrapers and assigns each a book as a task
+            name='books.toscrape.com',
+            kwargs={'url': 'http://books.toscrape.com/', 'timeout': (3.0, 20.0)})
+    ]
+    manager = BooksWorkGroupManager('books_scrape', stateful_book, groups=groups,
+                                    pool=5)
+    return manager
 
 
 class TestStaticBooksToScrapeScraper:
@@ -84,7 +119,6 @@ class TestStaticBooksToScrapeScraper:
         assert source == expected
 
 
-
 class TestStaticSplashBrowser:
     """
     Unit test some SplashBrowser methods, using the BooksToScrapeScraper test fixture.
@@ -118,3 +152,44 @@ class TestStaticSplashBrowser:
         get_page = str(bts_scraper.browser.get_current_page())
         html = get_html("books_toscrape/books_toscrape_index.html")
         assert get_page[:100] == html[:100]
+
+
+class TestLiveBooksToScrape:
+    """
+    Run through a live scrape of books.toscrape.com, save to newt_db,
+    and check the newt_db results are what we expect.
+    """
+    def test_live(self, bts_manager):
+        """
+        Test that the stock attribute has been properly set
+        """
+        # first, setup newt.db for testing
+        ndb.root._scrapes = ScrapeLists()
+        ndb.commit()
+
+        # now, perform the scrape
+        bts_manager.main()
+
+        # when the scrape is completed then check the results
+
+        result = get_job_results('books_scrape')
+
+        book_titles = []
+        prices = []
+        stocks = []
+        for r in result:
+            book_titles.append(r.book_title)
+            prices.append(r.price)
+            stocks.append(r.stock)
+
+        assert len(book_titles) == 3
+        assert len(prices) == 3
+        assert len(stocks) == 3
+
+        assert 'Soumission' in book_titles
+        assert 'Rip it Up and Start Again' in book_titles
+        assert 'Black Dust' in book_titles
+        assert '£50.10' in prices
+        assert 'In stock' in stocks
+
+        delete_job('books_scrape')

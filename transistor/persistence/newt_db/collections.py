@@ -54,7 +54,7 @@ class ScrapeLists(newt.db.Persistent):
     >>> ndb.root.scrapes = ScrapeLists()  # ONLY DURING SETUP.
     >>> ndb.root.scrapes.add('testing', ScrapeList())  # ANYTIME YOU NEED A NEW LIST
     >>> ndb.root.scrapes['testing'].add(
-    ...     MouserScraper(name="mouser.cn", part_number="TPA2012D2RTJR"))
+    ...     MouseKeyScraper(name="mousekey.cn", part_number="TPA2012D2RTJR"))
     >>> ndb.commit() # AFTER EVERY SCRAPE FOR EACH UPDATE.
     """
 
