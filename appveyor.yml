@@ -76,12 +76,7 @@ install:
           else
             {$root = "C:\Miniconda36-x64"}
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
-    - cmd: docker version
-    - cmd: cd c:\Program Files\Docker\Docker\
-    - cmd: net stop vmms
-    - cmd: net start vmms
-    - ps: ./DockerCli.exe -SwitchDaemon
-    - cmd: docker version
+    - cmd: choco install docker-for-windows
     - cmd: cd c:\Users\root\repos\transistor\appveyor\aquarium
     - cmd: docker-compose up
     - cmd: mkdir c:\tmp
