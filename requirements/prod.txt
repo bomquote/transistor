@@ -4,7 +4,7 @@ urllib3==1.24.1
 keyring==16.0.2
 lxml==4.2.5
 lz4==2.1.2
-openpyxl==2.5.2
+openpyxl==2.5.10
 pyexcel==0.5.9.1
 pyexcel-io==0.5.9.1
 pyexcel-ods3==0.5.2
