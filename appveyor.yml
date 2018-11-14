@@ -9,12 +9,12 @@
 # scripts that are called at very beginning, before repo cloning
 init:
   - git config --global core.autocrlf input
-  - SET PATH=C:\Program Files\PostgreSQL\10\bin\;C:\Users\root\repos\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
+  - SET PATH=C:\Program Files\PostgreSQL\10\bin\;x:host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
   - SET PGUSER=postgres
   - SET PGPASSWORD=Password12!
 
 # clone directory
-clone_folder: c:\Users\root\repos\transistor
+clone_folder: x:\host\transistor
 
 # Build worker image (VM template)
 image: Visual Studio 2017
@@ -28,9 +28,9 @@ environment:
   PYTHONUNBUFFERED: 1
   PYTHON_EXE: 'C:\Miniconda36-x64\envs\python36\python.exe'
   PYTHON_LIB: 'C:\Miniconda36-x64\envs\python36\Lib\site-packages'
-  BASE_PATH: 'C:\Users\root\repos\transistor\transistor\'
-  APP_DIR: 'C:\Users\root\repos\transistor\transistor'
-  PROJECT_ROOT: 'C:\Users\root\repos\transistor'
+  BASE_PATH: 'x:host\transistor\transistor\'
+  APP_DIR: 'x:\host\transistor\transistor'
+  PROJECT_ROOT: 'x:\host\transistor'
   TEMP: 'C:\tmp\'
   SPLASH_USERNAME: 'user'
   SPLASH_PASSWORD: 'userpass'
@@ -84,18 +84,18 @@ install:
     - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
     - cmd: docker-switch-linux
     # start aquarium
-    - cmd: cd c:\Users\root\repos\transistor\appveyor\aquarium
+    - cmd: cd x:\host\transistor\appveyor\aquarium
     - cmd: docker-compose up
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
-    - ps: c:\Users\root\repos\transistor\appveyor\redis.ps1
+    - ps: x:\host\transistor\appveyor\redis.ps1
     # install rabbitmq
-    - ps: c:\Users\root\repos\transistor\appveyor\rabbitmq.ps1
+    - ps: x:\host\transistor\appveyor\rabbitmq.ps1
     # Load the conda root environment, configure and install packages
     - cmd: conda config --set show_channel_urls true
     - cmd: conda config --set always_yes yes --set changeps1 no
     - cmd: conda update --yes --quiet conda
-    - cmd: conda create -n python36 --file=C:\Users\root\repos\transistor\conda_list_explicit.txt
+    - cmd: conda create -n python36 --file=x:\host\transistor\conda_list_explicit.txt
     - cmd: activate python36
     - cmd: set PYTHONUNBUFFERED=1
     - cmd: set PYTHONPATH=C:\Miniconda36-x64\envs\python36
@@ -130,7 +130,7 @@ install:
 build: off
 
 test_script:
-    - cmd: python -m pytest c:\Users\root\repos\transistor\tests
+    - cmd: python -m pytest x:\host\transistor\tests
 
 
 # after_test:
