@@ -20,7 +20,7 @@ services:
 
     splash0:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
@@ -34,7 +34,7 @@ services:
 
     splash1:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
@@ -48,7 +48,7 @@ services:
 
     splash2:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
@@ -62,7 +62,7 @@ services:
 
     splash3:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
@@ -76,7 +76,7 @@ services:
 
     splash4:
         image: scrapinghub/splash:master
-        command: --rm -v x:/host:/host --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
+        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
         expose:
             - 8050
         mem_limit: 4200m
