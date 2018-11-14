@@ -15,7 +15,7 @@ Install-Module snek
 
 Use-Python {
     $dg = Import-PythonModule "subprocess"
-    $dg.call("x:\host\transistor\aquarium\docker-compose-up.cmd")
+    $dg.call("x:\host\transistor\appveyor\docker-compose-up.cmd")
 } -Version v3
 
 Write-Host "Let's move on while Aquarium starts..." -ForegroundColor Green
