@@ -85,8 +85,8 @@ install:
     - cmd: docker-switch-linux
     # start aquarium
     - cmd: cd x:\host\transistor\appveyor\aquarium
-    # run docker-compose up from a separate cmd window
-    - cmd: start x:\host\transistor\docker.cmd
+    # run docker-compose up from a separate cmd window using a ps script
+    - ps: x:\host\transistor\appveyor\docker-compose-up.ps1
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: x:\host\transistor\appveyor\redis.ps1
