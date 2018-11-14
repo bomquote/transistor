@@ -11,9 +11,11 @@
 
 Write-Host "Installing Aquarium..." -ForegroundColor Cyan
 
-$cmdPath = "x:\host\transistor\aquarium\docker.cmd"
+Install-Module snek
 
-Write-Host "Starting aquarium service with docker-compose up..."
-cmd /c start /wait $cmdPath /S
+Use-Python {
+    $dg = Import-PythonModule "subprocess"
+    $dg.call("x:\host\transistor\aquarium\docker-compose-up.cmd")
+} -Version v3
 
-Write-Host "Aquarium installed and started" -ForegroundColor Green
+Write-Host "Let's move on while Aquarium starts..." -ForegroundColor Green
