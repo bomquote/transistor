@@ -109,6 +109,7 @@ install:
     - cmd: pip install keyring==16.0.2
     - cmd: pip install lxml==4.2.5
     - cmd: pip install lz4==2.1.2
+    - cmd: pip install openpyxl==2.5.2
     - cmd: pip install pyexcel==0.5.9.1
     - cmd: pip install pyexcel-io==0.5.9.1
     - cmd: pip install pyexcel-ods3==0.5.2
