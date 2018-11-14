@@ -1,0 +1,1 @@
+cd x:\host\transistor\aquarium && docker-compose up
