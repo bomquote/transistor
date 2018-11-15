@@ -13,6 +13,8 @@ import pytest
 from os.path import dirname as d
 from os.path import abspath, join
 from unittest.mock import Mock, patch
+from requests.adapters import HTTPAdapter
+from transistor import SplashBrowser
 from transistor.persistence.newt_db.collections import ScrapeList
 from examples.books_to_scrape.workgroup import BooksWorker, BooksToScrapeGroup
 from examples.books_to_scrape.scraper import BooksToScrapeScraper
@@ -95,6 +97,19 @@ def _BooksToScrapeGroup(_BooksWorker):
             return worker
 
     return _BookstoScrapeGroup
+
+
+@pytest.fixture(scope='function')
+def splash_browser():
+    """
+    A SplashBrowser instance for the unit tests.
+    :return:
+    """
+    browser = SplashBrowser(
+    soup_config = {'features': 'lxml'},
+    requests_adapters = {'http://': HTTPAdapter(max_retries=5)})
+
+    return browser
 
 
 def get_job_results(job_id):

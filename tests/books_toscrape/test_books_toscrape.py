@@ -12,6 +12,7 @@ check Transistor source code.
 from gevent import monkey
 monkey.patch_all()
 import pytest
+from requests import Response
 from bs4 import BeautifulSoup
 from pkgutil import get_data
 from pathlib import Path
@@ -51,9 +52,9 @@ def get_file_path(filename):
 
 
 @pytest.fixture(scope='function')
-def bts_scraper(test_dict):
+def bts_static_scraper(test_dict):
     """
-    A BooksToScrapeScraper test fixture.
+    A BooksToScrapeScraper static test fixture.
     """
     book_title = 'Soumission'
     page = get_html("books_toscrape/books_toscrape_index.html")
@@ -61,6 +62,16 @@ def bts_scraper(test_dict):
     test_dict['url'] = 'http://books.toscrape.com'
     scraper = BooksToScrapeScraper(book_title=book_title, **test_dict)
     scraper.start_http_session()
+    return scraper
+
+
+@pytest.fixture(scope='function')
+def bts_live_scraper():
+    """
+    A BooksToScrapeScraper live fixture for TestLiveBooksToScrape.
+    """
+    scraper = BooksToScrapeScraper(book_title='Black Dust')
+    scraper.start_http_session(url='http://books.toscrape.com')
     return scraper
 
 
@@ -89,30 +100,30 @@ class TestStaticBooksToScrapeScraper:
     Unit test some BooksToScrapeScraper methods using a static html page to hit a
     few methods which can be easily tested without live network request.
     """
-    def test_stock(self, bts_scraper):
+    def test_stock(self, bts_static_scraper):
         """
         Test that the stock attribute has been properly set
         """
-        assert bts_scraper.stock == 'In stock'
+        assert bts_static_scraper.stock == 'In stock'
 
-    def test_price(self, bts_scraper):
+    def test_price(self, bts_static_scraper):
         """
         Test that the price attribute has been properly set
         """
-        assert bts_scraper.price == '£50.10'
+        assert bts_static_scraper.price == '£50.10'
 
-    def test_next_page(self, bts_scraper):
+    def test_next_page(self, bts_static_scraper):
         """
         Test that the _next_page method returns the expected url
         """
-        next_page = bts_scraper._next_page()
+        next_page = bts_static_scraper._next_page()
         assert next_page == r'http://books.toscrape.com/catalogue/page-2.html'
 
-    def test_LUA_SOURCE(self, bts_scraper):
+    def test_LUA_SOURCE(self, bts_static_scraper):
         """
         Test the LUA_SOURCE returns as expected.
         """
-        source = bts_scraper.LUA_SOURCE
+        source = bts_static_scraper.LUA_SOURCE
         expected = get_data(
             'transistor',
             'scrapers/scripts/basic_splash.lua').decode('utf-8')
@@ -126,30 +137,30 @@ class TestStaticSplashBrowser:
     we are only using a static html page to hit a few methods.
     """
 
-    def test_ucontent(self, bts_scraper):
+    def test_ucontent(self, bts_static_scraper):
         """
         Test ucontent method returns as expected.
         """
-        assert bts_scraper.browser.ucontent.startswith('<!DOCTYPE html>')
+        assert bts_static_scraper.browser.ucontent.startswith('<!DOCTYPE html>')
 
-    def test_resp_content(self, bts_scraper):
+    def test_resp_content(self, bts_static_scraper):
         """
         Test resp_content returns an empty dict.
         """
-        assert bts_scraper.browser.resp_content == {}
+        assert bts_static_scraper.browser.resp_content == {}
 
-    def test_get_current_page_is_soup(self, bts_scraper):
+    def test_get_current_page_is_soup(self, bts_static_scraper):
         """
         Test get_current_page() returns a beautifulsoup4 object.
         """
-        page = bts_scraper.browser.get_current_page()
+        page = bts_static_scraper.browser.get_current_page()
         assert type(page) == BeautifulSoup
 
-    def test_get_current_page_to_string(self, bts_scraper):
+    def test_get_current_page_to_string(self, bts_static_scraper):
         """
         Test get_current_page() cast to string is roughly similar to our html.
         """
-        get_page = str(bts_scraper.browser.get_current_page())
+        get_page = str(bts_static_scraper.browser.get_current_page())
         html = get_html("books_toscrape/books_toscrape_index.html")
         assert get_page[:100] == html[:100]
 
@@ -159,10 +170,13 @@ class TestLiveBooksToScrape:
     Run through a live scrape of books.toscrape.com, save to newt_db,
     and check the newt_db results are what we expect.
     """
-    def test_live(self, bts_manager):
+
+    def test_live_manager(self, bts_manager):
         """
         Test that the stock attribute has been properly set
         """
+
+        # todo: move this to a setup fixture
         # first, setup newt.db for testing
         ndb.root._scrapes = ScrapeLists()
         ndb.commit()
@@ -192,6 +206,41 @@ class TestLiveBooksToScrape:
         assert '£50.10' in prices
         assert 'In stock' in stocks
 
+        assert result[0].har['log']['browser']['comment'] == 'PyQt 5.9, Qt 5.9.1'
+        assert result[0].png
+
+        # the below should currently return None if not using Crawlera
+        assert result[0].endpoint_status is None
+        assert result[0].crawlera_session is None
+        assert result[0].resp_content_type_header is None
+
+
+        # todo: move this to a teardown fixture
         delete_job('books_scrape')
         del ndb.root._scrapes
         ndb.commit()
+
+    def test_live_scraper_browser_open(self, bts_live_scraper):
+        """Test the scraper.browser.open method returns Response"""
+
+        link = 'http://books.toscrape.com/catalogue/black-dust_976/index.html'
+        bts_live_scraper.splash_json = {
+            'lua_source': bts_live_scraper.LUA_SOURCE,
+            'url': link,
+            'crawlera_user': bts_live_scraper.crawlera_user,
+            # set Splash to cache the lua script, to avoid sending it every request
+            'cache_args': 'lua_source',
+            'timeout': 10.0,
+            'session_id': 'create',
+            'referrer': bts_live_scraper.referrer if not None else
+            "https://www.google.com",
+            'searchurl': bts_live_scraper.searchurl,
+            'keyword': None,  # can be used in the LUA script to submit a form
+            'cookies': bts_live_scraper.cookies
+        }
+        page = bts_live_scraper.browser.open('http://localhost:8050/execute',
+                                             json=bts_live_scraper.splash_json,
+                                             timeout=(3.0, 10.0),
+                                             verify=bts_live_scraper.crawlera_ca,
+                                             stream=True)
+        assert type(page) == Response

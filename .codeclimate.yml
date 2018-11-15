@@ -17,6 +17,11 @@ engines:
       threshold: "B"
   pep8:
     enabled: true
+plugins:
+  bandit:
+    enabled: true
+    config:
+      python_version: 3
 ratings:
   paths:
   - "**.css"

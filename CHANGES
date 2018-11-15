@@ -2,7 +2,6 @@
   transistor: CHANGES
 ========================
 
-
 Nov 15, 2018
 -  when initializing a StatefulBook instance, use a kwarg  called `keywords` to set
 the name of the spreadsheet column heading which contains the target search terms.
