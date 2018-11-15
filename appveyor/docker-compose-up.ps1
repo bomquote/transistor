@@ -11,11 +11,8 @@
 
 Write-Host "Installing Aquarium..." -ForegroundColor Cyan
 
-Install-Module snek
+$cmdPath = "x:\host\transistor\appveyor\docker-compose-up.cmd"
 
-Use-Python {
-    $dg = Import-PythonModule "subprocess"
-    $dg.call("x:\host\transistor\appveyor\docker-compose-up.cmd")
-} -Version v3
+cmd /c start /wait $cmdPath -PassThru
 
 Write-Host "Let's move on while Aquarium starts..." -ForegroundColor Green
