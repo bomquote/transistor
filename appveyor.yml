@@ -12,7 +12,6 @@ init:
   - SET PATH=C:\Program Files\PostgreSQL\10\bin\;x:host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
   - SET PGUSER=postgres
   - SET PGPASSWORD=Password12!
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # clone directory
 clone_folder: x:\host\transistor

@@ -1,0 +1,1 @@
+START "" /D X:\host\transistor\appveyor\aquarium "docker-compose" up
