@@ -13,6 +13,6 @@ Write-Host "Installing Aquarium..." -ForegroundColor Cyan
 
 $cmdPath = "x:\host\transistor\appveyor\docker-compose-up.cmd"
 
-cmd /c start /wait $cmdPath -PassThru
+Start-Process $cmdPath -PassThru
 
 Write-Host "Let's move on while Aquarium starts..." -ForegroundColor Green

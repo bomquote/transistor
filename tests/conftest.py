@@ -85,25 +85,13 @@ def _BooksToScrapeGroup(_BooksWorker):
             Encapsulate your custom scraper, inside of a Worker object. This will
             eventually allow us to run an arbitrary amount of Scraper objects.
 
-            Create the number of workers in staff count.
-            Setting the http_session for the Worker is also handled here.
-            Last, this is a good place to ensure any custom class attributes you must
-            have on the worker are set here.
-
             :returns <Worker>, the worker object which will go into a Workgroup
             """
             worker = _BooksWorker(job_id=self.job_id, scraper=BooksToScrapeScraper,
                                  http_session={'url': self.url,
                                                'timeout': self.timeout},
                                  **self.kwargs)
-
-            # NOTE: assign custom class attrs on your workers here, as needed.  You pretty
-            # much always need to assign worker.name here, but you may need others as well.
-            # For example, if our scraper depended on china=True to scrape .com.cn domain.
-            # worker.china = self.china
-
             worker.name = self.name
-
             return worker
 
     return _BookstoScrapeGroup
