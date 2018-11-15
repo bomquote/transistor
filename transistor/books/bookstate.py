@@ -16,6 +16,7 @@ from pathlib import Path
 from os.path import dirname as d
 from os.path import abspath
 from transistor.books.taskstate import TaskTracker
+from transistor.exceptions import KeywordError
 
 root_dir = d(d(abspath(__file__)))
 
@@ -109,7 +110,8 @@ class StatefulBook:
     def _get_records(self):
         """
         Open the records as a list.
-        If you use iget then it returns a generator and we can't save the state.
+        If you use iget then it returns a generator and we can't
+        easily save the state.
         pe.iget_records(file_name=self.SOURCE)
 
         :return:
@@ -117,17 +119,20 @@ class StatefulBook:
         records = pe.get_records(file_name=self.SOURCE)
         return records
 
-    @staticmethod
-    def _get_sheet(records):
+    def _get_sheet(self, records):
         """
         Parse the item records and return a sheet.
         :return: a pyexcel.sheet.Sheet built from ->
          a_dictionary_of_one_dimensional_arrays = {"item": [1, 2, 3, 4]}
         """
         items = []
-        item_col = {'item': []}
+        item_col = {self.keywords: []}
         for record in records:
-            pn = record['item']
+            try:
+                pn = record[self.keywords]
+            except KeyError:
+                msg = KeywordError.msg
+                raise KeywordError(msg)
             items.append(str(pn))
         item_col['items'] = items
 
@@ -151,7 +156,7 @@ class StatefulBook:
         tracker_list = []
 
         for record in records:
-            init_to_do.append(str(record["item"]))
+            init_to_do.append(str(record[self.keywords]))
 
         for name in self.trackers:
             tracker_list.append(TaskTracker(name=name, to_do=init_to_do))

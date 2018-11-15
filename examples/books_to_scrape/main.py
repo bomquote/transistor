@@ -67,7 +67,7 @@ def get_file_path(filename):
 # in step three. Ensure the tracker name matches the WorkGroup.name in step three.
 file = get_file_path('book_titles.xlsx')
 trackers = ['books.toscrape.com']
-stateful_book = StatefulBook(file, trackers, autorun=True)
+stateful_book = StatefulBook(file, trackers, keywords='titles', autorun=True)
 
 
 # 3) Setup the WorkGroup. You can setup an arbitrary number of WorkGroups in a list.

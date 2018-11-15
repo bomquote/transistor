@@ -211,8 +211,13 @@ At this point, you should have a splash service running in your command prompt.
 
 **Crawlera**
 
-After registering for Crawlera, create accounts for each region you would like to present from.
-For our case, we are setup to handle three regions, ALL for global, China, and USA. You should set environment variables with the api key for each region you need, like below:
+Using crawlera is optional and not required for this ``books_to_scrape`` quickstart.
+
+But, if you want to use Crawlera with Transistor, first, register for the service and buy a subscription at `scrapinghub.com <https://scrapinghub.com>`_.
+
+After registering for Crawlera, create accounts in scrapinghub.com for each region you would like to present a proxied ip address from. For our case, we are setup to handle three regions, ALL for global, China, and USA.
+
+Finally, you should set environment variables on your computer/server with the api key for each region you need, like below:
 
 .. code-block:: python
 
@@ -379,13 +384,13 @@ The first thing we need to do is perform some imports.
     from examples.books_to_scrape.workgroup import BooksToScrapeGroup
     from examples.books_to_scrape.manager import BooksWorkGroupManager
 
-Second, setup a ``StatefulBook`` which will read the ``book_titles.xlsx`` file and transform the book titles from the spreadsheet into task queues for our ``WorkGroups``.
+Second, setup a ``StatefulBook`` which will read the ``book_titles.xlsx`` file and transform the book titles from the spreadsheet "titles" column into task queues for our ``WorkGroups``.
 
 .. code-block:: python
 
     filepath = 'your/path/to/book_titles.xlsx'
     trackers = ['books.toscrape.com']
-    stateful_book = StatefulBook(filepath, trackers)
+    stateful_book = StatefulBook(filepath, trackers, keywords="titles")
 
 Third, setup the ``WorkGroup`` in a list we'll call *groups*. We use a list here because you can setup as many ``WorkGroup`` objects with unique target websites and as many individual workers, as you need:
 
@@ -532,7 +537,7 @@ This will create four separate task trackers for each of the four websites to se
 
 .. code-block:: python
 
-    >>> book = StatefulBook(filepath, trackers)
+    >>> book = StatefulBook(filepath, trackers, keywords="part_numbers")
 
     >>> book.to_do()
 

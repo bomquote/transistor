@@ -3,6 +3,10 @@
 ========================
 
 
-Nov 13, 2018:
+Nov 15, 2018
+-  when initializing a StatefulBook instance, use a kwarg  called `keywords` to set
+the name of the spreadsheet column heading which contains the target search terms.
+For example, keywords='titles' or keywords='part_numbers'. Defaults to "item".
 
+Nov 13, 2018:
 - Initial commit of public repo

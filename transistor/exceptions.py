@@ -8,6 +8,8 @@ This module contains exception classes for Transistor.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
+
+
 class NoResults(Exception):
     pass
 
@@ -25,6 +27,16 @@ class UnknownError(Exception):
 
 
 class BrokenScraper(Exception):
+    pass
+
+
+class KeywordError(Exception):
+    """
+    Raise when a StatefulBook keyword does not match the spreadsheet column
+    heading.
+    """
+    msg = """The keyword you provided probably does not match 
+                the column heading in your spreadsheet."""
     pass
 
 

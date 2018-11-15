@@ -71,7 +71,7 @@ def bts_manager(_BooksToScrapeGroup):
     """
     file = get_file_path('book_titles.xlsx')
     trackers = ['books.toscrape.com']
-    stateful_book = StatefulBook(file, trackers, autorun=True)
+    stateful_book = StatefulBook(file, trackers, keywords='titles', autorun=True)
     groups = [
         WorkGroup(
             class_=_BooksToScrapeGroup,
