@@ -13,6 +13,6 @@ Write-Host "Installing Aquarium..." -ForegroundColor Cyan
 
 Set-Location -Path X:\host\transistor\appveyor\aquarium
 
-Start-Job -ScriptBlock {docker-compose.exe} -ArgumentList up
+Start-Job -ScriptBlock {docker-compose up}
 
 Write-Host "Let's move on while Aquarium starts..." -ForegroundColor Green
