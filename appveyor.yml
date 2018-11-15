@@ -85,7 +85,6 @@ install:
     - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
     - cmd: docker-switch-linux
     # start aquarium
-    - cmd: cd C:\Program Files\Docker\Docker\resources\bin && dir
     - ps: x:\host\transistor\appveyor\docker-compose-up.ps1
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
