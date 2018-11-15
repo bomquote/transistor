@@ -108,8 +108,8 @@ class SplashScraper(ABC):
 
         # set the splash basic authorization
         self.auth = basic_auth_header(
-            username=os.environ.get('SPLASH_USERNAME', None),
-            password=os.environ.get('SPLASH_PASSWORD', None))
+            username=os.environ.get('SPLASH_USERNAME', 'user'),
+            password=os.environ.get('SPLASH_PASSWORD', 'userpass'))
         self.browser.session.headers.update({'Authorization': self.auth})
 
     def __repr__(self):

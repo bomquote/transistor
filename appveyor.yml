@@ -34,7 +34,6 @@ environment:
   TEMP: 'C:\tmp\'
   SPLASH_USERNAME: 'user'
   SPLASH_PASSWORD: 'userpass'
-  COMPOSE_CONVERT_WINDOWS_PATHS: 1
 
 
   matrix:
