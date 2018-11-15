@@ -83,11 +83,7 @@ install:
     - ps: gcim Win32_Processor | % { "$($_.NumberOfCores) cores" }
     - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
     - cmd: docker-switch-linux
-    # upgrade pip
-    - cmd: python -m pip install --upgrade pip
     # start aquarium
-    - cmd: cd x:\host\transistor\appveyor\aquarium
-    # run docker-compose up from a separate cmd window using a ps script
     - ps: x:\host\transistor\appveyor\docker-compose-up.ps1
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
@@ -102,6 +98,8 @@ install:
     - cmd: activate python36
     - cmd: set PYTHONUNBUFFERED=1
     - cmd: set PYTHONPATH=C:\Miniconda36-x64\envs\python36
+    # upgrade pip
+    - cmd: python -m pip install --upgrade pip
     # install packages from pip
     - cmd: pip install mechanicalsoup==0.11.0
     - cmd: pip install requests==2.20.1
@@ -127,7 +125,6 @@ install:
     - cmd: pip install persistent==4.4.3
     - cmd: pip install zodb==5.5.1
     - cmd: pip install w3lib==1.19.0
-    - cmd: netstat -na -p UDP
 
 # Skip .NET project specific build phase.
 build: off

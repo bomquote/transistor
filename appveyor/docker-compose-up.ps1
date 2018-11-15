@@ -11,8 +11,8 @@
 
 Write-Host "Installing Aquarium..." -ForegroundColor Cyan
 
-$cmdPath = "x:\host\transistor\appveyor\docker-compose-up.cmd"
+Set-Location -Path X:\host\transistor\appveyor\aquarium
 
-Start-Process $cmdPath -PassThru
+Start-Job -ScriptBlock {docker-compose.exe up}
 
 Write-Host "Let's move on while Aquarium starts..." -ForegroundColor Green
