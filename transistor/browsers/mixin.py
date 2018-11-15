@@ -24,7 +24,7 @@ class SplashBrowserMixin:
 
     @property
     def ucontent(self):
-        print(f'this is raw_content -> {self.raw_content}')
+        # print(f'this is raw_content -> {self.raw_content}')
         return self.raw_content.decode(self.encoding)
 
     @property
