@@ -51,7 +51,8 @@ function use_crawlera(splash)
       ["Accept-Language"] = "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7",
       ["Connection"] = "keep-alive",
       ["DNT"] = "1",
-      ["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
+      ["Referer"] = splash.args.referrer,
+      ["User-Agent"] = splash.args.user_agent,
      })
 
     splash:on_response_headers(function (response)

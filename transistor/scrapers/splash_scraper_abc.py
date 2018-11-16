@@ -11,7 +11,7 @@ scraper implementations, methods must be customized per needs to scrape a target
 website.
 
 Notes:
-    - self.browser provides a class based from mechanicalsoup with similar API + more
+    - self.browser provides a class based from mechanicalsoup with similar API
     - self.browser.session provides direct access to the python-requests object
     - beautifulsoup4 methods can be used on the self.page attribute
 
@@ -36,31 +36,83 @@ class SplashScraper(ABC):
 
     Note:
         This is the abstract base class and you must subclass it to use it.
-
     """
 
-    # always just set these class attributes which are used for concurrency
+    __attrs__ = [
+        'auth', 'baseurl', 'browser', 'cookies', 'crawlera_user',
+        'http_session_timeout', 'http_session_valid', 'LUA_SOURCE', 'max_retries',
+        'name', 'number', 'referrer', 'searchurl', 'splash_args', 'user_agent'
+    ]
+
+    # class attrs used for concurrency
     baseurl = None
     name = None
     number = None
 
     @abstractmethod
-    def __init__(self, name=None, script=None, **kwargs):
+    def __init__(self, script=None, **kwargs):
         """
-        Create the instance. Each subclass should call super().__init__()
-        and then set the specific required attributes like self.baseurl and
-        self.searchurl.
+        Create the instance. Required attributes are listed below as kwarg
+        parameters. They can be set with kwargs or else should be explicitly
+        specified in a sublcass __init__ and then have a call to
+        super().__init__() made.
+
+        :param script:() your custom lua script, if any, passed to LUA_SOURCE
+
+        :param: kwargs: <item>:str() where <item> is an appropriate keyword search
+        term, like 'book_title' or 'part_number'.  Set this keyword in your subclassed
+        scraper as required.
+
+        :param kwargs: baseurl:str() the baseurl like 'http://books.toscrape.com/'
+
+        :param kwargs: searchurl:str() a specific url to execute searches on your
+        scrape target's website, if any.
+
+        :param kwargs: referrer: str(): the referrer to include in the headers of your
+        scraper, like 'https://www.google.com'.
+
+        :param kwargs: user_agent:str() set a custom user-agent header string like
+        user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
+
+        :param kwargs: name:str() give the scraper a name for easy reference.
+
+        :param kwargs: max_retries:int() The maximum number of retries each
+        connection should attempt. Note, this applies only to failed DNS
+        lookups, socket connections and connection timeouts, never to requests
+        where data has made it to the server. By default, Requests does not
+        retry failed connections. If you need granular control over the
+        conditions under which we retry a request, import urllib3's ``Retry``
+        class and pass that instead.
+
+        :param kwargs: http_session_timeout:tuple(float, float) => (3.05, 10.05)
+        This first number is maximum allowed seconds to connect to our splash
+        localhost server. The second timeout number is the number of seconds
+        that the client will wait between bytes sent from the server (it is not the
+        total timeout).
+
+        :param kwargs: splash_args:dict(): a python dict which will be sent in a post
+        request to the Splash service. This dict will serve to set the splash.args
+        attributes so they are available for use in the LUA script simply by
+        referencing splash.args. Default is as below:
+        self.splash_args = {
+                'lua_source': self.LUA_SOURCE,
+                'url': url,
+                'crawlera_user': self.crawlera_user,
+                # sets Splash to cache the lua script, avoids sending it every request
+                'cache_args': 'lua_source',
+                'timeout': timeout[1],
+                'session_id': 'create',
+                'referrer': self.referrer if not None else "https://www.google.com",
+                'searchurl': self.searchurl,
+                'keyword': keyword,  # can be used in the LUA script to submit a form
+                'cookies': self.cookies,
+                'user_agent': self.user_agent
+            }
         """
         super().__init__()
 
-        # ---------------  specify in subclass __init__()  ----------------- #
-
-        self.baseurl = None  # set after calling super().__init__()
-        self.referrer = None  # this should be set to base domain url with http(s)://
-        self.searchurl = None  # set after calling super().__init__()
-        self.crawlera_user = None  # set after calling super().__init__()
-
-        # the splash lua script. Modify this in the subclass __init__ as appropriate.
+        # The splash lua script. Provide a custom lua script to fit your use case.
         if script:
             self.LUA_SOURCE = script
         else:
@@ -70,10 +122,22 @@ class SplashScraper(ABC):
 
         # after calling super().__init__(), call self.start_http_session()
 
-        ##################################################################
+        # ------------------ kwargs ---------------- #
+        # Set these as needed in your subclass with keywords or hardcoded.
+        self.baseurl = kwargs.pop('baseurl', None)
+        self.searchurl = kwargs.pop('searchurl', None)
+        self.crawlera_user = kwargs.pop('crawlera_user', None)
+        self.name = kwargs.pop('name', None)
+        self.referrer = kwargs.pop('referrer', None)
+        self.user_agent = kwargs.pop('user_agent',
+                                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                     "AppleWebKit/537.36 (KHTML, like Gecko) "
+                                     "Chrome/69.0.3497.100 Safari/537.36")
+        self.max_retries = kwargs.pop('max_retries', 5)
+        self.http_session_timeout = kwargs.pop('http_session_timeout', (3.05, 10.05))
+        self.splash_args = kwargs.get('splash_args', None)
 
-        # ----- kwargs for testing setup ----- #
-        # page_text, status_code=None, url=None, soup_config=None
+        # ----- kwargs only used for testing setup ----- #
         self._test_true = kwargs.get('_test_true', False)
         self._test_page_text = kwargs.get('_test_page_text', None)
         self._test_status_code = kwargs.get('_test_status_code', None)
@@ -81,28 +145,25 @@ class SplashScraper(ABC):
         self._test_soup_config = kwargs.get('_test_soup_config', None)
         # ----- end kwargs for testing setup ----- #
 
-        # give it a name so we can easily reference it
-        self.name = name
-
-        # set this results flag to True. If a public method returns None then
-        # this self._result flag will switch to False.
+        # ------ flags for internal use --------- #
+        # For example, if a public method on your scraper returns
+        # None undesirably, switch the self._result flag to False.
+        # Then, you can just delete scrape results if flagged False.
         self._result = True
+        # ------- /end internal use flags -------- #
 
         # Whether we already have a valid HTTP session with the remote server
         self.http_session_valid = False
 
-        # set the splash_json, look for kwargs
-        self.splash_json = kwargs.get('splash_json', None)
-
         # ssl._create_default_https_context = ssl._create_unverified_context
-        self.crawlera_ca = get_data('transistor',
+        self._crawlera_ca = get_data('transistor',
                             'scrapers/certs/crawlera-ca.crt').decode('utf-8')
 
-        ssl.create_default_context(cadata=self.crawlera_ca)
+        ssl.create_default_context(cadata=self._crawlera_ca)
 
         self.browser = SplashBrowser(
             soup_config={'features': 'lxml'},
-            requests_adapters={'http://': HTTPAdapter(max_retries=5)})
+            requests_adapters={'http://': HTTPAdapter(max_retries=self.max_retries)})
 
         self.cookies = dict_from_cookiejar(self.browser.session.cookies)
 
@@ -116,42 +177,37 @@ class SplashScraper(ABC):
         return f'<SplashScraper({self.name})>'
 
     @abstractmethod
-    def start_http_session(self, url=None, timeout=(3.05, 10.05)):
+    def start_http_session(self, url=None, **kwargs):
         """
         Start the connection.
 
-        :param: url: The url you would like your scraper to use for initial
-        landing. If you do not provide this url, but you do have a self.searchurl
-        attribute set, then this method will default to use the self.searchurl.
+        :param: url: The url you would like your scraper to use
+        for initial landing. If you do not provide this url, but
+        you do have a self.searchurl attribute set, then this method
+        will default to use the self.searchurl.
 
         :param timeout: About the timeout parameter:
 
         First, you may want to review the python-request docs about timeouts.
         http://docs.python-requests.org/en/master/user/advanced/#timeouts
 
-        My interpretation is, for our use case, the first number is just the maximum
-        allowed time to connect to our splash localhost server. In practice, this
-        execution should be near instant. The 3.05 is listed in the python-request docs
-        so we just accept that as the standard here and get on with it.
+        If using Crawlera, the recommended timeout (2nd number) from
+        crawlera docs is at least 600 seconds. In practice, I've found
+        that 600.0 is too low for several websites which we scrape. In
+        some cases, while using Crawlera, we need to set this second timeout
+        number as high as 1200 seconds.
 
-        The second timeout number is more interesting.  Tt’s the number of seconds
-        that the client will wait between bytes sent from the server. It is not
-        the total time to timeout.
-
-        Finally, if using Crawlera, the recommended timeout (2nd number here) from
-        their docs is at least 600 seconds. In practice, I've found that 600.0 is
-        too low for several electronic component websites which we scrape. In some
-        cases, while using Crawlera, we need to set this second timeout number as
-        high as 1200 seconds.
-
-        If you use Crawlera, you will need to adjust the second timeout based on
-        the individual website. If the website uses 150 links to load the web page, and
-        you don't optimize your LUA script to drop unnecessary links, then
-        you can expect to need up to 12 seconds x 150 links = 1,800 seconds to fully
-        load the page in Crawlera. Scraping is a slow process with Splash + Crawlera.
+        If you use Crawlera, you will need to adjust the second timeout
+        based on the individual website. If the website uses 150 links to
+        load the web page, and you don't optimize your LUA script to drop
+        unnecessary links, then you can expect to need up to
+        12 seconds x 150 links = 1,800 seconds to fully load the page
+        in Crawlera. Scraping is a slow process with Splash + Crawlera.
 
         https://support.scrapinghub.com/support/solutions/articles/22000188397-crawlera-best-practices
         """
+        timeout = kwargs.pop('timeout', self.http_session_timeout)
+
         if self._test_true:
             self.http_session_valid = True
             return self.browser.open_fake_page(
@@ -162,64 +218,66 @@ class SplashScraper(ABC):
             # Send the post request to Splash
             if url is None:
                 url = self.searchurl
-            return self._stateful_post(url=url, json=None, timeout=timeout)
+            return self._stateful_post(url=url, splash_args=None, timeout=timeout)
 
-    def open(self, url, json: dict=None, reuse_session=False, timeout=(3.05, 10.05),
-             *args, **kwargs):
+    def open(self, url, splash_args:dict=None, reuse_session=False, *args, **kwargs):
         """
-        Open a url page in Splash, by sending a post request to your local running
-        Splash service. If you are using Crawlera, you can reuse the current session,
-        by setting the reuse_session flag to True.
+        Open a url page in Splash, by sending a post request to your local
+        running Splash service. If you are using Crawlera, you can reuse
+        the current session, by setting the reuse_session flag to True.
 
-        Primarily, this method is intended to help provide flexibility in link
-        following.
+        This method is intended to provide flexibility in link following, after
+        the initial http_connection has been made with start_http_session..
 
         Note:
         Generally, you should create the first network request for any subclass
-        based off this SplashScraper class with start_http_session, rather than using
-        this open() method.
+        based off this SplashScraper class with start_http_session().
 
-        But, if you do use this open() method as the first http session (bypassing
-        the start_http_session call), you must explicitly provide the json=dict()
-        to set the self.crawlera json attribute. And, you also need to set
-        self.http_session_valid = False to self.http_session_valid = True.
-
-        Otherwise, this class is going to break if you make the first session call
-        from a direct call to this open() method.
+        But, if you do use this open() method bypassing the initial
+        start_http_session call, you must explicitly provide the
+        splash_args=dict(). And, you also need to set
+        self.http_session_valid = True. Otherwise, this class is going to break.
 
         :param url: the url to open
 
-        :param json: a python dict which will be sent in a post request to the Splash
-        service, and will serve to set the splash.args, which will allow the
-        splash.args to then be fully accessible from inside the lua script.
+        :param splash_args: a python dict which will be sent in a post
+        request to the Splash service, which will set the dict(key, value) pairs
+        to then be accessible from inside the lua script as splash.args.
 
-        :param reuse_session: whether to use the existing crawlera session_id in the
-        call to open().
+        :param reuse_session: whether to use the existing crawlera session_id
+        in the call to open().
 
-        :param timeout: see note in SplashCrawleraComponentScraper.start_http_session
+        :param kwargs: timeout: see note in self.start_http_session
         """
+        timeout = kwargs.pop('timeout', self.http_session_timeout)
+
         if reuse_session:
             self._reuse_crawlera_session()
 
-        return self._stateful_post(url, json=json, timeout=timeout,
+        if splash_args:
+            self.splash_args = splash_args
+
+        return self._stateful_post(url, splash_args=splash_args, timeout=timeout,
                                    *args, **kwargs)
 
-    def _stateful_post(self, url, json=None, *args, **kwargs):
+    def _stateful_post(self, url, *args, **kwargs):
         """
         Execute sending the post request to the local running Splash service with our
         self.browser object.
 
         :param url: the url to open
-        :param json: a python dict which will be sent in a post request to the Splash
-        service. This dict will serve to set the splash.args attributes so they are
-        available for use in the LUA script simply by referencing splash.args.
+        :param splash_args: a python dict which will be sent in a post request
+        to the Splash service. This dict will serve to set the splash.args
+        attributes so they are available for use in the LUA script simply by
+        referencing splash.args.
         :param timeout: see note in start_http_session() for more detail
         """
-        timeout = kwargs.pop('timeout', (3.05, 3600.05))
-        keyword = kwargs.get('keyword', None)
+        timeout = kwargs.pop('timeout', self.http_session_timeout)
+        keyword = kwargs.pop('keyword', None)
+        splash_args = kwargs.pop('splash_args', self.splash_args)
 
-        if not json:
-            self.splash_json = {
+        if not splash_args:
+            self.splash_args = {
                 'lua_source': self.LUA_SOURCE,
                 'url': url,
                 'crawlera_user': self.crawlera_user,
@@ -230,15 +288,16 @@ class SplashScraper(ABC):
                 'referrer': self.referrer if not None else "https://www.google.com",
                 'searchurl': self.searchurl,
                 'keyword': keyword,  # can be used in the LUA script to submit a form
-                'cookies': self.cookies
+                'cookies': self.cookies,
+                'user_agent': self.user_agent
             }
         else:
-            self.splash_json = json
+            self.splash_args = splash_args
         response = self.browser.stateful_post(
             'http://localhost:8050/execute',
-            json=self.splash_json,
+            json=self.splash_args,
             timeout=timeout,
-            verify=self.crawlera_ca,
+            verify=self._crawlera_ca,
             stream=True, *args, **kwargs)
         self.http_session_valid = True
         return response
@@ -260,7 +319,7 @@ class SplashScraper(ABC):
         that the current session will be extended with an self.open() request.
 
         """
-        self.splash_json['session_id'] = self.session_id
+        self.splash_args['session_id'] = self.session_id
 
     @property
     def page(self):

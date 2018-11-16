@@ -224,7 +224,7 @@ class TestLiveBooksToScrape:
         """Test the scraper.browser.open method returns Response"""
 
         link = 'http://books.toscrape.com/catalogue/black-dust_976/index.html'
-        bts_live_scraper.splash_json = {
+        bts_live_scraper.splash_args = {
             'lua_source': bts_live_scraper.LUA_SOURCE,
             'url': link,
             'crawlera_user': bts_live_scraper.crawlera_user,
@@ -236,11 +236,12 @@ class TestLiveBooksToScrape:
             "https://www.google.com",
             'searchurl': bts_live_scraper.searchurl,
             'keyword': None,  # can be used in the LUA script to submit a form
-            'cookies': bts_live_scraper.cookies
+            'cookies': bts_live_scraper.cookies,
+            'user_agent': bts_live_scraper.user_agent
         }
         page = bts_live_scraper.browser.open('http://localhost:8050/execute',
-                                             json=bts_live_scraper.splash_json,
+                                             json=bts_live_scraper.splash_args,
                                              timeout=(3.0, 10.0),
-                                             verify=bts_live_scraper.crawlera_ca,
+                                             verify=bts_live_scraper._crawlera_ca,
                                              stream=True)
         assert type(page) == Response

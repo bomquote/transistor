@@ -2,10 +2,18 @@
   transistor: CHANGES
 ========================
 
+Nov 16, 2018
+- standardized SplashScraper attributes: 'auth', 'baseurl', 'browser', 'cookies',
+'crawlera_user', 'http_session_timeout', 'http_session_valid', 'LUA_SOURCE',
+'max_retries', 'name', 'number', 'referrer', 'searchurl', 'splash_args', 'user_agent'.
+
+- Now, nearly all of the SplashScraper attributes can be set via **kwargs if desired.
+
 Nov 15, 2018
--  when initializing a StatefulBook instance, use a kwarg  called `keywords` to set
+-  when initializing a StatefulBook instance, use a **kwarg called `keywords` to set
 the name of the spreadsheet column heading which contains the target search terms.
 For example, keywords='titles' or keywords='part_numbers'. Defaults to "item".
 
 Nov 13, 2018:
 - Initial commit of public repo
+- pypi 0.1.0 release.

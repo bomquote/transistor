@@ -3,6 +3,13 @@
 
 **Web data collection and storage for intelligent use cases.**
 
+.. image:: https://img.shields.io/badge/pypi-0.1.0-blue.svg
+  :target: https://pypi.org/project/transistor/0.1.0/
+
+.. image:: https://img.shields.io/badge/Python-3.5%20%7C%203.6%20%7C%203.7-blue.svg
+
+.. image:: https://img.shields.io/badge/Status-Beta-blue.svg
+
 .. image:: https://ci.appveyor.com/api/projects/status/xfg2yedwyrbyxysy/branch/master?svg=true
     :target: https://ci.appveyor.com/project/bomquote/transistor
 
@@ -17,9 +24,10 @@
 .. image:: https://codecov.io/gh/bomquote/transistor/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/bomquote/transistor
 
-===============================
+
+=============
 *transistor*
-===============================
+=============
 
 About
 -----

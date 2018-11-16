@@ -75,6 +75,11 @@ class StatefulBook:
         book = StatefulBook(file, trackers)
 
     """
+
+    __attrs__ = [
+        'file_name', 'keywords', 'source', 'trackers'
+    ]
+
     def __init__(self, file_name: str=None, trackers: list=None, autorun=True,  **kwargs):
         """
         Instantiate the class.

@@ -68,7 +68,7 @@ class ScrapedDataExtractor(ABC):
         self.number = self.scraper.number
         self.scraper_repr = self.scraper.__repr__()
         self.cookies = self.scraper.cookies
-        self.splash_json = self.scraper.splash_json
+        self.splash_args = self.scraper.splash_args
         self.http_session_valid = self.scraper.http_session_valid
         self.baseurl = self.scraper.baseurl
         self.crawlera_user = self.scraper.crawlera_user
@@ -103,7 +103,7 @@ class ScrapedDataExtractor(ABC):
         self.shell.number = self.number
         self.shell.scraper_repr = self.scraper_repr
         self.shell.cookies = self.cookies
-        self.shell.splash_json = self.splash_json
+        self.shell.splash_args = self.splash_args
         self.shell.http_session_valid = self.http_session_valid
         self.shell.baseurl = self.baseurl
         self.shell.crawlera_user = self.crawlera_user
