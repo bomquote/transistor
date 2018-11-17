@@ -15,5 +15,7 @@ from .managers import BaseWorkGroupManager
 from .scrapers import SplashScraper
 from .workers import BaseWorker, BaseGroup, WorkGroup
 
+name = "transistor"
+
 __all__ = [BaseGroup, BaseWorker, BaseWorkGroupManager, SplashBrowser,
            SplashScraper, StatefulBook, WorkGroup]
