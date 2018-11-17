@@ -31,6 +31,9 @@ class BaseWorkGroupManager:
     """
     Base class for a WorkGroupManager.
     """
+    __attrs__ = [
+        'book', 'job_id', 'groups', 'trackers', 'pool', 'qitems', 'workgroups',
+    ]
 
     def __init__(self, job_id, book, groups:list, pool:int=20):
         """
@@ -40,13 +43,16 @@ class BaseWorkGroupManager:
         :param job_id: will save the result of the workers Scrapes to `job_id` list.
         If this job_id is "NONE" then it will pass on the save.
         :param book:  a StatefulBook instance
-        :param pool: size of the greenlets pool, should be at least the total number
-         of all workers + 1 for the manager
-        :param groups: a list WorkGroup(<WorkGroup> class object,
-        number_of_workers, **kwargs)
+        :param pool: size of the greenlets pool. If you want to utilize all the
+        workers concurrently, it should be at least the total number
+        of all workers + 1 for the manager. Otherwise, the pool is useful to
+        constrain concurrency to help stay within Crawlera subscription limits.
+        :param groups: a list of class: `WorkGroup()` objects.
         Example:
-            groups = [WorkGroup(class_=MouserGroup, workers=10, kwargs={"china":True}),
-                    WorkGroup(class_=MouserGroup, workers=0, kwargs={})]
+            >>> groups = [
+            >>> WorkGroup(class_=MouseKeyGroup, workers=5, kwargs={"china":True}),
+            >>> WorkGroup(class_=MouseKeyGroup, workers=5, kwargs={})
+            >>> ]
         :param pool: number of greenlets to create
         """
         self.job_id = job_id
@@ -113,7 +119,7 @@ class BaseWorkGroupManager:
     def spawn_list(self):
         """"
         The spawn() method begins a new greenlet with the given arguments
-        (which are passed to the greenlet constructor) and add it to the
+        (which are passed to the greenlet constructor) and adds it to the
         collection of greenlets this group is monitoring.
 
         We return a list of the newly started greenlets, used in a later
@@ -138,7 +144,7 @@ class BaseWorkGroupManager:
         This method actually spawns the scraper and then the purpose is to allow
         some additional final actions to be performed on the scraper object after
         the worker completes the scrape job, but before it shuts down and the object
-        instance is lost (though the ScraperNewt object will exist in the db).
+        instance is lost (though the ScraperShell object will exist in the db).
 
         The simplest example which must be implemented:
 

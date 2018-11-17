@@ -2,6 +2,9 @@
   transistor: CHANGES
 ========================
 
+Nov 17, 2018
+- pypy 0.1.1 release
+
 Nov 16, 2018
 - standardized SplashScraper attributes: 'auth', 'baseurl', 'browser', 'cookies',
 'crawlera_user', 'http_session_timeout', 'http_session_valid', 'LUA_SOURCE',

@@ -1,5 +1,7 @@
-include LICENSE README.rst
+include LICENSE AUTHORS CHANGES README.rst
 recursive-include tests *.py
+recursive-include tests *.xlsx
+recursive-include tests *.html
 recursive-include examples/*.py
 include requirements/dev.txt requirements/prod.txt
 include docs/*

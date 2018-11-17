@@ -13,8 +13,8 @@ DESCRIPTION = 'A lightweight Python web scraping framework for intelligent use c
 URL = 'https://github.com/bomquote/transistor'
 EMAIL = 'bmjjr@bomquote.com'
 AUTHOR = 'Bob Jordan'
-REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.0'
+REQUIRES_PYTHON = '>=3.5.0'
+VERSION = '0.1.1'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -124,12 +124,12 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    download_url='https://github.com/bomquote/transistor/archive/v0.1.0.tar.gz',
+    download_url='https://github.com/bomquote/transistor/archive/v0.1.1.tar.gz',
     keywords=['scraping', 'crawling', 'spiders', 'requests', 'beautifulsoup4',
               'mechanicalsoup', 'framework', 'headless-browser'],
-    # packages=find_packages(exclude=('tests',)),
+    packages=find_packages(exclude=('tests',)),
     # If your package is a single module, use this instead of 'packages':
-    py_modules=['transistor'],
+    # py_modules=['transistor'],
 
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],

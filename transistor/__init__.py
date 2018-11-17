@@ -14,3 +14,6 @@ from .browsers import SplashBrowser
 from .managers import BaseWorkGroupManager
 from .scrapers import SplashScraper
 from .workers import BaseWorker, BaseGroup, WorkGroup
+
+__all__ = [BaseGroup, BaseWorker, BaseWorkGroupManager, SplashBrowser,
+           SplashScraper, StatefulBook, WorkGroup]
