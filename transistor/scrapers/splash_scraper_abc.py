@@ -295,7 +295,8 @@ class SplashScraper(ABC):
                 'searchurl': self.searchurl,
                 'keyword': keyword,  # can be used in the LUA script to submit a form
                 'cookies': self.cookies,
-                'user_agent': self.user_agent
+                'user_agent': self.user_agent,
+                'splash_wait': self.splash_wait
             }
         else:
             self.splash_args = splash_args

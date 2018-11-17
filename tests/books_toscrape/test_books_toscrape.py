@@ -237,7 +237,8 @@ class TestLiveBooksToScrape:
             'searchurl': bts_live_scraper.searchurl,
             'keyword': None,  # can be used in the LUA script to submit a form
             'cookies': bts_live_scraper.cookies,
-            'user_agent': bts_live_scraper.user_agent
+            'user_agent': bts_live_scraper.user_agent,
+            'splash_wait': bts_live_scraper.splash_wait
         }
         page = bts_live_scraper.browser.open('http://localhost:8050/execute',
                                              json=bts_live_scraper.splash_args,
