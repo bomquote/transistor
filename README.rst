@@ -331,7 +331,6 @@ Setting up a ``BaseGroup`` is all that is required for the minimal example.
 
 .. code-block:: python
 
-    import gevent
     from transistor import BaseWorker, BaseGroup
     from examples.books_to_scrape.scraper import BooksToScrapeScraper
 
@@ -383,10 +382,10 @@ The first thing we need to do is perform some imports.
     # in main.py, monkey patching for gevent must be done first
     from gevent import monkey
     monkey.patch_all()
-    # next, import other need objects to launch the scrape job
-    from transistor import StatefulBook, WorkGroup
-    from examples.books_to_scrape.workgroup import BooksToScrapeGroup
-    from examples.books_to_scrape.manager import BooksWorkGroupManager
+
+    from transistor import StatefulBook, WorkGroup, BaseWorkGroupManager
+    # Use the subclassed BooksToScrapeGroup you created above
+    from <path-to-your-BooksToScrapeGroup> import BooksToScrapeGroup
 
 Second, setup a ``StatefulBook`` which will read the ``book_titles.xlsx`` file and transform the book titles from the spreadsheet "titles" column into task queues for our ``WorkGroups``.
 
@@ -412,9 +411,12 @@ Last, setup the ``WorkGroupManager`` and prepare the file to call the ``manager.
 
 .. code-block:: python
 
-    # Ensure the pool is marginally larger than the sum of the total number of workers
-    # assigned in the list of WorkGroup objects.
-    manager = BooksWorkGroupManager(job_id='books_scrape', book=stateful_book, groups=groups, pool=25)
+    # If you want to execute all the scrapers at the same time, ensure the pool is
+    # marginally larger than the sum of the total number of workers assigned in the
+    # list of WorkGroup objects. However, sometimes you may want to constrain your pool
+    # to a specific number less than your scrapers. That's also OK. This is useful
+    # like Crawlera's C10 instance, only allows 10 concurrent workers. Set pool=10.
+    manager = BaseWorkGroupManager(job_id='books_scrape', book=stateful_book, groups=groups, pool=25)
 
     if __name__ == "__main__":
         manager.main()  # call manager.main() to start the job.
