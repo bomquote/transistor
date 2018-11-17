@@ -62,9 +62,7 @@ class SplashBrowserMixin:
     @property
     def crawlera_session(self):
         """
-        Extract the crawlera session number. This is helpful if we
-        receive 503 banned multiple times we should request a new crawlera session
-        (tbd how to actually do that).
+        Extract the crawlera session number.
         """
         if self.resp_headers:
             try:

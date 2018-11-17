@@ -3,24 +3,18 @@
 
 **Web data collection and storage for intelligent use cases.**
 
-.. image:: https://img.shields.io/badge/pypi-0.1.0-blue.svg
-  :target: https://pypi.org/project/transistor/0.1.0/
-
 .. image:: https://img.shields.io/badge/Python-3.5%20%7C%203.6%20%7C%203.7-blue.svg
-
+.. image:: https://img.shields.io/badge/pypi-0.1-blue.svg
+  :target: https://pypi.org/project/transistor/0.1.0/
 .. image:: https://img.shields.io/badge/Status-Beta-blue.svg
-
 .. image:: https://ci.appveyor.com/api/projects/status/xfg2yedwyrbyxysy/branch/master?svg=true
     :target: https://ci.appveyor.com/project/bomquote/transistor
-
 .. image:: https://pyup.io/repos/github/bomquote/transistor/shield.svg?t=1542037265283
     :target: https://pyup.io/account/repos/github/bomquote/transistor/
     :alt: Updates
-
 .. image:: https://api.codeclimate.com/v1/badges/0c34950c38db4f38aea6/maintainability
    :target: https://codeclimate.com/github/bomquote/transistor/maintainability
    :alt: Maintainability
-
 .. image:: https://codecov.io/gh/bomquote/transistor/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/bomquote/transistor
 
@@ -103,7 +97,7 @@ Transistor provides useful layers and objects in the following categories:
 3. **spiders** (wip, on the to-do list)
 
 - see ``transistor/spiders`` (not yet implemented)
-- while it is straightforward to use the current Transistor design to do basic crawling (see ``examples/books_to_scrape/scraper.py`` for an example) the current way to do this with Transistor is always optimal for crawling. So we'll implement modified designs for crawling spiders.
+- while it is straightforward to use the current Transistor design to do basic crawling (see ``examples/books_to_scrape/scraper.py`` for an example) the current way to do this with Transistor is not always optimal for crawling. So we'll implement modified designs for crawling spiders.
 - specifics TBD, may be fully custom or else may reuse some good architecture parts of `scrapy <https://github.com/scrapy/scrapy>`_, although if we do that, it will be done so we don't need a scrapy dependency and further it will be using gevent for asynchronous I/O.
 
 

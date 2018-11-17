@@ -101,7 +101,7 @@ class SplashScraper(ABC):
                 'crawlera_user': self.crawlera_user,
                 # sets Splash to cache the lua script, avoids sending it every request
                 'cache_args': 'lua_source',
-                'timeout': timeout[1],
+                'timeout': timeout[1],  # timeout (in seconds) for the render, 3600 max
                 'session_id': 'create',
                 'referrer': self.referrer if not None else "https://www.google.com",
                 'searchurl': self.searchurl,
@@ -283,7 +283,7 @@ class SplashScraper(ABC):
                 'crawlera_user': self.crawlera_user,
                 # set Splash to cache the lua script, to avoid sending it every request
                 'cache_args': 'lua_source',
-                'timeout': timeout[1],
+                'timeout': timeout[1],  # timeout (in seconds) for the render, 3600 max
                 'session_id': 'create',
                 'referrer': self.referrer if not None else "https://www.google.com",
                 'searchurl': self.searchurl,
