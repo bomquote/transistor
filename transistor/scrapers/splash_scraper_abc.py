@@ -41,7 +41,8 @@ class SplashScraper(ABC):
     __attrs__ = [
         'auth', 'baseurl', 'browser', 'cookies', 'crawlera_user',
         'http_session_timeout', 'http_session_valid', 'LUA_SOURCE', 'max_retries',
-        'name', 'number', 'referrer', 'searchurl', 'splash_args', 'user_agent'
+        'name', 'number', 'referrer', 'searchurl', 'splash_args', 'splash_wait'
+        'user_agent',
     ]
 
     # class attrs used for concurrency
@@ -69,7 +70,7 @@ class SplashScraper(ABC):
         scrape target's website, if any.
 
         :param kwargs: referrer: str(): the referrer to include in the headers of your
-        scraper, like 'https://www.google.com'.
+        scraper. Default is 'https://www.google.com'.
 
         :param kwargs: user_agent:str() set a custom user-agent header string like
         user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
@@ -91,6 +92,9 @@ class SplashScraper(ABC):
         that the client will wait between bytes sent from the server (it is not the
         total timeout).
 
+        :param kwargs: splash_wait:float() controls the time in seconds Splash will
+        wait after opening a web page, before taking actions. Default 3.0 sec.
+
         :param kwargs: splash_args:dict(): a python dict which will be sent in a post
         request to the Splash service. This dict will serve to set the splash.args
         attributes so they are available for use in the LUA script simply by
@@ -107,7 +111,8 @@ class SplashScraper(ABC):
                 'searchurl': self.searchurl,
                 'keyword': keyword,  # can be used in the LUA script to submit a form
                 'cookies': self.cookies,
-                'user_agent': self.user_agent
+                'user_agent': self.user_agent,
+                'splash_wait': self.splash_wait
             }
         """
         super().__init__()
@@ -135,7 +140,8 @@ class SplashScraper(ABC):
                                      "Chrome/69.0.3497.100 Safari/537.36")
         self.max_retries = kwargs.pop('max_retries', 5)
         self.http_session_timeout = kwargs.pop('http_session_timeout', (3.05, 10.05))
-        self.splash_args = kwargs.get('splash_args', None)
+        self.splash_args = kwargs.pop('splash_args', None)
+        self.splash_wait = kwargs.pop('splash_wait', 3.0)
 
         # ----- kwargs only used for testing setup ----- #
         self._test_true = kwargs.get('_test_true', False)

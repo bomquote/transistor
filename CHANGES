@@ -2,6 +2,12 @@
   transistor: CHANGES
 ========================
 
+11/18/2018
+- added 'splash_wait' attribute to SplashScraper. This controls the time
+in seconds Splash will wait after opening a web page, before taking actions.
+This is particularly important for websites which may continue to load from
+ajax after a time delay. Set with `splash_args=<float>` keyword. Default 3.0.
+
 Nov 17, 2018
 - pypy 0.1.1 release
 

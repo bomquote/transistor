@@ -17,6 +17,9 @@ engines:
       threshold: "B"
   pep8:
     enabled: true
+    exclude_fingerprints:
+    - d11ab9f305887eae99d07d796be2703f
+    - 9fc66b415b766c60594d757ac60a7ddc
 plugins:
   bandit:
     enabled: true

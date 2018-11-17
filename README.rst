@@ -232,7 +232,7 @@ Finally, you should set environment variables on your computer/server with the a
 Quickstart: ``books_to_scrape`` example
 ---------------------------------------
 
-See ``examples/books_to_scrape`` for a fully working example with more detailed notes in the source code.  We'll go through an abbreviated setup here, without the many of the longer notes and database/persistence parts that you can find in the ``examples`` folder souce code.
+See ``examples/books_to_scrape`` for a fully working example with more detailed notes in the source code.  We'll go through an abbreviated setup here, without many of the longer notes and database/persistence parts that you can find in the ``examples`` folder souce code.
 
 The ``books_to_scrape`` example assumes we have a column of 20 book titles in an excel file, with a column heading *item*.  We plan to scrape the domain ``books.toscrape.com`` to find the book titles. For the book titles we find, we will scrape the sale price and stock status.
 

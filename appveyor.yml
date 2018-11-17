@@ -116,7 +116,7 @@ install:
     - cmd: pip install pyexcel-xls==0.5.8
     - cmd: pip install pyexcel-xlsx==0.5.6
     - cmd: pip install pycryptodome==3.7.0
-    - cmd: pip install pytest==3.10.1
+    - cmd: pip install pytest==4.0.0
     - cmd: pip install pytest-cov==2.6.0
     - cmd: pip install coverage==4.5.2
     - cmd: pip install mock==2.0.0

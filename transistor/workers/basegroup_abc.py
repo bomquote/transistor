@@ -19,7 +19,7 @@ class BaseGroup(ABC):
 
     workgroup3 = workgroup1 + workgroup2
 
-    It should be inherited to form a WorkGroup, where WorkGroup is a  group of
+    It should be inherited to form a WorkGroup, where WorkGroup is a group of
     individual scraper workers.
     """
     name = None

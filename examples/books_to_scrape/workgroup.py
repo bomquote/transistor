@@ -33,11 +33,11 @@ class BooksWorker(BaseWorker):
         I'm only overriding this method to return a few extra print messages and
         also call out, this is a good hook place for your further customization.
 
-        Use whatever complex logic between save_to_newt() and
+        Use whatever complex logic between save_to_db() and
         gevent.sleep() as per your own customized requirement.
 
-        Also, if you don't want to use newt.db at all, you could also replace the
-        save_to_newt method here, and persist the data however you wish.
+        Also, if you don't want to use newt.db at all, you should override the
+        self.save_to_db method.
 
         """
         self.events.append(scraper)
@@ -64,8 +64,8 @@ class BooksWorker(BaseWorker):
 
     def get_scraper_extractor(self, scraper):
         """
-        Use this method to pass the scraper which has already returned from
-        the scrape job, into your own custom data extractor.
+        Use this method to pass in the scraper which has already returned from
+        the scrape job, into your own custom data extractor/serializer.
         :param scraper: this will be the executed scraper object (i.e. BookScraper())
         :return: a custom ScraperExtractor instance
         """
@@ -76,7 +76,7 @@ class BooksWorker(BaseWorker):
         Save the shell of the completed Scraper object to newt.db, using the
         middle-layer serialization helper class, BookDataExtractor.
 
-        :param scraper: the scraper object (i.e. MouserScraper())
+        :param scraper: the scraper object (i.e. MouseKeyScraper())
         :param task: just passing through the item for printing.
         :return: commit to newt db and return a print statement.
         """
@@ -118,7 +118,7 @@ class BooksToScrapeGroup(BaseGroup):
         Encapsulate your custom scraper, inside of a Worker object. This will
         eventually allow us to run an arbitrary amount of Scraper objects.
 
-        Create the number of workers in staff count.
+        Creates the number of workers given in `staff` (see BaseGroup.__init__()).
         Setting the http_session for the Worker is also handled here.
         Last, this is a good place to ensure any custom class attributes you must
         have on the worker are set here.

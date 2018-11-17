@@ -27,7 +27,7 @@ function main(splash)
     http_method=splash.args.http_method,
     body=splash.args.body,
     })
-    assert(splash:wait(1.0))
+    assert(splash:wait(splash.args.splash_wait))
     return {
         url = splash:url(),
         cookies = splash:get_cookies(),
