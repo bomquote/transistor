@@ -73,7 +73,7 @@ class BooksWorker(BaseWorker):
 
     def save_to_db(self, scraper, task):
         """
-        Save the shell of the completed Scraper object to newt.db, using the
+        Save the container of the completed Scraper object to newt.db, using the
         middle-layer serialization helper class, BookDataExtractor.
 
         :param scraper: the scraper object (i.e. MouseKeyScraper())
@@ -90,10 +90,10 @@ class BooksWorker(BaseWorker):
                 # will be raised if there is already a list with the same job_name
                 pass
             # extract the data object to be persisted, with the extractor.write() method
-            shell = self.get_scraper_extractor(scraper).write()
-            ndb.root.scrapes[self.job_id].add(shell)
+            container = self.get_scraper_extractor(scraper).write()
+            ndb.root.scrapes[self.job_id].add(container)
             ndb.commit()
-            print(f'Worker {self.name}-{self.number} saved {shell.__repr__()} to '
+            print(f'Worker {self.name}-{self.number} saved {container.__repr__()} to '
                   f'scrape_list "{self.job_id}" for task {task}.')
         else:
             # if job_id is NONE then we'll skip saving the objects

@@ -7,14 +7,28 @@ from shutil import rmtree
 
 from setuptools import find_packages, setup, Command
 
+here = os.path.abspath(os.path.dirname(__file__))
+
+# Import the README and use it as the long-description.
+# Note: this will only work if 'README.rst' is present in your MANIFEST.in file!
+
+with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
+    long_description = '\n' + f.read()
+
+# Load the package's __version__.py module as a dictionary.
+about = {}
+
 # Package meta-data.
-NAME = 'transistor'
-DESCRIPTION = 'A lightweight Python web scraping framework for intelligent use cases.'
-URL = 'https://github.com/bomquote/transistor'
-EMAIL = 'bmjjr@bomquote.com'
-AUTHOR = 'Bob Jordan'
+NAME = about['__title__']
+DESCRIPTION = about['__description__']
+URL = about['__url__']
+EMAIL = about['__author_email__']
+AUTHOR = about['__author__']
 REQUIRES_PYTHON = '>=3.5.0'
-VERSION = '0.1.1'
+
+with open(os.path.join(here, NAME, '__version__.py')) as f:
+    exec(f.read(), about)
+
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -34,10 +48,7 @@ REQUIRED = [
     'w3lib>=1.19.0',
     'pycryptodome>=3.7.0',
     'gevent>=1.3.7',
-    'newt.db>=0.9.0',
-    'zodbpickle>=1.0.2',
-    'persistent>=4.4.3',
-    'zodb>=5.5.1',
+
 ]
 
 test_requirements = [
@@ -49,31 +60,18 @@ test_requirements = [
 
 # What packages are optional?
 EXTRAS = {
-    # 'fancy feature': ['django'],
+    'newt.db': [
+        'newt.db>=0.9.0',
+        'zodbpickle>=1.0.2',
+        'persistent>=4.4.3',
+        'zodb>=5.5.1'
+    ],
 }
 
 # The rest you shouldn't have to touch too much :)
 # ------------------------------------------------
 # Except, perhaps the License and Trove Classifiers!
 # If you do change the License, remember to change the Trove Classifier for that!
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-# Import the README and use it as the long-description.
-# Note: this will only work if 'README.md' is present in your MANIFEST.in file!
-try:
-    with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
-        long_description = '\n' + f.read()
-except FileNotFoundError:
-    long_description = DESCRIPTION
-
-# Load the package's __version__.py module as a dictionary.
-about = {}
-if not VERSION:
-    with open(os.path.join(here, NAME, '__version__.py')) as f:
-        exec(f.read(), about)
-else:
-    about['__version__'] = VERSION
 
 
 class UploadCommand(Command):
@@ -137,7 +135,7 @@ setup(
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
-    license='MIT',
+    license=about['__license__'],
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers

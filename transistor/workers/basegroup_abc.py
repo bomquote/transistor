@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-transistor.io.workers.basegroup_abc
+transistor.workers.basegroup_abc
 ~~~~~~~~~~~~
-This module implements BaseGroup. See transistor.io.workers.__init__ for
+This module implements BaseGroup. See transistor.workers.__init__ for
 more notes on this module.
 
 :copyright: Copyright (C) 2018 by BOM Quote Limited

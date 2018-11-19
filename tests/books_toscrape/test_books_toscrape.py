@@ -33,7 +33,7 @@ def get_html(filename):
     Get the appropriate html testfile and return it. Filename should include
     the folder the file is in.
 
-    :param filename: ex. -> "digikey/dkchina_multiple.html"
+    :param filename: ex. -> "digidog/digidog_china_multiple.html"
     """
     data_folder = Path(root_dir)
     file_to_open = data_folder / filename

@@ -66,11 +66,11 @@ class StatefulBook:
     Finally, prepare the the data for export to an excel workbook.
 
     When you fire this up in repl:
-        from transistor.io.ingest import StatefulBook
-        from transistor.io.ingest import get_file_path
+        from transistor.ingest import StatefulBook
+        from transistor.ingest import get_file_path
         file = get_file_path('clock_bom.xlsx')
-        trackers = ['mouser.cn', 'mouser.com', 'digikey.com.cn', 'digikey.com',
-        'futureelectronics.cn', 'futureelectronics.com']
+        trackers = ['mousekey.cn', 'mousekey.com', 'digidog.com.cn', 'digidog.com',
+        'futuredigi.cn', 'futuredigi.com']
 
         book = StatefulBook(file, trackers)
 
@@ -181,12 +181,12 @@ class StatefulBook:
         """
         Return the to_do queue
         :return:
-        deque([<TaskTracker(name=mouser.cn)>,
-           <TaskTracker(name=mouser.com)>,
-           <TaskTracker(name=digikey.com.cn)>,
-           <TaskTracker(name=digikey.com)>,
-           <TaskTracker(name=futureelectronics.cn)>,
-           <TaskTracker(name=futureelectronics.com)>])
+        deque([<TaskTracker(name=mousekey.cn)>,
+           <TaskTracker(name=mousekey.com)>,
+           <TaskTracker(name=digidog.com.cn)>,
+           <TaskTracker(name=digidog.com)>,
+           <TaskTracker(name=futuredigi.cn)>,
+           <TaskTracker(name=futuredigi.com)>])
         """
         return self.__state.to_do
 

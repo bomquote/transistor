@@ -17,32 +17,32 @@ from abc import ABC, abstractmethod
 class ScrapedDataExtractor(ABC):
     """
     A worker tool to extract the data from the SplashScraper object and pass the
-    data into a new class object (called 'shell' here) which can be pickled.
+    data into a new class object (called 'container' here) which can be pickled.
 
-    A raw finished component scraper goes in. A newt.db compatible class object
+    A raw finished component scraper goes in. A simple container class object
     containing all the relevant data we want to save from the scrape job,
     comes out.
 
     The main reason why I use two classes for this (ScrapedDataExtractor and
-    SplashScraperShell) is because this class has to be instanced with
+    SplashScraperContainer) is because this class has to be instanced with
     the scraper object itself. And, that scraper object can't be pickled.
 
-    Think about refactoring the way this works, later.
+    todo: consider refactoring the way this works, later.
     """
 
-    def __init__(self, scraper, shell):
+    def __init__(self, scraper, container):
         """
         Create an instance.
         :param scraper: an instance of SplashScraper object which has already finished
         a scrape.
-        :param shell: a class in which the attributes to be persisted from the scraper
+        :param container: a class in which the attributes to be persisted from the scraper
          will be written. It seems redundant, but the key here is, it must be able
          to be pickled. And in order to be pickled, it must not contain any
          beautifulsoup4 objects, because they can't be pickled, but the scraper
          will most likely contain those bs4 objects.
         """
         self.scraper = scraper
-        self.shell = shell()
+        self.container = container()
         # pre-call the extract method, to set the attributes on this class
         self.extract()
 
@@ -85,34 +85,43 @@ class ScrapedDataExtractor(ABC):
     @abstractmethod
     def write(self):
         """
-        Create the new shell object which can be pickled.
+        Create the new container object which can be pickled.
 
-        :return: SplashScraperShell()
+        :return: SplashScraperContainer()
         """
-        # create a new shell object
+        # create a new container object
 
         # SplashBrowser properties
-        self.shell.raw_content = self.raw_content
-        self.shell.status = self.scraper.browser.status
+        self.container.raw_content = self.raw_content
+        self.container.status = self.scraper.browser.status
         # SplashBrowser methods
-        self.shell.current_request = self.scraper.browser.get_current_request()
-        self.shell.current_url = self.scraper.browser.get_current_url()
+        self.container.current_request = self.scraper.browser.get_current_request()
+        self.container.current_url = self.scraper.browser.get_current_url()
 
         # scraper attributes
-        self.shell.name = self.name
-        self.shell.number = self.number
-        self.shell.scraper_repr = self.scraper_repr
-        self.shell.cookies = self.cookies
-        self.shell.splash_args = self.splash_args
-        self.shell.http_session_valid = self.http_session_valid
-        self.shell.baseurl = self.baseurl
-        self.shell.crawlera_user = self.crawlera_user
-        self.shell.referrer = self.referrer
-        self.shell.searchurl = self.searchurl
-        self.shell.LUA_SOURCE = self.LUA_SOURCE
-        self.shell._test_true = self._test_true
-        self.shell._result = self._result
+        self.container.name = self.name
+        self.container.number = self.number
+        self.container.scraper_repr = self.scraper_repr
+        self.container.cookies = self.cookies
+        self.container.splash_args = self.splash_args
+        self.container.http_session_valid = self.http_session_valid
+        self.container.baseurl = self.baseurl
+        self.container.crawlera_user = self.crawlera_user
+        self.container.referrer = self.referrer
+        self.container.searchurl = self.searchurl
+        self.container.LUA_SOURCE = self.LUA_SOURCE
+        self.container._test_true = self._test_true
+        self.container._result = self._result
 
         # scraper properties
         # scraper private methods
         # public methods
+
+
+    def fields(self):
+        """
+        Define the specific target fields desired for export to spreadsheet.
+        The fields will be exported in the order which they are defined.
+        :return:
+        """
+        pass

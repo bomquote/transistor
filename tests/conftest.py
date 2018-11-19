@@ -58,10 +58,10 @@ def _BooksWorker():
                     pass
                 # extract the data object to be persisted, with the
                 # extractor.write() method
-                shell = self.get_scraper_extractor(scraper).write()
-                ndb.root._scrapes[self.job_id].add(shell)
+                container = self.get_scraper_extractor(scraper).write()
+                ndb.root._scrapes[self.job_id].add(container)
                 ndb.commit()
-                print(f'Worker {self.name}-{self.number} saved {shell.__repr__()} to '
+                print(f'Worker {self.name}-{self.number} saved {container.__repr__()} to '
                       f'scrape_list "{self.job_id}" for task {task}.')
             else:
                 # if job_id is NONE then we'll skip saving the objects

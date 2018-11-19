@@ -9,6 +9,8 @@
   :target: https://pypi.org/project/transistor/0.1.1/
 .. image:: https://img.shields.io/badge/Status-Beta-blue.svg
   :target: https://github.com/bomquote/transistor
+.. image:: https://img.shields.io/badge/license-MIT-lightgrey.svg
+  :target: https://github.com/bomquote/transistor/blob/master/LICENSE
 .. image:: https://ci.appveyor.com/api/projects/status/xfg2yedwyrbyxysy/branch/master?svg=true
     :target: https://ci.appveyor.com/project/bomquote/transistor
 .. image:: https://pyup.io/repos/github/bomquote/transistor/shield.svg?t=1542037265283
@@ -28,7 +30,7 @@
 About
 -----
 
-The web is full of data. Transistor is a lightweight framework for collecting, storing, and using targeted data from structured web pages.
+The web is full of data. Transistor is a web scraping framework for collecting, storing, and using targeted data from structured web pages.
 
 Transistor's current strengths are in being able to:
     - provide an interface to use `Splash <https://github.com/scrapinghub/splash>`_ headless browser / javascript rendering service.
@@ -51,8 +53,8 @@ Development of Transistor is sponsored by `BOM Quote Manufacturing <https://www.
 3. Provide asynchronous I/O for task execution, using `gevent <https://github.com/gevent/gevent>`_.
 4. Easily integrate within a web app like `Flask <https://github.com/pallets/flask>`_, `Django <https://github.com/django/django>`_ , or other python based `web frameworks <https://github.com/vinta/awesome-python#web-frameworks>`_.
 5. Provide spreadsheet based data ingest and export options, like import a list of search terms from excel, ods, csv, and export data to each as well.
-6. Utilize quick and easy integrated task queues which can be automatically filled with data search terms by a simple spreadsheet import.
-7. Able to integrate with more robust task queues like `Celery <https://github.com/celery/celery>`_ and also interact with `rabbitmq <https://www.rabbitmq.com/>`_ and `redis <https://redis.io/>`_ as needed.
+6. Utilize quick and easy integrated task work queues which can be automatically filled with data search terms by a simple spreadsheet import.
+7. Able to integrate with more robust task queues like `Celery <https://github.com/celery/celery>`_ while using `rabbitmq <https://www.rabbitmq.com/>`_ or `redis <https://redis.io/>`_ as needed.
 8. Provide hooks for users to persist data via any method they choose, while also supporting our own opinionated choice which is a `PostgreSQL <https://www.postgresql.org/>`_ database along with `newt.db <https://github.com/newtdb/db>`_.
 9. Contain useful abstractions, classes, and interfaces for scraping and crawling with machine learning assistance (wip, timeline tbd).
 10. Further support data science use cases of the persisted data, where convenient and useful for us to provide in this library (wip, timeline tbd).
@@ -450,9 +452,8 @@ Just fire it up in a python repl like below and ensure the ``start_http_session`
 
 .. code-block:: python
 
-    from my_custom_scrapers.component.mousekey import MouseKeyScraper
-
-    ms = MouseKeyScraper(part_number='C1210C106K4RACTU', autorun=True)
+    >>> from my_custom_scrapers.component.mousekey import MouseKeyScraper
+    >>> ms = MouseKeyScraper(part_number='C1210C106K4RACTU', autorun=True)
 
 After the scrape completes, various methods and attributes from ``SplashScraper`` and ``SplashBrowser`` are available, plus your custom attributes and methods from your own subclassed scraper, are available:
 
@@ -487,7 +488,7 @@ in ``examples/books_to_scrape/settings.py`` and a second file to setup newt.db a
 
     import os
     import newt.db
-    from transistor.settings import DevConfig, ProdConfig, TestConfig
+    from examples.books_to_scrape.settings import DevConfig, ProdConfig, TestConfig
     from transistor.utility.utils import get_debug_flag
 
     def get_config():

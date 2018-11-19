@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.io.workers
+transistor.workers
 ~~~~~~~~~~~~
 This module implements BaseWorker and BaseGroup classes. Classes which are
 nearly fully functional but have a few abstract methods which must be finally

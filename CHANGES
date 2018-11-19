@@ -7,6 +7,12 @@
 in seconds Splash will wait after opening a web page, before taking actions.
 This is particularly important for websites which may continue to load from
 ajax after a time delay. Set with `splash_args=<float>` keyword. Default 3.0.
+- changed API away from using the word `shell` to now using `container`.
+- created newt_crud.py file in transistor/persistence/newt_db, removed
+same from examples/books_to_scrape/persistence.
+- moved container.py and extractor.py up a level into the main
+transistor/persistence module
+
 
 Nov 17, 2018
 - pypy 0.1.1 release

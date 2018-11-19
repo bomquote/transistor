@@ -12,6 +12,24 @@ This module implements a basic mechanicalsoup.StatefulBrowser web scrape example
 from mechanicalsoup import StatefulBrowser
 
 
+def _get_usd_row_cells(trs):
+    """
+    Get the table cells from the webpage we need for the exchange rate data.
+    :param trs:  browser.get_current_page().find_all("tr")
+    :return: list(): a list of cells
+    """
+    cells = []
+    for tr in trs:
+        if tr.td:
+            if 'USD' in tr.td.text:
+                usd_row = tr.td.next_siblings
+                if usd_row:
+                    for cell in usd_row:
+                        if '\n' not in cell:
+                            cells.append(cell)
+    return cells
+
+
 def get_current_usd_to_cny():
     """
     Get the current China mainland bank transfer buying rate for USD to CNY.
@@ -27,15 +45,7 @@ def get_current_usd_to_cny():
     browser = StatefulBrowser()
     browser.open('http://www.boc.cn/sourcedb/whpj/enindex.html')
     trs = browser.get_current_page().find_all("tr")
-    cells = []
-    for tr in trs:
-        if tr.td:
-            if 'USD' in tr.td.text:
-                usd_row = tr.td.next_siblings
-                if usd_row:
-                    for cell in usd_row:
-                        if '\n' not in cell:
-                            cells.append(cell)
+    cells = _get_usd_row_cells(trs)
     rate = cells[0].text
     time = cells[5].text
     time = time.split()

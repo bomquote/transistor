@@ -13,11 +13,11 @@ column in the `book_titles.xlsx` workbook.
 - workgroup.py
     - subclasses BaseWorker to create BooksWorker
     - sublcasses BaseGroup to create BooksToScrapeGroup
-    - see BaseWorker and BaseGroup in transistor.io.workers.abstract
+    - see BaseWorker and BaseGroup in transistor.workers.abstract
 
 - manager.py
     - sublasses BaseWorkGroupManager to create BooksWorkGroupManager
-    - see BaseWorkGroupManager in transistor.io.managers.manager_abc
+    - see BaseWorkGroupManager in transistor.managers.manager_abc
 
 - main.py
     - Entry point to run the books_to_scrape example

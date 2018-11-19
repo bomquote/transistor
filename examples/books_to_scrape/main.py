@@ -21,7 +21,7 @@ book title in it's work queue, gathering the data for each matched book title, a
 crawls from page to next-page.
 
 The total crawl time would be about the same. But, the alternative design using only
-one worker to crawl each page and collect mutliple results per page as they are found,
+one worker to crawl each page and collect multiple results per page as they are found,
 would have crawled a lot less pages in total, bringing some potential net benefit. Even
 if the benefit is just reducing the risk of irritating the target server webmaster.
 
@@ -45,6 +45,9 @@ monkey.patch_all()
 from os.path import dirname as d
 from pathlib import Path
 from os.path import abspath
+# used for postgresql and newt.db persistence
+from transistor.persistence.newt_db import get_job_results, delete_job
+from examples.books_to_scrape.persistence.newt_db import ndb
 # finally, the core of what we need to launch the scrape job
 from transistor import WorkGroup, StatefulBook
 from examples.books_to_scrape.workgroup import BooksToScrapeGroup
@@ -92,12 +95,10 @@ if __name__ == "__main__":
     manager.main()  # call manager.main() to start the job.
 
     # below shows an example of navigating your persisted data after the scrape
-    from examples.books_to_scrape.persistence.newt_crud import (get_job_results,
-                                                                delete_job)
 
-    result = get_job_results('books_scrape')
+    result = get_job_results('books_scrape', ndb)
 
     for r in result:
         print(f'{r.book_title}, {r.price}, {r.stock}')
 
-    delete_job('books_scrape')
+    delete_job('books_scrape', ndb)

@@ -5,7 +5,7 @@ transistor.examples.books_to_scrape.persistence.serialization
 This module contains classes to serialize the data from a scrape object after a scrape
 in a format that is able to be pickled and persisted in a postgresql db with newt.db.
 
-The attributes in the shell object to be saved must match up to the extractors
+The attributes in the container object to be saved must match up to the extractors
 `extract` and `write` methods.
 
 :copyright: Copyright (C) 2018 by BOM Quote Limited
@@ -14,10 +14,10 @@ The attributes in the shell object to be saved must match up to the extractors
 """
 
 import newt.db
-from transistor.persistence.newt_db import ScrapedDataExtractor, SplashScraperShell
+from transistor.persistence.newt_db import ScrapedDataExtractor, SplashScraperContainer
 
 
-class BookScraperShell(newt.db.Persistent, SplashScraperShell):
+class BookScraperContainer(newt.db.Persistent, SplashScraperContainer):
     """
     A class object which will encapsulate the data from the scraper object. It will
     itself be persisted in PostgreSQL and also further serialized to a JSONB field,
@@ -40,17 +40,17 @@ class BookScraperShell(newt.db.Persistent, SplashScraperShell):
         super().__init__()
 
     def __repr__(self):
-        return f"<BookScraperShell({self.name, self.book_title})>"
+        return f"<BookScraperContainer({self.name, self.book_title})>"
 
 
 class BookDataExtractor(ScrapedDataExtractor):
     """
     A worker tool to extract the data from the BookScraper object and pass the
-    data into BookScraperShell, a class which can be pickled.
+    data into BookScraperContainer, a class which can be pickled.
     """
 
-    def __init__(self, scraper, shell=BookScraperShell):
-        super().__init__(scraper=scraper, shell=shell)
+    def __init__(self, scraper, container=BookScraperContainer):
+        super().__init__(scraper=scraper, container=container)
 
     def extract(self):
         """
@@ -65,17 +65,17 @@ class BookDataExtractor(ScrapedDataExtractor):
 
     def write(self):
         """
-        Write your scraper's extracted custom data attributes to the BookScraperShell
-        class which will be persisted in the database.
+        Write your scraper's extracted custom data attributes to the
+        BookScraperContainer class which will be persisted in the database.
 
         Call super() to also capture attributes built-in from the Base classes.
 
-        Last, ensure you assign the attributes to `self.shell` and also finally
-        you must return self.shell in this method!
+        Last, ensure you assign the attributes to `self.container` and also finally
+        you must return self.container in this method!
         """
         super().write()
-        self.shell.book_title = self.book_title
-        self.shell.price = self.price
-        self.shell.stock = self.stock
+        self.container.book_title = self.book_title
+        self.container.price = self.price
+        self.container.stock = self.stock
 
-        return self.shell
+        return self.container

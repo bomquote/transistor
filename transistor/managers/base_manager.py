@@ -76,7 +76,7 @@ class BaseWorkGroupManager:
         for tracker in book.to_do():
             items.[self.tracker.name] = tracker.to_do()
 
-        deque([<TaskTracker(name=mouser.cn)>, <TaskTracker(name=mouser.com)>])
+        deque([<TaskTracker(name=mousekey.cn)>, <TaskTracker(name=mousekey.com)>])
 
         :return:
         """
@@ -144,7 +144,7 @@ class BaseWorkGroupManager:
         This method actually spawns the scraper and then the purpose is to allow
         some additional final actions to be performed on the scraper object after
         the worker completes the scrape job, but before it shuts down and the object
-        instance is lost (though the ScraperShell object will exist in the db).
+        instance is lost (though the ScraperContainer object will exist in the db).
 
         The simplest example which must be implemented:
 
