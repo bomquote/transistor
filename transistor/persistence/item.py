@@ -7,14 +7,19 @@ This module implements a common output data format by providing the
 to collect the scraped data. They provide a dictionary-like API with a
 convenient syntax for declaring their available fields.
 
-This code was copied from the Scrapy.item module.
+This code was originally copied from the Scrapy.item module. It was
+then modified to remove six, because we are not supporting python 2.
 
 Reference:
 https://github.com/scrapy/scrapy/blob/master/scrapy/item.py
-https://github.com/scrapy/scrapy/blob/master/scrapy/utils/trackref.py
 
-:copyright: Copyright (C) 2018 by BOM Quote Limited
-:license: The MIT License, see LICENSE for more details.
+:copyright: Original scrapy.item.py from scrapy==1.5.1 is
+Copyright by it's authors and further changes or contributions here are
+Copyright (C) 2018 by BOM Quote Limited.
+:license: Original scrapy.item.py from scrapy==1.5.1 license is found at
+https://github.com/scrapy/scrapy/archive/1.5.1.zip
+and further changes or contributions here are licensed under The MIT
+License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
 
@@ -22,9 +27,9 @@ from pprint import pformat
 from collections import MutableMapping
 
 from abc import ABCMeta
-import six
 
-from scrapy.utils.trackref import object_ref
+
+from transistor.utility.trackref import object_ref
 
 
 class BaseItem(object_ref):
@@ -66,7 +71,7 @@ class DictItem(MutableMapping, BaseItem):
     def __init__(self, *args, **kwargs):
         self._values = {}
         if args or kwargs:  # avoid creating dict for most common case
-            for k, v in six.iteritems(dict(*args, **kwargs)):
+            for k, v in dict(*args, **kwargs).items():
                 self[k] = v
 
     def __getitem__(self, key):
@@ -110,7 +115,5 @@ class DictItem(MutableMapping, BaseItem):
     def copy(self):
         return self.__class__(self)
 
-
-@six.add_metaclass(ItemMeta)
-class Item(DictItem):
+class Item(DictItem, metaclass=ItemMeta):
     pass

@@ -9,13 +9,17 @@ Web data collection and storage for intelligent use cases.
 ~~~~~~~~~~~~
 """
 
-from .books import StatefulBook
-from .browsers import SplashBrowser
-from .managers import BaseWorkGroupManager
-from .scrapers import SplashScraper
-from .workers import BaseWorker, BaseGroup, WorkGroup
+from transistor.books import StatefulBook
+from transistor.browsers import SplashBrowser
+from transistor.managers import BaseWorkGroupManager
+from transistor.scrapers import SplashScraper
+from transistor.workers import BaseWorker, BaseGroup, WorkGroup
+from transistor.persistence import (delete_job, Field, get_job_results, Item, SplashScraperContainer,
+    ScrapedDataExtractor)
 
 name = "transistor"
 
-__all__ = [BaseGroup, BaseWorker, BaseWorkGroupManager, SplashBrowser,
-           SplashScraper, StatefulBook, WorkGroup]
+__all__ = ['BaseGroup', 'BaseWorker', 'BaseWorkGroupManager', 'delete_job',
+           'Field', 'get_job_results', 'Item', 'SplashBrowser', 'SplashScraper',
+           'SplashScraperContainer', 'StatefulBook', 'ScrapedDataExtractor',
+           'WorkGroup']

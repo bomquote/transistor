@@ -117,11 +117,3 @@ class ScrapedDataExtractor(ABC):
         # scraper private methods
         # public methods
 
-
-    def fields(self):
-        """
-        Define the specific target fields desired for export to spreadsheet.
-        The fields will be exported in the order which they are defined.
-        :return:
-        """
-        pass

@@ -2,6 +2,11 @@
   transistor: CHANGES
 ========================
 
+11/19/2018
+- implemented Item(), taking a lead from Scrapy API here, and this will
+form the basis for similar APIs for Item exporters and Item pipelines.
+No need to reinvent the wheel in this case.
+
 11/18/2018
 - added 'splash_wait' attribute to SplashScraper. This controls the time
 in seconds Splash will wait after opening a web page, before taking actions.
