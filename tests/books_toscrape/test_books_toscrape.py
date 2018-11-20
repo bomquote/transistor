@@ -192,9 +192,9 @@ class TestLiveBooksToScrape:
         prices = []
         stocks = []
         for r in result:
-            book_titles.append(r.book_title)
-            prices.append(r.price)
-            stocks.append(r.stock)
+            book_titles.append(r['book_title'])
+            prices.append(r['price'])
+            stocks.append(r['stock'])
 
         assert len(book_titles) == 3
         assert len(prices) == 3
@@ -206,13 +206,13 @@ class TestLiveBooksToScrape:
         assert '£50.10' in prices
         assert 'In stock' in stocks
 
-        assert result[0].har['log']['browser']['comment'] == 'PyQt 5.9, Qt 5.9.1'
-        assert result[0].png
+        assert result[0]['har']['log']['browser']['comment'] == 'PyQt 5.9, Qt 5.9.1'
+        assert result[0]['png']
 
         # the below should currently return None if not using Crawlera
-        assert result[0].endpoint_status is None
-        assert result[0].crawlera_session is None
-        assert result[0].resp_content_type_header is None
+        assert result[0]['endpoint_status'] is None
+        assert result[0]['crawlera_session'] is None
+        assert result[0]['resp_content_type_header'] is None
 
 
         # todo: move this to a teardown fixture

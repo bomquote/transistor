@@ -2,10 +2,28 @@
   transistor: CHANGES
 ========================
 
+
+11/20/2018
+Made several API breaking changes:
+- changed transistor.persistence.extractor.py ScrapedDataExtractor to
+transistor.persistence.exporter.py BaseItemExporter and eliminated
+the `.extract` method on that class as it is no longer needed.
+- changed transistor.persistence.container SplashScraperContainer to
+transistor.persistence.containers SplashScraperItems
+- SplashScraperItems now inherits from class::Item() and defines Fields()
+just like the Scrapy API. All the previous class attributes and properties
+should now be accessed like a dictionary. For example, here is the old way:
+    >>> result = get_job_results('books_scrape')
+    >>> for r in result:
+    >>>    book_titles.append(r.book_title)
+Now, the new class::Item() API requires accessing `book_title` like below:
+    >>>    book_titles.append(r['book_title'])
+- changed transistor.workers.baseworker.py Baseworker.get_scraper_extractor()
+method name to Baseworker.get_scraper_exporter()
+
 11/19/2018
-- implemented Item(), taking a lead from Scrapy API here, and this will
-form the basis for similar APIs for Item exporters and Item pipelines.
-No need to reinvent the wheel in this case.
+- implemented class::Item(), enabling a similar API to Scrapy for
+Item data containers and Item Exporters.
 
 11/18/2018
 - added 'splash_wait' attribute to SplashScraper. This controls the time

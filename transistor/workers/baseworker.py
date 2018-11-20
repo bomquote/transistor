@@ -74,7 +74,6 @@ class BaseWorker:
         except Empty:
             print(f'Quitting time for worker {self.name}-{self.number}!')
 
-
     def result(self, scraper, task):
         """
         At this point, we finally received a result from the scraper, and this
@@ -92,7 +91,6 @@ class BaseWorker:
         self.save_to_db(scraper, task)
         print(f'Worker {self.name}-{self.number} finished task {task}')
         gevent.sleep(0)
-
 
     def save_to_db(self, scraper, task):
         """
@@ -118,8 +116,7 @@ class BaseWorker:
                                **kwargs)
         return scraper
 
-
-    def get_scraper_extractor(self, scraper):
+    def get_scraper_exporter(self, scraper):
         """
         This is a hook point for any serialization you may want to do depending on
         your data persistence model.  In `examples/books_to_scrape` we show a method
@@ -127,7 +124,7 @@ class BaseWorker:
         while also automatically serializing the object to a postgres jsonb field.
 
         :param scraper: the scraper object (i.e. BooksToScrapeScraper())
-        :return: a custom ScraperExtractor instance like:
-        SplashComponentScraperExtractor(scraper)
+        :return: a custom ScraperExporter instance like:
+        SplashComponentScraperExporter(scraper)
         """
-        raise NotImplementedError('You must return a custom ScraperExtractor.')
+        raise NotImplementedError('You must return a custom ScraperExporter.')

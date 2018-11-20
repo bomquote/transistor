@@ -11,7 +11,7 @@ This module implements a working example of a BaseWorker and BaseGroup.
 import gevent
 from transistor import BaseWorker, BaseGroup
 from examples.books_to_scrape.scraper import BooksToScrapeScraper
-from examples.books_to_scrape.persistence import BookDataExtractor, ndb
+from examples.books_to_scrape.persistence import BookDataExporter, ndb
 from transistor.persistence.newt_db.collections import ScrapeList
 
 
@@ -51,8 +51,8 @@ class BooksWorker(BaseWorker):
 
     def get_scraper(self, task, **kwargs):
         """
-        Return an instance of the custom Scraper object. Specifically, note how `task`
-        is passed here, as the `book_title` parameter.
+        Return an instance of the custom Scraper object. Specifically, note
+        how `task` is passed here, as the `book_title` parameter.
 
         The book titles are read from the excel spreadsheet, and each title then
         loaded into a work queue, where it becomes a task to be assigned by the
@@ -62,19 +62,19 @@ class BooksWorker(BaseWorker):
                                **kwargs)
         return scraper
 
-    def get_scraper_extractor(self, scraper):
+    def get_scraper_exporter(self, scraper):
         """
         Use this method to pass in the scraper which has already returned from
-        the scrape job, into your own custom data extractor/serializer.
+        the scrape job, into your own custom data exporter/serializer.
         :param scraper: this will be the executed scraper object (i.e. BookScraper())
-        :return: a custom ScraperExtractor instance
+        :return: a custom ScraperExporter instance
         """
-        return BookDataExtractor(scraper)
+        return BookDataExporter(scraper)
 
     def save_to_db(self, scraper, task):
         """
         Save the container of the completed Scraper object to newt.db, using the
-        middle-layer serialization helper class, BookDataExtractor.
+        middle-layer serialization helper class, BookDataExporter.
 
         :param scraper: the scraper object (i.e. MouseKeyScraper())
         :param task: just passing through the item for printing.
@@ -89,11 +89,11 @@ class BooksWorker(BaseWorker):
             except KeyError:
                 # will be raised if there is already a list with the same job_name
                 pass
-            # extract the data object to be persisted, with the extractor.write() method
-            container = self.get_scraper_extractor(scraper).write()
-            ndb.root.scrapes[self.job_id].add(container)
+            # export the data object to be persisted, with the export.write() method
+            items = self.get_scraper_exporter(scraper).write()
+            ndb.root.scrapes[self.job_id].add(items)
             ndb.commit()
-            print(f'Worker {self.name}-{self.number} saved {container.__repr__()} to '
+            print(f'Worker {self.name}-{self.number} saved {items.__repr__()} to '
                   f'scrape_list "{self.job_id}" for task {task}.')
         else:
             # if job_id is NONE then we'll skip saving the objects
@@ -106,7 +106,7 @@ class BooksToScrapeGroup(BaseGroup):
     Organize a group of Workers for the Manager class to assign tasks and monitor
     results.
 
-    All WorkerGroups should inherit from Basegroup. Then, create the
+    All WorkerGroups should inherit from BaseGroup. Then, create the
     Worker instance in `hired_worker` method using the custom scraper object.
 
     Note how, in this case, the `BooksToScrapeScraper` is assigned in the
@@ -129,9 +129,10 @@ class BooksToScrapeGroup(BaseGroup):
                              http_session={'url': self.url, 'timeout': self.timeout},
                              **self.kwargs)
 
-        # NOTE: assign custom class attrs on your workers here, as needed.  You pretty
-        # much always need to assign worker.name here, but you may need others as well.
-        # For example, if our scraper depended on china=True to scrape .com.cn domain.
+        # NOTE: assign custom class attrs on your workers here, as needed.
+        # You pretty much always need to assign worker.name here, but you
+        # may need others as well. For example, if our scraper depended
+        # on china=True to scrape .com.cn domain. Set:
         # worker.china = self.china
 
         worker.name = self.name

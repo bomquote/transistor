@@ -56,12 +56,12 @@ def _BooksWorker():
                 except KeyError:
                     # will be raised if there is already a list with the same job_name
                     pass
-                # extract the data object to be persisted, with the
-                # extractor.write() method
-                container = self.get_scraper_extractor(scraper).write()
-                ndb.root._scrapes[self.job_id].add(container)
+                # export the data object to be persisted, with the
+                # exporter.write() method
+                items = self.get_scraper_exporter(scraper).write()
+                ndb.root._scrapes[self.job_id].add(items)
                 ndb.commit()
-                print(f'Worker {self.name}-{self.number} saved {container.__repr__()} to '
+                print(f'Worker {self.name}-{self.number} saved {items.__repr__()} to '
                       f'scrape_list "{self.job_id}" for task {task}.')
             else:
                 # if job_id is NONE then we'll skip saving the objects

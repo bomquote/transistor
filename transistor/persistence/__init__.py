@@ -10,10 +10,10 @@ database, spreadsheet export, write to file.
 ~~~~~~~~~~~~
 """
 
-from .extractor import ScrapedDataExtractor
-from .container import SplashScraperContainer
+from .exporters import BaseItemExporter
+from .containers import SplashScraperItems
 from .item import Item, Field
 from .newt_db.newt_crud import get_job_results, delete_job
 
-__all__ = ['delete_job', 'Field', 'get_job_results', 'Item','ScrapedDataExtractor',
-           'SplashScraperContainer']
+__all__ = ['delete_job', 'Field', 'get_job_results', 'Item','BaseItemExporter',
+           'SplashScraperItems']

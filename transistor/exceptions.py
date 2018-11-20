@@ -39,6 +39,15 @@ class KeywordError(Exception):
                 the column heading in your spreadsheet."""
     pass
 
+# Items
+
+class DropItem(Exception):
+    """Drop item from the item pipeline"""
+    pass
+
+class NotSupported(Exception):
+    """Indicates a feature or method is not supported"""
+    pass
 
 class BadRequest(Exception):
 

@@ -14,12 +14,12 @@ from transistor.browsers import SplashBrowser
 from transistor.managers import BaseWorkGroupManager
 from transistor.scrapers import SplashScraper
 from transistor.workers import BaseWorker, BaseGroup, WorkGroup
-from transistor.persistence import (delete_job, Field, get_job_results, Item, SplashScraperContainer,
-    ScrapedDataExtractor)
+from transistor.persistence import (delete_job, Field, get_job_results, Item,
+                                    SplashScraperItems, BaseItemExporter)
 
 name = "transistor"
 
 __all__ = ['BaseGroup', 'BaseWorker', 'BaseWorkGroupManager', 'delete_job',
            'Field', 'get_job_results', 'Item', 'SplashBrowser', 'SplashScraper',
-           'SplashScraperContainer', 'StatefulBook', 'ScrapedDataExtractor',
+           'SplashScraperItems', 'StatefulBook', 'BaseItemExporter',
            'WorkGroup']

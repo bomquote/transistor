@@ -9,7 +9,4 @@ This module implements container classes for storing python objects in newt.db.
 ~~~~~~~~~~~~
 """
 
-from ..container import SplashScraperContainer
-from ..extractor import ScrapedDataExtractor
-
 from .newt_crud import get_job_results, delete_job
