@@ -1,5 +1,6 @@
 ---
-engines:
+version: 2
+plugins:
   csslint:
     enabled: true
   duplication:
@@ -20,13 +21,11 @@ engines:
     checks:
       E501:
         enabled: false
-plugins:
   bandit:
     enabled: true
     config:
       python_version: 3
-ratings:
-  paths:
+paths:
   - "**.css"
   - "**.inc"
   - "**.js"
@@ -34,8 +33,8 @@ ratings:
   - "**.module"
   - "**.py"
 exclude_paths:
-- docs/
-- tests/
-- requirements/
-- appveyor/aquarium/
-- transistor/utility/browsercookie.py
+  - docs/
+  - tests/
+  - requirements/
+  - appveyor/aquarium/
+  - transistor/utility/browsercookie.py
