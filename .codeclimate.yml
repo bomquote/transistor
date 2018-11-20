@@ -25,13 +25,6 @@ plugins:
     enabled: true
     config:
       python_version: 3
-  paths:
-    - "**.css"
-    - "**.inc"
-    - "**.js"
-    - "**.jsx"
-    - "**.module"
-    - "**.py"
 exclude_patterns:
   - docs/
   - tests/
