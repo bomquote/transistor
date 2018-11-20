@@ -203,7 +203,7 @@ class TestLiveBooksToScrape:
         assert 'Soumission' in book_titles
         assert 'Rip it Up and Start Again' in book_titles
         assert 'Black Dust' in book_titles
-        assert '£50.10' in prices
+        assert 'UK £50.10' in prices
         assert 'In stock' in stocks
 
         assert result[0]['har']['log']['browser']['comment'] == 'PyQt 5.9, Qt 5.9.1'

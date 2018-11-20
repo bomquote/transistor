@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.crawlera
+transistor.utility.crawlera
 ~~~~~~~~~~~~
 This module implements various helper functions for working with the
 scrapinghub.com Crawlera 'smart proxy' service.

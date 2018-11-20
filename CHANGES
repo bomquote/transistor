@@ -20,6 +20,12 @@ Now, the new class::Item() API requires accessing `book_title` like below:
     >>>    book_titles.append(r['book_title'])
 - changed transistor.workers.baseworker.py Baseworker.get_scraper_extractor()
 method name to Baseworker.get_scraper_exporter()
+- implemented built-in exporters closely matching Scrapy exporter API.
+Exporters include 'BaseItemExporter', 'PprintItemExporter', 'PickleItemExporter',
+'CsvItemExporter', 'XmlItemExporter', 'JsonLinesItemExporter',
+'JsonItemExporter', 'MarshalItemExporter'
+- it is now possible to use custom serializers on a per field basis. Check
+the examples/books_to_scrape/persistence/serialization.py file for an example.
 
 11/19/2018
 - implemented class::Item(), enabling a similar API to Scrapy for

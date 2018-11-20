@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.tests.persistence.item
+transistor.tests.persistence.test_item
 ~~~~~~~~~~~~
 This module provides some functions and classes to record and report
 references to live object instances.
@@ -12,7 +12,7 @@ About performance: This library has a minimal performance impact when enabled,
 and no performance penalty at all when disabled (as object_ref becomes just an
 alias to object in that case).
 
-This code was copied from the Scrapy.tests.test_item module.
+This code was nearly completely copied from the Scrapy.tests.test_item module.
 
 Reference:
 https://github.com/scrapy/scrapy/blob/master/scrapy/utils/trackref.py

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.persistence.item
+transistor.utility.trackref
 ~~~~~~~~~~~~
 This module provides some functions and classes to record and report
 references to live object instances.

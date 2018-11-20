@@ -4,10 +4,10 @@ transistor.examples.books_to_scrape.persistence.serialization
 ~~~~~~~~~~~~
 This module contains classes to serialize the data from a scrape object
 after a scrape in a format that is able to be pickled and persisted in
-a postgresql db with newt.db.
+a postgresql database with newt.db. and also exported to excel.
 
 The attributes in the container object to be saved must match up to the
-extractors `extract` and `write` methods.
+exporter class `write` methods.
 
 :copyright: Copyright (C) 2018 by BOM Quote Limited
 :license: The MIT License, see LICENSE for more details.
@@ -17,6 +17,15 @@ extractors `extract` and `write` methods.
 import newt.db
 from transistor.persistence.item import Field
 from transistor.persistence import BaseItemExporter, SplashScraperItems
+
+
+def serialize_price(value):
+    """
+    A serializer used in BookScraperItems to ensure USD is prefixed on the
+    `price` Field, for the data returned in the scrape.
+    :param value: the scraped value for the `price` Field
+    """
+    return f'UK {str(value)}'
 
 
 class BookScraperItems(newt.db.Persistent, SplashScraperItems):
@@ -36,9 +45,8 @@ class BookScraperItems(newt.db.Persistent, SplashScraperItems):
     # -- names of your customized scraper class attributes go here -- #
 
     book_title = Field()  # str() # the book_title which we searched
-    price = Field()  # the self.price attribute
+    price = Field(serializer=serialize_price)  # the self.price attribute
     stock = Field()  # the self.stock attribute
-
 
 
 class BookDataExporter(BaseItemExporter):
@@ -62,7 +70,10 @@ class BookDataExporter(BaseItemExporter):
         """
         super().write()
         self.items['book_title'] = self.scraper.book_title
-        self.items['price'] = self.scraper.price
+        self.items['price'] = self.serialize_field(
+            field=Field(serializer=serialize_price),
+            name='price',
+            value=self.scraper.price)
         self.items['stock'] = self.scraper.stock
 
         return self.items

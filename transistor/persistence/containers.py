@@ -11,6 +11,17 @@ Any changes to this module should also be checked against the ScrapedDataExporte
 in the exporter.py file. The attributes here must match up to the
 ScrapedDataExporter.write method.
 
+Note: The primary way customize how a field will be serialized, is to write a
+custom serializer for the field. See below example:
+
+>>> from transistor import Item, Field
+>>> def serialize_price(value):
+>>>     return f'USD ${str(value)}'
+
+>>> class Product(Item):
+>>>    name = Field()
+>>>    price = Field(serializer=serialize_price)
+
 :copyright: Copyright (C) 2018 by BOM Quote Limited
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
