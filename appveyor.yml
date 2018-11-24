@@ -102,6 +102,7 @@ install:
     # upgrade pip
     - cmd: python -m pip install --upgrade pip
     # install packages from pip
+    - cmd: pip install Acquisition==4.5
     - cmd: pip install mechanicalsoup==0.11.0
     - cmd: pip install requests==2.20.1
     - cmd: pip install urllib3==1.24.1

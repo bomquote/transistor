@@ -62,6 +62,7 @@ class SplashBrowser(StatefulBrowser, SplashBrowserMixin):
     Note: `select_form`, `submit` and `submit_selected` need refactored
     to work with Splash. Not useful/broken at the moment.
     """
+
     retry = 0
 
     def __init__(self, *args, **kwargs):
@@ -70,8 +71,21 @@ class SplashBrowser(StatefulBrowser, SplashBrowserMixin):
         self.__state = _BrowserState()
         self._test_true = False
         self.timeout_exception = False
-        kwargs.pop('encoding', None)  # encoding is always utf-8
+        self.flags = kwargs.pop('flags', None)
+        self.priority = kwargs.pop('priority', 0)
+        if kwargs.pop('meta', None):
+            self._meta = dict(kwargs.pop('meta'))
+        else:
+            self._meta = None
+        self.callback = None
+        self.errback = None
         super().__init__(*args, **kwargs)
+
+    @property
+    def meta(self):
+        if self._meta is None:
+            self._meta = {}
+        return self._meta
 
     def _get_raw_content(self):
         return self._content
@@ -312,8 +326,24 @@ class SplashBrowser(StatefulBrowser, SplashBrowserMixin):
 
         All arguments are forwarded to :func:`SplashCrawleraBrowser.post`.
 
+        :param: url: this will always be the Splash /execute endpoint
+        :param: kwargs: callback: a user defined callable to call
+        after the response is returned.
+        :param: kwargs: errback: a user defined callable to call
+        after the response is returned.
         :return: Forwarded from :func:`SplashCrawleraBrowser.post`.
         """
+        callback = kwargs.pop('callback', None)
+        errback = kwargs.pop('errback', None)
+
+        if callback is not None and not callable(callback):
+            raise TypeError(
+                f'callback must be a callable, got {type(callback).__name__}')
+        if errback is not None and not callable(errback):
+            raise TypeError(
+                f'errback must be a callable, got {type(errback).__name__}')
+        self.callback = callback
+        self.errback = errback
 
         if self.get_verbose() == 1:
             sys.stdout.write('.')
@@ -325,6 +355,8 @@ class SplashBrowser(StatefulBrowser, SplashBrowserMixin):
 
         response_callback = self._response_callback(resp)
 
+        if self.callback:
+            return response_callback, self.callback()
         return response_callback
 
     def _response_callback(self, resp):
@@ -337,7 +369,7 @@ class SplashBrowser(StatefulBrowser, SplashBrowserMixin):
 
         :returns response object
         """
-        def callback(response):
+        def recurse(response):
             """Recursively call"""
             return self._response_callback(response)
 
@@ -361,7 +393,7 @@ class SplashBrowser(StatefulBrowser, SplashBrowserMixin):
                 print(f'Retying attempt {self.retry}.')
                 gevent.sleep(random.randint(12, 20))
                 response = self.refresh()
-                return callback(response)
+                return recurse(response)
 
             # check for http504 in content which means some sort of timeout
             if b'http504' in self.raw_content or '504' in str(self.status):
@@ -371,7 +403,7 @@ class SplashBrowser(StatefulBrowser, SplashBrowserMixin):
                 print(f'Retying attempt {self.retry}.')
                 gevent.sleep(random.randint(12, 20))
                 response = self.refresh()
-                return callback(response)
+                return recurse(response)
 
         print(f'Retried {self.retry} times and all were unsuccessful.')
         return resp

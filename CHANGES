@@ -2,6 +2,9 @@
   transistor: CHANGES
 ========================
 
+11/24/18
+- added a few attributes to SplashBrowser in anticipation of needing them
+to support a more robust crawling class.
 
 11/20/2018
 Made several API breaking changes:

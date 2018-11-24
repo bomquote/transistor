@@ -9,7 +9,7 @@ Worker/Scrapers.
 
 Although this class is fully functional as-is. The monitor() method provides an
 excellent hook point for post-scrape Worker manipulation. A more robust implementation
-will sublcass BaseManager and override the monitor method for customization.
+will subclass BaseManager and override the monitor method for customization.
 
 
 :copyright: Copyright (C) 2018 by BOM Quote Limited
@@ -66,19 +66,17 @@ class BaseWorkGroupManager:
 
     def _init_tasks(self):
         """
-        Create individual task queues for the workers. The worker names
-        should be extracted from self.book.to_do().
+        Create individual task queues for the workers. The tracker names
+        should be extracted from self.book.to_do() and the tracker
+        name should match the worker name.
 
+        Extract the tracker name and then create the qitems. Example:
 
-        Extract the tracker name and then create the items.
-
-        items = {}
-        for tracker in book.to_do():
-            items.[self.tracker.name] = tracker.to_do()
-
+        >>> qitems = {}
+        >>> for tracker in book.to_do():
+        >>>    qitems.[self.tracker.name] = tracker.to_do()
+        returns:
         deque([<TaskTracker(name=mousekey.cn)>, <TaskTracker(name=mousekey.com)>])
-
-        :return:
         """
 
         for tracker in self.book.to_do():
@@ -94,27 +92,30 @@ class BaseWorkGroupManager:
 
         :return:
         """
+        # first, build a list from tracker names per qitems.keys()
         names = [name for name in self.qitems.keys()]
         for name in names:
             for group in self.groups:
-                if group[2] == name:
+                # match the tracker name to the group name
+                if group.name == name:
                     # assumes `group` is a WorkGroup namedtuple of the form:
-                    # WorkGroup(class_=BooksGroup, workers=2, kwargs={'china':True,
-                    # 'timeout': (3.0, 3.0)})
+                    # WorkGroup(class_=BooksGroup, workers=2, name='mousekey.com',
+                    # kwargs={'china':True, 'timeout': (3.0, 3.0)})
 
-                    # add the name to group3 dict
-                    group[3]['name'] = name
-                    workgroup = group[0](
-                        staff=group[1], job_id=self.job_id, **group[3])
-                    # now is the time to set the name attribute on the workgroup
-                    workgroup.name = name
+                    # add the name to group.kwargs dict so it can be passed down
+                    # to the worker/scraper and assigned as an attr on them
+                    group.kwargs['name'] = name
+                    workergroup = group.class_(
+                        staff=group.workers, job_id=self.job_id, **group.kwargs)
+                    # now is the time to set the name attribute on the workergroup
+                    workergroup.name = name
                     # now that the name is assigned, init the workers on the workgroup
                     # this allows the encapsulated Worker to also be assigned the name
                     # don't change this without testing, Workers will lose their name
-                    workgroup.init_workers()
+                    workergroup.init_workers()
                     # lastly, after calling init_workers, assign the workgroup instance
                     # with workers instance to the workgroups dict with key = `name`
-                    self.workgroups[name] = workgroup
+                    self.workgroups[name] = workergroup
 
     def spawn_list(self):
         """"
@@ -144,7 +145,7 @@ class BaseWorkGroupManager:
         This method actually spawns the scraper and then the purpose is to allow
         some additional final actions to be performed on the scraper object after
         the worker completes the scrape job, but before it shuts down and the object
-        instance is lost (though the ScraperContainer object will exist in the db).
+        instance is lost.
 
         The simplest example which must be implemented:
 
@@ -180,7 +181,7 @@ class BaseWorkGroupManager:
 
     def manage(self):
         """"
-        Manage will hand out work when  the appropriate Worker is free.
+        Manage will hand out work when the appropriate Worker is free.
         The manager timeout must be less than worker timeout, or else, the workers
         will be idled and shutdown.
         """

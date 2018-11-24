@@ -205,6 +205,8 @@ class TestLiveBooksToScrape:
         assert 'Black Dust' in book_titles
         assert 'UK £50.10' in prices
         assert 'In stock' in stocks
+        assert None not in prices
+        assert None not in stocks
 
         assert result[0]['har']['log']['browser']['comment'] == 'PyQt 5.9, Qt 5.9.1'
         assert result[0]['png']

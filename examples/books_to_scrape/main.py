@@ -4,7 +4,18 @@ transistor.examples.books_to_scrape.main
 ~~~~~~~~~~~~
 Entry point to run the books_to_scrape example.
 
-Note: The example highlighted here, employs a "crawl" mechanism inside each
+Note:
+
+The primary use case where the current Transistor design shines, is when you need to
+scrape websites which have a search functionality. These are generally non-paginated
+websites, which you need to enter a search term, and then scrape the page which is
+given by the server in response.
+
+For the search term use case, this design is good. You can send an arbitrary number
+of workers to the search page. Each worker has one task issued, a task to execute the
+search for the term it has been assigned, and return to us with the response.
+
+The example highlighted here, employs a "crawl" mechanism inside each
 of the scraper objects. This is not really showcasing the optimal use case for
 a Transistor SplashScraper with Manager/WorkGroups, per the current design.
 
@@ -24,15 +35,6 @@ The total crawl time would be about the same. But, the alternative design using 
 one worker to crawl each page and collect multiple results per page as they are found,
 would have crawled a lot less pages in total, bringing some potential net benefit. Even
 if the benefit is just reducing the risk of irritating the target server webmaster.
-
-The primary use case where the current Transistor design shines, is when you need to
-scrape websites which have a search functionality. These are generally non-paginated
-websites, which you need to enter a search term, and then scrape the page which is
-given by the server in response.
-
-For the search term use case, this design is good. You can send an arbitrary number
-of workers to the search page. Each worker has one task issued, a task to execute the
-search for the term it has been assigned, and return to us with the response.
 
 :copyright: Copyright (C) 2018 by BOM Quote Limited
 :license: The MIT License, see LICENSE for more details.
@@ -86,8 +88,11 @@ groups = [
         kwargs={'url': 'http://books.toscrape.com/', 'timeout': (3.0, 20.0)})
     ]
 
-# 4) Last, setup the Manager. Ensure the pool is marginally larger than the number of
-# total workers assigned in groups in step #3 above.
+# 4) Last, setup the Manager. You can constrain the number of workers actually
+# deployed, through the `pool` parameter. For example, this is useful
+# when using a Crawlera 'C10' plan which limits concurrency to 10. To deploy all
+# the workers concurrently, set the pool to be marginally larger than the number
+# of total workers assigned in groups in step #3 above.
 manager = BooksWorkGroupManager('books_scrape', stateful_book, groups=groups, pool=25)
 
 
@@ -96,9 +101,9 @@ if __name__ == "__main__":
 
     # below shows an example of navigating your persisted data after the scrape
 
-    result = get_job_results('books_scrape', ndb)
+    result = get_job_results(ndb, 'books_scrape')
 
     for r in result:
-        print(f'{r.book_title}, {r.price}, {r.stock}')
+        print(f"{r['book_title']}, {r['price']}, {r['stock']}")
 
-    delete_job('books_scrape', ndb)
+    delete_job(ndb, 'books_scrape')

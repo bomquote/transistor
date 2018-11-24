@@ -7,8 +7,8 @@ the books.toscrape.com website, with the book titles themselves ingested from a
 column in the `book_titles.xlsx` workbook.
 
 - scraper.py
-    - subclasses SplashScraper to create a customized  BooksToScrapeScraper
-    - see SplashScraper in transistor.scrapers.abstract.sc_scraper_abc
+    - subclasses SplashScraper to create a customized BooksToScrapeScraper
+    - see SplashScraper in transistor.scrapers.abstract.splash_scraper_abc
 
 - workgroup.py
     - subclasses BaseWorker to create BooksWorker
@@ -30,9 +30,6 @@ column in the `book_titles.xlsx` workbook.
 
 - persistence/newt_db.py
     - an example of setting up a newt.db connection, which we name ndb
-
-- persistence/newt_crud.py
-    - some crud convenience functions to work with objects in lists stored in newt.db
 
 
 :copyright: Copyright (C) 2018 by BOM Quote Limited

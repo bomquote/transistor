@@ -9,6 +9,8 @@ scrapinghub.com Crawlera 'smart proxy' service.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
+import gevent.monkey
+gevent.monkey.patch_all()
 import os
 import json
 import requests

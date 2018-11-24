@@ -24,7 +24,7 @@ DESCRIPTION = about['__description__']
 URL = about['__url__']
 EMAIL = about['__author_email__']
 AUTHOR = about['__author__']
-REQUIRES_PYTHON = '>=3.5.0'
+REQUIRES_PYTHON = '>=3.6.0'
 
 with open(os.path.join(here, NAME, '__version__.py')) as f:
     exec(f.read(), about)
@@ -32,6 +32,7 @@ with open(os.path.join(here, NAME, '__version__.py')) as f:
 
 # What packages are required for this module to be executed?
 REQUIRED = [
+    'Acquisition>=4.5'
     'mechanicalsoup>=0.11.0',
     'requests>=2.20.1',
     'urllib3>=1.24.1',
@@ -52,7 +53,7 @@ REQUIRED = [
 ]
 
 test_requirements = [
-    'pytest==3.10.1',
+    'pytest>=4.0.0',
     'pytest-cov==2.6.0',
     'coverage==4.5.2',
     'mock==2.0.0'

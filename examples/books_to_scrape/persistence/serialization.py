@@ -25,8 +25,8 @@ def serialize_price(value):
     `price` Field, for the data returned in the scrape.
     :param value: the scraped value for the `price` Field
     """
-    return f'UK {str(value)}'
-
+    if value:
+        return f'UK {str(value)}'
 
 class BookScraperItems(newt.db.Persistent, SplashScraperItems):
     """
@@ -45,7 +45,7 @@ class BookScraperItems(newt.db.Persistent, SplashScraperItems):
     # -- names of your customized scraper class attributes go here -- #
 
     book_title = Field()  # str() # the book_title which we searched
-    price = Field(serializer=serialize_price)  # the self.price attribute
+    price = Field()  # the self.price attribute
     stock = Field()  # the self.stock attribute
 
 
@@ -53,6 +53,10 @@ class BookDataExporter(BaseItemExporter):
     """
     A worker tool to extract the data from the BookScraper object and pass the
     data into BookScraperContainer, a class which can be pickled.
+
+    Define any custom serializers on a per-field basis here, by calling
+    self.serialize_field(field, name, value).  See the example below
+    for 'price'.
     """
 
     def __init__(self, scraper, items=BookScraperItems):
@@ -68,12 +72,20 @@ class BookDataExporter(BaseItemExporter):
         Last, ensure you assign the attributes to `self.items` and also finally
         you must return self.items in this method!
         """
+        # first call super() to write the built-in Items from BaseItemExporter
         super().write()
+
+        # now, define your custom items
         self.items['book_title'] = self.scraper.book_title
+        self.items['stock'] = self.scraper.stock
+        # set the value with self.serialize_field(field, name, value) as needed,
+        # for example, `serialize_price` below turns '£50.10' into 'UK £50.10'
+        # the '£50.10' is the original scraped value from the website stored in
+        # self.scraper.price, but we think it is more clear as 'UK £50.10'
         self.items['price'] = self.serialize_field(
             field=Field(serializer=serialize_price),
             name='price',
             value=self.scraper.price)
-        self.items['stock'] = self.scraper.stock
 
+        # finally, ensure you return self.items
         return self.items

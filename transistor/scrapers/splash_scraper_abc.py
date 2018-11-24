@@ -254,6 +254,8 @@ class SplashScraper(ABC):
         in the call to open().
 
         :param kwargs: timeout: see note in self.start_http_session
+        :param kwargs: callback: a user defined function to call after the
+        response is returned. Useful for crawling.
         """
         timeout = kwargs.pop('timeout', self.http_session_timeout)
 

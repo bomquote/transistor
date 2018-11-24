@@ -21,7 +21,7 @@ __all__ = ['BaseItemExporter']
 
 class BaseItemExporter:
     """
-    This is the (abstract) base class for all Item Exporters. It provides
+    This is the base class for all Item Exporters. It provides
     support for common features used by all (concrete) Item Exporters,
     such as defining what fields to export, whether to export empty fields,
     or which encoding to use.

@@ -35,7 +35,10 @@ class BaseGroup(ABC):
         Crawlera, the 2nd timeout number is dependent on the website and
         optimization of the LUA SOURCE script to filter links that do not need
         followed in order to get the data that you are targeting.
-
+        :param kwargs: name::str(): a name attribute which will be passed down to
+        the worker and scraper.
+        :param: url::str(): the starting URL which will be passed down to the worker
+        and scraper.
         """
         self.staff = staff
         self.job_id = job_id
