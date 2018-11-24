@@ -240,7 +240,9 @@ class TestLiveBooksToScrape:
             'cookies': bts_live_scraper.cookies,
             'user_agent': bts_live_scraper.user_agent,
             'splash_wait': bts_live_scraper.splash_wait,
-            'js_source': bts_live_scraper.js_source
+            'js_source': ";" if not bts_live_scraper.js_source else
+            bts_live_scraper.js_source,
+            'script': 0 if not bts_live_scraper.js_source else 1
         }
         page = bts_live_scraper.browser.open('http://localhost:8050/execute',
                                              json=bts_live_scraper.splash_args,

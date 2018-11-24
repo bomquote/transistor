@@ -301,11 +301,13 @@ class SplashScraper(ABC):
                 'cookies': self.cookies,
                 'user_agent': self.user_agent,
                 'splash_wait': self.splash_wait,
-                'js_source': self.js_source
+                'js_source':  ";" if not self.js_source else self.js_source,
+                'script': 0 if not self.js_source else 1
             }
         else:
             self.splash_args = splash_args
         response = self.browser.stateful_post(
+            # 'http://localhost:8050/render.json'if self.js_source else
             'http://localhost:8050/execute',
             json=self.splash_args,
             timeout=timeout,

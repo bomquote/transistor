@@ -66,7 +66,7 @@ function main(splash)
     splash.response_body_enabled = true
     use_crawlera(splash)
     assert(splash:go(splash.args.url))
-    assert(splash:runjs(splash.args.js_source))
     assert(splash:wait(splash.args.splash_wait))
+    assert(splash:runjs(splash.args.js_source))
     return splash:html()
 end
