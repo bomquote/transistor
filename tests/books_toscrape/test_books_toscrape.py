@@ -216,7 +216,6 @@ class TestLiveBooksToScrape:
         assert result[0]['crawlera_session'] is None
         assert result[0]['resp_content_type_header'] is None
 
-
         # todo: move this to a teardown fixture
         delete_job('books_scrape')
         del ndb.root._scrapes
@@ -240,7 +239,8 @@ class TestLiveBooksToScrape:
             'keyword': None,  # can be used in the LUA script to submit a form
             'cookies': bts_live_scraper.cookies,
             'user_agent': bts_live_scraper.user_agent,
-            'splash_wait': bts_live_scraper.splash_wait
+            'splash_wait': bts_live_scraper.splash_wait,
+            'js_source': bts_live_scraper.js_source
         }
         page = bts_live_scraper.browser.open('http://localhost:8050/execute',
                                              json=bts_live_scraper.splash_args,

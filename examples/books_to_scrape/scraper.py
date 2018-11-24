@@ -76,7 +76,7 @@ class BooksToScrapeScraper(SplashScraper):
         if self._next_page():
             self.open(url=self._next_page())
             # use gevent.sleep to add a time delay to avoid hammering the server
-            gevent.sleep(3)
+            gevent.sleep(1)
             return self._find_title()
         return print(f'Crawled all pages. Title not found.')
 

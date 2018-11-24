@@ -82,6 +82,7 @@ function main(splash)
         http_method=splash.args.http_method,
         body=splash.args.body,
     })
+    assert(splash:runjs(splash.args.js_source))
     assert(splash:wait(splash.args.splash_wait))
 
     local entries = splash:history()

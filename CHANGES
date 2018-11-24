@@ -6,6 +6,9 @@
 - added a few attributes to SplashBrowser in anticipation of needing them
 to support a more robust crawling class.
 
+- SplashScraper now accepts a kwarg 'js_source' which forwards javascript to
+the Lua script where it is executed with splash:runjs(splash.args.js_source).
+
 11/20/2018
 Made several API breaking changes:
 - changed transistor.persistence.extractor.py ScrapedDataExtractor to

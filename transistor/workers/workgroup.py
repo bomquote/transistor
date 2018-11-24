@@ -9,12 +9,13 @@ See transistor.workers.__init__ for more notes on this module.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
-from collections import namedtuple
+from typing import NamedTuple, Type
+from transistor.workers.basegroup_abc import BaseGroup
 
-WorkGroup = namedtuple('WorkGroup', ['class_', 'workers', 'name', 'kwargs'])
-WorkGroup.__doc__ = \
-    """"
-    A namedtuple to use when starting up a WorkGroupManager.  Intended use 
+
+class WorkGroup(NamedTuple):
+    """
+    A container class to use when starting up a WorkGroupManager.  Intended use
     is, like below:
 
     >>> groups = [
@@ -26,9 +27,13 @@ WorkGroup.__doc__ = \
     >>>          ]
     >>> manager = WorkGroupManager('part_number_job_1', book, groups=groups, pool=5)
 
-    :param class: the <WorkGroup> class object
+    :param class: the <WorkerGroup> class object
     :param class: the number of workers to spawn
-    :param class: the workgroup name, 
+    :param class: the workgroup name,
     where name == tracker name == worker name == scraper name, must all be same
     :param class: kwargs to use for each <Worker> instance in the group
     """
+    class_: Type[BaseGroup]
+    workers: int
+    name: str
+    kwargs: dict

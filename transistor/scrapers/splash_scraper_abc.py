@@ -112,7 +112,8 @@ class SplashScraper(ABC):
                 'keyword': keyword,  # can be used in the LUA script to submit a form
                 'cookies': self.cookies,
                 'user_agent': self.user_agent,
-                'splash_wait': self.splash_wait
+                'splash_wait': self.splash_wait,
+                'js_source': self.js_source
             }
         """
         super().__init__()
@@ -142,6 +143,7 @@ class SplashScraper(ABC):
         self.http_session_timeout = kwargs.pop('http_session_timeout', (3.05, 10.05))
         self.splash_args = kwargs.pop('splash_args', None)
         self.splash_wait = kwargs.pop('splash_wait', 3.0)
+        self.js_source = kwargs.pop('js_source', None)
 
         # ----- kwargs only used for testing setup ----- #
         self._test_true = kwargs.get('_test_true', False)
@@ -298,7 +300,8 @@ class SplashScraper(ABC):
                 'keyword': keyword,  # can be used in the LUA script to submit a form
                 'cookies': self.cookies,
                 'user_agent': self.user_agent,
-                'splash_wait': self.splash_wait
+                'splash_wait': self.splash_wait,
+                'js_source': self.js_source
             }
         else:
             self.splash_args = splash_args

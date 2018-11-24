@@ -9,17 +9,18 @@ more notes on this module.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, ABCMeta
 
 
 class BaseGroup(ABC):
     """
-    Inherit this class to create a WorkGroup. It allows to index and combine
-    groups of workers. For example, this class enables WorkGroups to be combined like:
+    Inherit this class to create a WorkerGroup. It allows to index and combine
+    groups of workers. For example, this class enables WorkerGroups to be
+    combined like:
 
-    workgroup3 = workgroup1 + workgroup2
+    workergroup3 = workergroup1 + workergroup2
 
-    It should be inherited to form a WorkGroup, where WorkGroup is a group of
+    It should be inherited to form a WorkerGroup, where WorkerGroup is a group of
     individual scraper workers.
     """
     name = None
@@ -51,7 +52,7 @@ class BaseGroup(ABC):
         self.kwargs = kwargs
 
     def __repr__(self):
-        return f"<WorkGroup(job_id='{self.job_id}', group_name='{self.name}')>"
+        return f"<WorkerGroup(job_id='{self.job_id}', group_name='{self.name}')>"
 
     def __getitem__(self, index):
         """
