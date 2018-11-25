@@ -37,14 +37,31 @@ __all__ = ['PprintItemExporter', 'PickleItemExporter', 'PythonItemExporter',
 
 
 class CsvItemExporter(BaseItemExporter):
+    """
+    Exports Items in CSV format to the given file-like object. If the
+    fields_to_export attribute is set, it will be used to define the CSV
+    columns and their order. The export_empty_fields attribute has no
+    effect on this exporter.
+    """
 
     def __init__(self, file, include_headers_line=True, join_multivalued=',', **kwargs):
+        """
+
+        :param file: the file-like object to use for exporting the data. Its write
+        method should accept bytes (a disk file opened in binary mode, a io.BytesIO
+        object, etc)
+        :param include_headers_line:  If enabled, makes the exporter output a header
+        line with the field names taken from BaseItemExporter.fields_to_export or
+        the first exported item fields.
+        :param join_multivalued:
+        :param kwargs:
+        """
         self.scraper = kwargs.pop('scraper', None)
         self.items = kwargs.pop('items', Item)
         super().__init__(scraper=self.scraper, items=self.items)
         self._configure(kwargs, dont_fail=True)
         if not self.encoding:
-            self.encoding = 'utf-8'
+            self.encoding = 'utf_8_sig'
         self.include_headers_line = include_headers_line
         self.stream = io.TextIOWrapper(
             file,

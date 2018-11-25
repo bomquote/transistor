@@ -10,10 +10,12 @@ database, spreadsheet export, write to file.
 ~~~~~~~~~~~~
 """
 
-from .exporters import BaseItemExporter
+from .exporters import (PprintItemExporter, PickleItemExporter, PythonItemExporter,
+                        CsvItemExporter, MarshalItemExporter, BaseItemExporter)
 from .containers import SplashScraperItems
 from .item import Item, Field
 from .newt_db.newt_crud import get_job_results, delete_job
 
-__all__ = ['delete_job', 'Field', 'get_job_results', 'Item','BaseItemExporter',
-           'SplashScraperItems']
+__all__ = ['delete_job', 'Field', 'get_job_results', 'Item', 'PprintItemExporter',
+           'PickleItemExporter', 'PythonItemExporter', 'CsvItemExporter',
+           'MarshalItemExporter', 'BaseItemExporter', 'SplashScraperItems']

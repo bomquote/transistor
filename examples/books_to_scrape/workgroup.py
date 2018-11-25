@@ -22,7 +22,7 @@ class BooksWorker(BaseWorker):
     to facilitate gevent based concurrency.
 
     First, inherit from BaseWorker and then implement the get_scraper,
-    get_scraper_extractor, and save_to_db methods, as shown below.
+    get_scraper_extractor, and process_exports methods, as shown below.
 
     Also, add any extra class attributes as needed to support your custom
     Scraper and ScraperDataExtractor.
@@ -33,34 +33,21 @@ class BooksWorker(BaseWorker):
         I'm only overriding this method to return a few extra print messages and
         also call out, this is a good hook place for your further customization.
 
-        Use whatever complex logic between save_to_db() and
+        Use whatever complex logic between process_exports() and
         gevent.sleep() as per your own customized requirement.
 
         Also, if you don't want to use newt.db at all, you should override the
-        self.save_to_db method.
+        self.process_exports method.
 
         """
         self.events.append(scraper)
-        self.save_to_db(scraper, task)
+        self.process_exports(scraper, task)
         #  /start CUSTOM LOGIC
         print(f'{self.name} has {scraper.stock} inventory status.')
         print(f'pricing: {scraper.price}')
         print(f'Worker {self.name}-{self.number} finished task {task}')
         # /end CUSTOM LOGIC
         gevent.sleep(0)
-
-    def get_scraper(self, task, **kwargs):
-        """
-        Return an instance of the custom Scraper object. Specifically, note
-        how `task` is passed here, as the `book_title` parameter.
-
-        The book titles are read from the excel spreadsheet, and each title then
-        loaded into a work queue, where it becomes a task to be assigned by the
-        manager for completion.  Here, we pass in the task.
-        """
-        scraper = self.scraper(task, name=self.name, number=self.number,
-                               **kwargs)
-        return scraper
 
     def get_scraper_exporter(self, scraper):
         """
@@ -69,10 +56,15 @@ class BooksWorker(BaseWorker):
         :param scraper: this will be the executed scraper object (i.e. BookScraper())
         :return: a custom ScraperExporter instance
         """
-        return BookDataExporter(scraper)
+        # ensure to open this file in binary mode
+        book_data_file = open('c:/tmp/book_data.csv', 'a+b')
+        return BookDataExporter(scraper,
+                                fields_to_export=['book_title', 'stock', 'price'],
+                                file=book_data_file, )
 
-    def save_to_db(self, scraper, task):
+    def process_exports(self, scraper, task):
         """
+        Process the exports.
         Save the container of the completed Scraper object to newt.db, using the
         middle-layer serialization helper class, BookDataExporter.
 
@@ -89,10 +81,15 @@ class BooksWorker(BaseWorker):
             except KeyError:
                 # will be raised if there is already a list with the same job_name
                 pass
-            # export the data object to be persisted, with the export.write() method
-            items = self.get_scraper_exporter(scraper).write()
+            # get the exporter
+            exporter = self.get_scraper_exporter(scraper)
+            # export the items object, with the export.write() method
+            items = exporter.write()
+            # save the items object to newt.db
             ndb.root.scrapes[self.job_id].add(items)
             ndb.commit()
+            # we also want a spreadsheet, so export the csv data
+            exporter.export_item(items)
             print(f'Worker {self.name}-{self.number} saved {items.__repr__()} to '
                   f'scrape_list "{self.job_id}" for task {task}.')
         else:

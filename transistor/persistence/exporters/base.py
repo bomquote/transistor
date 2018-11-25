@@ -19,6 +19,7 @@ License, see LICENSE for more details.
 
 __all__ = ['BaseItemExporter']
 
+
 class BaseItemExporter:
     """
     This is the base class for all Item Exporters. It provides
@@ -57,8 +58,8 @@ class BaseItemExporter:
         already finished a scrape.
         :param items: a class in which the attributes to be persisted
         from the scraper will be written.
-        :param kwargs: fields_to_export: A list with the name of the
-        fields that will be exported, or None if you want to export
+        :param kwargs: fields_to_export::list(): A list with the name
+        of the fields that will be exported, or None if you want to export
         all fields. Defaults to None. Some exporters (like CsvItemExporter)
         respect the order of the fields defined in this attribute. Some
         exporters may require fields_to_export list in order to export
@@ -87,7 +88,6 @@ class BaseItemExporter:
     def __repr__(self):
         return f"<Exporter({self.scraper.__repr__()})>"
 
-
     def _configure(self, options, dont_fail=False):
         """
         Configure the exporter by poping options from the ``options`` dict.
@@ -102,14 +102,12 @@ class BaseItemExporter:
         if not dont_fail and options:
             raise TypeError("Unexpected options: %s" % ', '.join(options.keys()))
 
-
     def export_item(self, item):
         """
         Exports the given item. This method must be implemented in subclasses.
         :param item:
         """
         raise NotImplementedError
-
 
     def serialize_field(self, field, name:str, value):
         """
@@ -133,7 +131,7 @@ class BaseItemExporter:
         """
         Signal the beginning of the exporting process. Some exporters may
         use this to generate some required header (for example, the
-        XmlItemExporter). You must call this method before exporting any items.
+        XmlItemExporter).
         :return:
         """
         pass
@@ -142,7 +140,6 @@ class BaseItemExporter:
         """
         Signal the end of the exporting process. Some exporters may use
         this to generate some required footer (for example, the XmlItemExporter).
-        You must always call this method after you have no more items to export.
         :return:
         """
         pass
@@ -173,7 +170,6 @@ class BaseItemExporter:
 
             yield field_name, value
 
-
     def write(self):
         """
         Create the new class::Item() container object. This is
@@ -202,7 +198,6 @@ class BaseItemExporter:
         self.items['endpoint_status'] = self.scraper.browser.endpoint_status
         self.items['crawlera_session'] = self.scraper.browser.crawlera_session
         self.items['html'] = self.scraper.browser.html
-
 
         # scraper attributes
         self.items['name']=self.scraper.name

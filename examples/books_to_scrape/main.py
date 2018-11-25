@@ -97,6 +97,7 @@ manager = BooksWorkGroupManager('books_scrape', stateful_book, groups=groups, po
 
 
 if __name__ == "__main__":
+
     manager.main()  # call manager.main() to start the job.
 
     # below shows an example of navigating your persisted data after the scrape

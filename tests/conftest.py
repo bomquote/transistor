@@ -41,11 +41,11 @@ def _BooksWorker():
     """
     class _BooksWorker(BooksWorker):
         """
-        A _BooksWorker instance which overrides the save_to_db method to
+        A _BooksWorker instance which overrides the process_exports method to
         make it useful for testing.
         """
 
-        def save_to_db(self, scraper, task):
+        def process_exports(self, scraper, task):
             if self.job_id is not 'NONE':
                 try:
                     # create the list with the job name if it doesnt already exist
@@ -56,11 +56,15 @@ def _BooksWorker():
                 except KeyError:
                     # will be raised if there is already a list with the same job_name
                     pass
-                # export the data object to be persisted, with the
-                # exporter.write() method
-                items = self.get_scraper_exporter(scraper).write()
+                # get the exporter
+                exporter = self.get_scraper_exporter(scraper)
+                # export the items object, with the export.write() method
+                items = exporter.write()
+                # save the items object to newt.db (USE ._scrapes for this fixture!!)
                 ndb.root._scrapes[self.job_id].add(items)
                 ndb.commit()
+                # we also want a spreadsheet, so export the csv data
+                exporter.export_item(items)
                 print(f'Worker {self.name}-{self.number} saved {items.__repr__()} to '
                       f'scrape_list "{self.job_id}" for task {task}.')
             else:
@@ -79,7 +83,7 @@ def _BooksToScrapeGroup(_BooksWorker):
     """
     class _BookstoScrapeGroup(BooksToScrapeGroup):
         """
-        A _BooksWorker instance which overrides the save_to_db method to
+        A _BooksWorker instance which overrides the process_exports method to
         make it useful for testing.
         """
         def hired_worker(self):
@@ -106,8 +110,8 @@ def splash_browser():
     :return:
     """
     browser = SplashBrowser(
-    soup_config = {'features': 'lxml'},
-    requests_adapters = {'http://': HTTPAdapter(max_retries=5)})
+        soup_config={'features': 'lxml'},
+        requests_adapters={'http://': HTTPAdapter(max_retries=5)})
 
     return browser
 

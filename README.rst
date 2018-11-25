@@ -515,7 +515,7 @@ Now, from your python repl:
     from transistor.newt_db import ndb
 
     >>> ndb.root.scrapes = ScrapeLists()  # Assigning ScrapeLists() is only required during initial seup. Or else, when/if you change the ScrapeLists() object, for example, to provide more functionality to the class.
-    >>> ndb.root.scrapes.add('first-scrape', ScrapeList())  # You will add a new ScrapeList() anytime you need a new list container. Like, every single scrape you save.  See ``save_to_db`` method in ``examples/books_to_scrape/workgroup.py``.
+    >>> ndb.root.scrapes.add('first-scrape', ScrapeList())  # You will add a new ScrapeList() anytime you need a new list container. Like, every single scrape you save.  See ``process_exports`` method in ``examples/books_to_scrape/workgroup.py``.
     >>> ndb.commit() # you must explicitly commit() after each change to newt.db.
 
 At this point, you are ready-to-go with newt.db and PostgreSQL.

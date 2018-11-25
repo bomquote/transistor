@@ -55,5 +55,5 @@ def to_unicode(text, encoding=None, errors='strict'):
         raise TypeError('to_unicode must receive a bytes or str'
                         'object, got %s' % type(text).__name__)
     if encoding is None:
-        encoding = 'utf-8'
+        encoding = 'utf_8_sig'
     return text.decode(encoding, errors)

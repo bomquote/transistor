@@ -32,7 +32,6 @@ with open(os.path.join(here, NAME, '__version__.py')) as f:
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'Acquisition>=4.5'
     'mechanicalsoup>=0.11.0',
     'requests>=2.20.1',
     'urllib3>=1.24.1',
@@ -123,7 +122,7 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    download_url='https://github.com/bomquote/transistor/archive/v0.1.1.tar.gz',
+    download_url='https://github.com/bomquote/transistor/archive/v0.2.0.tar.gz',
     keywords=['scraping', 'crawling', 'spiders', 'requests', 'beautifulsoup4',
               'mechanicalsoup', 'framework', 'headless-browser'],
     packages=find_packages(exclude=('tests',)),

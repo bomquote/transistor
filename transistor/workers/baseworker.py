@@ -88,11 +88,11 @@ class BaseWorker:
         :param task: passing through the task from spawn_scraper method.
         """
         self.events.append(scraper)
-        self.save_to_db(scraper, task)
+        self.process_export(scraper, task)
         print(f'Worker {self.name}-{self.number} finished task {task}')
         gevent.sleep(0)
 
-    def save_to_db(self, scraper, task):
+    def process_export(self, scraper, task):
         """
         Here is where you can implement some custom logic to persist your data.
         Check the examples/books_to_scrape folder for a fully working example
@@ -104,11 +104,17 @@ class BaseWorker:
         :param task: just passing through the item task .
         :return: pass or commit to your db and return a print statement.
         """
-        raise NotImplementedError('You must implement save_to_db, even if just `pass`.')
+        raise NotImplementedError('You must implement export method to use it.')
 
     def get_scraper(self, task, **kwargs):
         """
         Return an instance of a custom Scraper object with parameters that you need.
+        Specifically, note how `task` is passed here.
+
+        In our examples/books_to_scrape, task is passed to the `book_title`
+        parameter. The book titles are read from the excel spreadsheet, and each
+        title is then loaded into a work queue, where it becomes a task to be
+        assigned by the manager for completion.  Here, is where task is passed in.
 
         :return: self.scraper(task, name=self.name, number=self.number, **kwargs)
         """

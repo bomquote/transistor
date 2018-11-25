@@ -38,19 +38,19 @@ class BooksWorkGroupManager(BaseWorkGroupManager):
         """
         print(f'spawning {target}')
         target.spawn_scraper()  # this must be called. It is, required.
-        # Calling spawn_scraper() above instructs the Worker object to start the scrape.
-        # So there will be some wait period at this point for each worker to actually
-        # run out of work and quit with a graceful shutdown.
-        # Therefore, A GOOD SPOT TO HOOK SOME POST-SCRAPE LOGIC ON YOUR WORKERS RESULTS,
-        # IS RIGHT HERE. For example, I've simply set `events = []` as a class attribute
-        # on the BaseWorker <Worker> object and then appended `self` to `events` after
-        # each scrape returns, as completed by the Worker.
+        # Calling spawn_scraper() above instructs the Worker object to start
+        # the scrape.So there will be some wait period at this point for each
+        # worker to actually run out of work and quit with a graceful shutdown.
+        # Therefore, A GOOD SPOT TO HOOK SOME POST-SCRAPE LOGIC ON YOUR WORKERS
+        # RESULTS, IS RIGHT HERE. For example, I've simply set `events = []` as a
+        # class attribute on the BaseWorker <Worker> object and then appended
+        # `self` to `events` after each scrape returns, as completed by the Worker.
         for event in target.events:
             # here, event represents returned scraper objects which the worker has
             # completed. We can iterate through the event objects and, for example,
-            # apply some data transformation, delete failed scrapes, or else save data
+            # apply some data transformation, delete failed scrapes, or save data
             print(f'THIS IS A MONITOR EVENT - > {event}')
-        # This last line is required, ensure the below gevent.sleep(0) remains!
+        # This last line is required, ensure the below gevent.sleep(0) remains.
         gevent.sleep(0)
 
 

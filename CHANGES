@@ -2,6 +2,9 @@
   transistor: CHANGES
 ========================
 
+11/25/18
+- `BaseWorker.save_to_db` has been changed to `BaseWorker.process_exports`
+
 11/24/18
 - added a few attributes to SplashBrowser in anticipation of needing them
 to support a more robust crawling class.

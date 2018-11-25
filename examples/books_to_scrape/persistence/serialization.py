@@ -13,10 +13,9 @@ exporter class `write` methods.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
-
 import newt.db
 from transistor.persistence.item import Field
-from transistor.persistence import BaseItemExporter, SplashScraperItems
+from transistor.persistence import SplashScraperItems, CsvItemExporter
 
 
 def serialize_price(value):
@@ -26,7 +25,7 @@ def serialize_price(value):
     :param value: the scraped value for the `price` Field
     """
     if value:
-        return f'UK {str(value)}'
+        return f"UK {str(value)}"
 
 class BookScraperItems(newt.db.Persistent, SplashScraperItems):
     """
@@ -49,7 +48,7 @@ class BookScraperItems(newt.db.Persistent, SplashScraperItems):
     stock = Field()  # the self.stock attribute
 
 
-class BookDataExporter(BaseItemExporter):
+class BookDataExporter(CsvItemExporter):
     """
     A worker tool to extract the data from the BookScraper object and pass the
     data into BookScraperContainer, a class which can be pickled.
@@ -59,8 +58,8 @@ class BookDataExporter(BaseItemExporter):
     for 'price'.
     """
 
-    def __init__(self, scraper, items=BookScraperItems):
-        super().__init__(scraper=scraper, items=items)
+    def __init__(self, scraper, items=BookScraperItems, **kwargs):
+        super().__init__(scraper=scraper, items=items, **kwargs)
 
     def write(self):
         """
@@ -89,3 +88,23 @@ class BookDataExporter(BaseItemExporter):
 
         # finally, ensure you return self.items
         return self.items
+
+    def export_item(self, item):
+        """
+        Override to set a globals `_headers_not_written` variable. We must
+        do this because we are utilizing multiple Worker objects that are
+        each encapsulating a unique class::Exporter instance. While, we are
+        writing to the same global csv file. So, to avoid re-writing the header
+        on each exporter's write the the csv file, we can refer to a globally
+        scoped variable, to write the header on the first write, and then check
+        if the header has already been written on the subsequent writes.
+        """
+        if globals().get('_headers_not_written', True):
+            globals()['_headers_not_written'] = False
+            self._write_headers_and_set_fields_to_export(item)
+
+        fields = self._get_serialized_fields(item, default_value='',
+                                             include_empty=True)
+        values = list(self._build_row(x for _, x in fields))
+
+        self.csv_writer.writerow(values)
