@@ -6,7 +6,7 @@ lxml==4.2.5
 lz4==2.1.2
 openpyxl==2.5.2
 pyexcel==0.5.9.1
-pyexcel-io==0.5.9.1
+pyexcel-io==0.5.10
 pyexcel-ods3==0.5.2
 pyexcel-webio==0.1.4
 pyexcel-xls==0.5.8
