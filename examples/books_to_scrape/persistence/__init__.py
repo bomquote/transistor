@@ -10,5 +10,5 @@ with postgresql + newt.db.
 ~~~~~~~~~~~~
 """
 
-from .serialization import BookDataExporter, BookScraperItems
+from .serialization import BookItems, BookItemsLoader
 from .newt_db import ndb

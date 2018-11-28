@@ -2,6 +2,32 @@
   transistor: CHANGES
 ========================
 
+11/28/18
+
+More API breaking changes:
+
+- previously, the Worker needed to be explicitly defined in the
+BaseGroup.hired_worker() method, and the Scraper needed to be defined
+inside the Worker. Now, you can set the Worker and Scraper at
+the top level in the WorkGroup parameters named `worker` and `spider`.
+Explicitly subclassing BaseGroup to override hired_worker is no longer
+required. But, it can still be done. Then, you can just set the WorkGroup
+parameter `group` to the custom BaseGroup class.
+
+- previously, exporters were initialized with an Item and Scraper class
+set as a parameter. That created problems spinning up multiple workers with
+asynchronous I/O, for example requiring blocking file locking for CsvExport
+along with global variables to avoid rewriting header lines. Now, set classes
+for Item and ItemLoaders at the top level in the WorkGroup parameters
+named `items`, `loader` and set a parameterized Exporter instance in the
+WorkGroup `exporter` parameter. The API is a lot closer to Scrapy's Item,
+ItemLoader and Exporters, which should be more familiar and has some benefits.
+
+- references to `scraper` have generally been changed to `spider`.  The
+intent is `spider` is a generalization for both `scraper` and `crawler`.
+This is in advance of implementing some more specific crawler functionality.
+
+
 11/25/18
 - `BaseWorker.save_to_db` has been changed to `BaseWorker.process_exports`
 
@@ -50,7 +76,6 @@ ajax after a time delay. Set with `splash_args=<float>` keyword. Default 3.0.
 same from examples/books_to_scrape/persistence.
 - moved container.py and extractor.py up a level into the main
 transistor/persistence module
-
 
 Nov 17, 2018
 - pypy 0.1.1 release

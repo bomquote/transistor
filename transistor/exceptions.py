@@ -26,7 +26,7 @@ class UnknownError(Exception):
     pass
 
 
-class BrokenScraper(Exception):
+class BrokenSpider(Exception):
     pass
 
 

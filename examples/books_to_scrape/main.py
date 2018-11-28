@@ -52,8 +52,12 @@ from transistor.persistence.newt_db import get_job_results, delete_job
 from examples.books_to_scrape.persistence.newt_db import ndb
 # finally, the core of what we need to launch the scrape job
 from transistor import WorkGroup, StatefulBook
-from examples.books_to_scrape.workgroup import BooksToScrapeGroup
+from transistor.persistence.exporters import CsvItemExporter
+from examples.books_to_scrape.workgroup import BooksWorker
+from examples.books_to_scrape.scraper import BooksToScrapeScraper
 from examples.books_to_scrape.manager import BooksWorkGroupManager
+from examples.books_to_scrape.persistence.serialization import (
+    BookItems, BookItemsLoader)
 
 
 # 1) get the excel file path which has the book_titles we are interested to scrape
@@ -75,16 +79,24 @@ trackers = ['books.toscrape.com']
 stateful_book = StatefulBook(file, trackers, keywords='titles', autorun=True)
 
 
-# 3) Setup the WorkGroup. You can setup an arbitrary number of WorkGroups in a list.
+# 3) Setup the WorkGroups. You can create an arbitrary number of WorkGroups in a list.
 # For example, if there are three different domains which you want to search for
 # the book titles from the excel file. To, scrape the price and stock data on
 # each of the three different websites for each book title. You could setup three
 # different WorkGroups here. Last, the WorkGroup.name should match the tracker name.
 groups = [
     WorkGroup(
-        class_=BooksToScrapeGroup,
-        workers=20,  # this creates 20 scrapers and assigns each a book as a task
         name='books.toscrape.com',
+        spider=BooksToScrapeScraper,
+        worker=BooksWorker,
+        items=BookItems,
+        loader=BookItemsLoader,
+        exporters=[
+            CsvItemExporter(
+                fields_to_export=['book_title', 'stock', 'price'],
+                file=open('c:/tmp/book_data.csv', 'a+b'))
+        ],
+        workers=20,  # this creates 20 scrapers and assigns each a book as a task
         kwargs={'url': 'http://books.toscrape.com/', 'timeout': (3.0, 20.0)})
     ]
 

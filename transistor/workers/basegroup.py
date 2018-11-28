@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.workers.basegroup_abc
+transistor.workers.basegroup
 ~~~~~~~~~~~~
 This module implements BaseGroup. See transistor.workers.__init__ for
 more notes on this module.
@@ -9,21 +9,16 @@ more notes on this module.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
-from abc import ABC, abstractmethod, ABCMeta
 
 
-class BaseGroup(ABC):
+class BaseGroup:
     """
-    Inherit this class to create a WorkerGroup. It allows to index and combine
-    groups of workers. For example, this class enables WorkerGroups to be
-    combined like:
+    Inherit this class to create a Group of Worker objects. It allows to
+    easily index and combine groups of workers. For example, this class
+    enables class WorkerGroup<#>(BaseGroup) to be combined like:
 
-    workergroup3 = workergroup1 + workergroup2
-
-    It should be inherited to form a WorkerGroup, where WorkerGroup is a group of
-    individual scraper workers.
+    WorkerGroup3 = WorkerGroup1 + WorkerGroup2
     """
-    name = None
 
     def __init__(self, staff: int, job_id: str, timeout: tuple = None, **kwargs):
         """
@@ -37,9 +32,9 @@ class BaseGroup(ABC):
         optimization of the LUA SOURCE script to filter links that do not need
         followed in order to get the data that you are targeting.
         :param kwargs: name::str(): a name attribute which will be passed down to
-        the worker and scraper.
+        the worker and spider.
         :param: url::str(): the starting URL which will be passed down to the worker
-        and scraper.
+        and spider.
         """
         self.staff = staff
         self.job_id = job_id
@@ -48,6 +43,11 @@ class BaseGroup(ABC):
             self.timeout = (3.05, 700.00)
         self.worker_list = None
         self.name = kwargs.get('name', None)
+        self.items = kwargs.get('items', None)
+        self.loader = kwargs.get('loader', None)
+        self.exporter = kwargs.get('exporter', None)
+        self.worker = kwargs.get('worker', None)
+        self.spider = kwargs.pop('spider', None)
         self.url = kwargs.get('url', None)
         self.kwargs = kwargs
 
@@ -56,14 +56,15 @@ class BaseGroup(ABC):
 
     def __getitem__(self, index):
         """
-        We want the class to be able to work like a list.
+        Enable the class to function like a list.
         :param index: an index
         """
         return self.worker_list[index]
 
     def __add__(self, other):
         """
-        Let's be able to add two worker lists together.
+        Enable to add two classes that inherit from this BaseGroup class,
+        together.  It should function the same as adding two lists together.
         :param other: another object which inherits from BaseGroup
         """
         total_workers = []
@@ -81,6 +82,9 @@ class BaseGroup(ABC):
             worker = self.hired_worker()
             worker.job_id = self.job_id
             worker.number = number + 1  # I don't want a zero index worker number
+            worker.items = self.items
+            worker.loader = self.loader
+            worker.exporter = self.exporter
             worker_list.append(worker)
         self.worker_list = worker_list
         return worker_list
@@ -91,6 +95,20 @@ class BaseGroup(ABC):
 
         return self.worker_list
 
-    @abstractmethod
     def hired_worker(self):
-        raise NotImplementedError("You must define a hired_worker method")
+        """
+        Encapsulates the custom spider, inside of a Worker object. This helps
+        enable running an arbitrary amount of Spider objects.
+
+        Creates the number of workers given in `staff` (see BaseGroup.__init__()).
+        Setting the http_session for the Worker is also handled here.
+        Last, this is a good place to ensure any custom class attributes you must
+        have on the worker are set here.
+
+        :returns <Worker>, the worker object
+        """
+        worker = self.worker(job_id=self.job_id, spider=self.spider,
+                             http_session={'url': self.url, 'timeout': self.timeout},
+                             **self.kwargs)
+
+        return worker

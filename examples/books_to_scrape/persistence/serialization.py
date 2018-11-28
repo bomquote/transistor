@@ -15,7 +15,8 @@ exporter class `write` methods.
 """
 import newt.db
 from transistor.persistence.item import Field
-from transistor.persistence import SplashScraperItems, CsvItemExporter
+from transistor.persistence import SplashScraperItems
+from transistor.persistence.loader import ItemLoader
 
 
 def serialize_price(value):
@@ -27,7 +28,8 @@ def serialize_price(value):
     if value:
         return f"UK {str(value)}"
 
-class BookScraperItems(newt.db.Persistent, SplashScraperItems):
+
+class BookItems(newt.db.Persistent, SplashScraperItems):
     """
     A class object which will encapsulate the data from the scraper
     object. It will itself be persisted in PostgreSQL and also
@@ -40,7 +42,7 @@ class BookScraperItems(newt.db.Persistent, SplashScraperItems):
     To avoid issues, ensure that the result from a beautifulsoup4 object
     is cast to string. Wrapping it with str() will avoid issues.
     """
-
+    written = False
     # -- names of your customized scraper class attributes go here -- #
 
     book_title = Field()  # str() # the book_title which we searched
@@ -48,18 +50,7 @@ class BookScraperItems(newt.db.Persistent, SplashScraperItems):
     stock = Field()  # the self.stock attribute
 
 
-class BookDataExporter(CsvItemExporter):
-    """
-    A worker tool to extract the data from the BookScraper object and pass the
-    data into BookScraperContainer, a class which can be pickled.
-
-    Define any custom serializers on a per-field basis here, by calling
-    self.serialize_field(field, name, value).  See the example below
-    for 'price'.
-    """
-
-    def __init__(self, scraper, items=BookScraperItems, **kwargs):
-        super().__init__(scraper=scraper, items=items, **kwargs)
+class BookItemsLoader(ItemLoader):
 
     def write(self):
         """
@@ -71,12 +62,10 @@ class BookDataExporter(CsvItemExporter):
         Last, ensure you assign the attributes to `self.items` and also finally
         you must return self.items in this method!
         """
-        # first call super() to write the built-in Items from BaseItemExporter
-        super().write()
 
         # now, define your custom items
-        self.items['book_title'] = self.scraper.book_title
-        self.items['stock'] = self.scraper.stock
+        self.items['book_title'] = self.spider.book_title
+        self.items['stock'] = self.spider.stock
         # set the value with self.serialize_field(field, name, value) as needed,
         # for example, `serialize_price` below turns '£50.10' into 'UK £50.10'
         # the '£50.10' is the original scraped value from the website stored in
@@ -84,27 +73,11 @@ class BookDataExporter(CsvItemExporter):
         self.items['price'] = self.serialize_field(
             field=Field(serializer=serialize_price),
             name='price',
-            value=self.scraper.price)
+            value=self.spider.price)
+
+        # call super() to write the built-in Items from BaseItemExporter
+        super().write()
 
         # finally, ensure you return self.items
+        self.items.written=True
         return self.items
-
-    def export_item(self, item):
-        """
-        Override to set a globals `_headers_not_written` variable. We must
-        do this because we are utilizing multiple Worker objects that are
-        each encapsulating a unique class::Exporter instance. While, we are
-        writing to the same global csv file. So, to avoid re-writing the header
-        on each exporter's write the the csv file, we can refer to a globally
-        scoped variable, to write the header on the first write, and then check
-        if the header has already been written on the subsequent writes.
-        """
-        if globals().get('_headers_not_written', True):
-            globals()['_headers_not_written'] = False
-            self._write_headers_and_set_fields_to_export(item)
-
-        fields = self._get_serialized_fields(item, default_value='',
-                                             include_empty=True)
-        values = list(self._build_row(x for _, x in fields))
-
-        self.csv_writer.writerow(values)

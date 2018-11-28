@@ -19,11 +19,14 @@ from pathlib import Path
 from os.path import dirname as d
 from os.path import abspath
 from transistor import StatefulBook, WorkGroup
-from transistor.persistence.newt_db.collections import ScrapeLists
+from transistor.persistence.newt_db.collections import SpiderLists
+from transistor.persistence.exporters.exporters import CsvItemExporter
 from ..conftest import get_job_results, delete_job
 from examples.books_to_scrape.persistence.newt_db import ndb
 from examples.books_to_scrape.scraper import BooksToScrapeScraper
 from examples.books_to_scrape.manager import BooksWorkGroupManager
+from examples.books_to_scrape.persistence.serialization import (
+    BookItems, BookItemsLoader)
 
 root_dir = d(d(abspath(__file__)))
 
@@ -76,22 +79,36 @@ def bts_live_scraper():
 
 
 @pytest.fixture(scope='function')
-def bts_manager(_BooksToScrapeGroup):
+def bts_manager(_BooksToScrapeGroup, _BooksWorker):
     """
     A BooksToScrape Manager test fixture for live network call.
     """
+    # ensure to open this file in binary mode
+    book_data_file = open('c:/tmp/book_data.csv', 'a+b')
+    exporters = [
+        CsvItemExporter(
+            fields_to_export=['book_title', 'stock', 'price'],
+            file=book_data_file
+        )
+    ]
+
     file = get_file_path('book_titles.xlsx')
     trackers = ['books.toscrape.com']
-    stateful_book = StatefulBook(file, trackers, keywords='titles', autorun=True)
+    tasks = StatefulBook(file, trackers, keywords='titles', autorun=True)
+
     groups = [
         WorkGroup(
-            class_=_BooksToScrapeGroup,
-            workers=3,  # this creates 3 scrapers and assigns each a book as a task
             name='books.toscrape.com',
+            spider=BooksToScrapeScraper,
+            worker=_BooksWorker,
+            items=BookItems,
+            loader=BookItemsLoader,
+            exporters=exporters,
+            workers=3,  # this creates 3 scrapers and assigns each a book as a task
             kwargs={'url': 'http://books.toscrape.com/', 'timeout': (3.0, 20.0)})
     ]
-    manager = BooksWorkGroupManager('books_scrape', stateful_book, groups=groups,
-                                    pool=5)
+    manager = BooksWorkGroupManager('books_scrape', tasks, groups=groups, pool=5)
+
     return manager
 
 
@@ -178,7 +195,7 @@ class TestLiveBooksToScrape:
 
         # todo: move this to a setup fixture
         # first, setup newt.db for testing
-        ndb.root._scrapes = ScrapeLists()
+        ndb.root._spiders = SpiderLists()
         ndb.commit()
 
         # now, perform the scrape
@@ -218,7 +235,7 @@ class TestLiveBooksToScrape:
 
         # todo: move this to a teardown fixture
         delete_job('books_scrape')
-        del ndb.root._scrapes
+        del ndb.root._spiders
         ndb.commit()
 
     def test_live_scraper_browser_open(self, bts_live_scraper):

@@ -15,8 +15,9 @@ from os.path import abspath, join
 from unittest.mock import Mock, patch
 from requests.adapters import HTTPAdapter
 from transistor import SplashBrowser
-from transistor.persistence.newt_db.collections import ScrapeList
-from examples.books_to_scrape.workgroup import BooksWorker, BooksToScrapeGroup
+from transistor import BaseGroup
+from transistor.persistence.newt_db.collections import SpiderList
+from examples.books_to_scrape.workgroup import BooksWorker
 from examples.books_to_scrape.scraper import BooksToScrapeScraper
 from examples.books_to_scrape.persistence.newt_db import ndb
 
@@ -45,26 +46,22 @@ def _BooksWorker():
         make it useful for testing.
         """
 
-        def process_exports(self, scraper, task):
+        def pre_process_exports(self, spider, task):
             if self.job_id is not 'NONE':
                 try:
                     # create the list with the job name if it doesnt already exist
-                    ndb.root._scrapes.add(self.job_id, ScrapeList())
+                    ndb.root._spiders.add(self.job_id, SpiderList())
                     print(
-                        f'Worker {self.name}-{self.number} created a new scrape_list '
-                        f'for {self.job_id}.')
+                        f'Worker {self.name}-{self.number} created a new scrape_list for '
+                        f'{self.job_id}')
                 except KeyError:
                     # will be raised if there is already a list with the same job_name
                     pass
-                # get the exporter
-                exporter = self.get_scraper_exporter(scraper)
-                # export the items object, with the export.write() method
-                items = exporter.write()
-                # save the items object to newt.db (USE ._scrapes for this fixture!!)
-                ndb.root._scrapes[self.job_id].add(items)
+                # export the scraper data to the items object
+                items = self.load_items(spider)
+                # save the items object to newt.db
+                ndb.root._spiders[self.job_id].add(items)
                 ndb.commit()
-                # we also want a spreadsheet, so export the csv data
-                exporter.export_item(items)
                 print(f'Worker {self.name}-{self.number} saved {items.__repr__()} to '
                       f'scrape_list "{self.job_id}" for task {task}.')
             else:
@@ -72,6 +69,19 @@ def _BooksWorker():
                 print(
                     f'Worker {self.name}-{self.number} said job_name is {self.job_id} '
                     f'so will not save it.')
+
+        def post_process_exports(self, spider, task):
+            """
+            A hook point for customization after process_exports.
+
+            In this example, we append the returned scraper object to a
+            class attribute called `events`.
+
+            """
+            self.events.append(spider)
+            print(f'{self.name} has {spider.stock} inventory status.')
+            print(f'pricing: {spider.price}')
+            print(f'Worker {self.name}-{self.number} finished task {task}')
 
     return _BooksWorker
 
@@ -81,7 +91,7 @@ def _BooksToScrapeGroup(_BooksWorker):
     """
     Create an Group for testing which uses the _BooksWorker
     """
-    class _BookstoScrapeGroup(BooksToScrapeGroup):
+    class _BookstoScrapeGroup(BaseGroup):
         """
         A _BooksWorker instance which overrides the process_exports method to
         make it useful for testing.
@@ -97,7 +107,6 @@ def _BooksToScrapeGroup(_BooksWorker):
                                  http_session={'url': self.url,
                                                'timeout': self.timeout},
                                  **self.kwargs)
-            worker.name = self.name
             return worker
 
     return _BookstoScrapeGroup
@@ -120,7 +129,7 @@ def get_job_results(job_id):
     """
     A ndb helper method that manipulates the _scraper object.
     """
-    return ndb.root._scrapes.lists[job_id].results
+    return ndb.root._spiders.lists[job_id].results
 
 
 def delete_job(job_id):
@@ -128,7 +137,7 @@ def delete_job(job_id):
     A ndb helper method that manipulates the _scraper object.
     """
     try:
-        del ndb.root._scrapes.lists[job_id]
+        del ndb.root._spiders.lists[job_id]
         ndb.commit()
     except KeyError:
         pass

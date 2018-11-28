@@ -80,7 +80,7 @@ Transistor provides useful layers and objects in the following categories:
 - Crawlera use is optional. It has a minimum monthly cost of $25 USD for starter package and next level up is currently $100 USD/month.
 - in using Crawlera, the concurrency provided by gevent for asynchronous I/O along with Splash running with Aquarium, is absolutely required, because a single request with Splash + Crawlera is quite slow, taking up to **15 minutes** or more to successfully return a result.
 
-**Scraping**
+**Spiders**
 
 1. **browsers**
 
@@ -98,10 +98,10 @@ Transistor provides useful layers and objects in the following categories:
 - the scraper design is built around gevent based asynchronous I/O, and this design allows to send out an arbitrarily large number of scraper workers, with each scraper worker assigned a specific scrape task to complete.
 - the current core design, in allowing to send out an arbitrarily large number of scraper workers, is not necessarily an optimal design to 'crawl' pages in search of targeted data. Where it shines is when you need to use a webpage search function on an arbitrarily large list of search tasks, await the search results for each task, and finally return a scraped result for each task.
 
-3. **spiders** (wip, on the to-do list)
+3. **crawlers** (wip, on the to-do list)
 
-- see ``transistor/spiders`` (not yet implemented)
-- while it is straightforward to use the current Transistor design to do basic crawling (see ``examples/books_to_scrape/scraper.py`` for an example) the current way to do this with Transistor is not always optimal for crawling. So we'll implement modified designs for crawling spiders.
+- see ``transistor/crawlers`` (not yet implemented)
+- while it is straightforward to use the current Transistor scraper design to do basic crawling (see ``examples/books_to_scrape/scraper.py`` for an example) the current way to do this with Transistor is not optimal for crawling. So we'll implement modified designs for crawling spiders.
 - specifics TBD, may be fully custom or else may reuse some good architecture parts of `scrapy <https://github.com/scrapy/scrapy>`_, although if we do that, it will be done so we don't need a scrapy dependency and further it will be using gevent for asynchronous I/O.
 
 

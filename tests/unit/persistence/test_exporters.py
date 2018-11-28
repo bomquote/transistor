@@ -51,8 +51,8 @@ class BaseItemExporterTest(unittest.TestCase):
         self.output = BytesIO()
         self.ie = self._get_exporter()
 
-    def _get_exporter(self, scraper=bts_static_scraper, items=TestItem, **kwargs):
-        return BaseItemExporter(scraper, items, **kwargs)
+    def _get_exporter(self, **kwargs):
+        return BaseItemExporter(**kwargs)
 
     def _check_output(self):
         pass
@@ -122,8 +122,7 @@ class BaseItemExporterTest(unittest.TestCase):
 
 class PythonItemExporterTest(BaseItemExporterTest):
     def _get_exporter(self, **kwargs):
-        return PythonItemExporter(binary=False, scraper=bts_static_scraper,
-                                  items=TestItem,  **kwargs)
+        return PythonItemExporter(binary=False, **kwargs)
 
     def test_invalid_option(self):
         with self.assertRaisesRegexp(TypeError, "Unexpected options: invalid_option"):
@@ -165,8 +164,7 @@ class PythonItemExporterTest(BaseItemExporterTest):
         self.assertEqual(type(exported['age'][0]['age'][0]), dict)
 
     def test_export_binary(self):
-        exporter = PythonItemExporter(binary=True, scraper=bts_static_scraper,
-                                      items=TestItem)
+        exporter = PythonItemExporter(binary=True)
         value = TestItem(name='John£', age='22')
         expected = {b'name': b'John\xc2\xa3', b'age': b'22'}
         self.assertEqual(expected, exporter.export_item(value))
@@ -525,7 +523,7 @@ class CustomItemExporterTest(unittest.TestCase):
                     return super().serialize_field(field, name, value)
 
         i = TestItem(name=u'John', age='22')
-        ie = CustomItemExporter(scraper=bts_static_scraper, items=TestItem)
+        ie = CustomItemExporter()
 
         self.assertEqual(ie.serialize_field(i.fields['name'], 'name', i['name']), 'John')
         self.assertEqual(ie.serialize_field(i.fields['age'], 'age', i['age']), '23')

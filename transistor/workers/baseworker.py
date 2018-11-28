@@ -14,30 +14,33 @@ from gevent.queue import Queue, Empty
 
 
 class BaseWorker:
+    """
+    A class that performs actions on a returned Spider object (Scraper or Crawler)
+    and can itself be scaled up to an arbitrary number of instances in a BaseGroup.
+    """
 
     tasks = Queue(maxsize=1)
-    name = None
     number = None
     events = []
 
-    def __init__(self, job_id:str, scraper, http_session=None, **kwargs):
+    def __init__(self, job_id:str, spider, http_session=None, **kwargs):
         """
         :param job_id: will be the name of the list which the worker
-        appends the finished scraper object to in newt.db, for example, if the
+        appends the finished spider object to in newt.db, for example, if the
         job_name is 'testing' then the jobs will be added to the `testing` scrape_list.
 
-        :param scraper: the Scraper class object like `BooksToScrapeScraper`
+        :param spider: the Scraper or Crawler class object like `BooksToScrapeScraper`
 
         ::param http_session: dict(), specialized session args. Example,
-        some scraper implementation may require to define a custom landing page
+        some spider implementation may require to define a custom landing page
         url and also need fine control over the timeouts. So the http_session would
         look like http_session={'url': <landing page url>, 'timeout' : (3.05, 1200.05)}
 
-        :param kwargs: generally only needed to support customized scraper
-        implementations. For example, if your scraper logic depends on some flag,
+        :param kwargs: generally only needed to support customized spider
+        implementations. For example, if your spider logic depends on some flag,
         like china=True, which might define whether or not a .com.cn domain is
         scraped, instead of just the .com domain. Use kwargs as needed here, to
-        execute based on your customized scraper logic.
+        execute based on your customized spider logic.
 
         :param kwargs: qtimeout: to adjust the queue timeout like {"qtimeout":5} which
         you should probably never adjust this. But, if you do adjust this, ensure that
@@ -45,11 +48,14 @@ class BaseWorker:
 
         """
         self.job_id = job_id
-        self.scraper = scraper
+        self.spider = spider
         self.http_session = http_session
         if http_session is None:
             self.http_session = {}
-        self.number = self.number
+        self.name = kwargs.get('name', None)
+        self.items = kwargs.get('items', None)
+        self.loader = kwargs.get('loader', None)
+        self.exporters = kwargs.get('exporters', None)
         # a note for clarity about qtimeout, it is the self.tasks.get(timeout=int)
         # `timeout`, not the http_session `timeout`
         # this worker qtimeout must be longer than manager's qtimeout or else
@@ -59,7 +65,7 @@ class BaseWorker:
     def __repr__(self):
         return f"<Worker(job_id='{self.job_id}', name='{self.name}-{self.number}')>"
 
-    def spawn_scraper(self, **kwargs):
+    def spawn_spider(self, **kwargs):
         """
         Start and execute.
         """
@@ -67,48 +73,68 @@ class BaseWorker:
             while True:
                 task = self.tasks.get(timeout=self.qtimeout)  # decrements queue by 1
                 print(f'Worker {self.name}-{self.number} got task {task}')
-                scr = self.get_scraper(task, **kwargs)
-                scr.start_http_session(**self.http_session)
-                # OK, right here is where we wait for the scraper to return a result.
-                self.result(scr, task)
+                spider = self.get_spider(task, **kwargs)
+                spider.start_http_session(**self.http_session)
+                # OK, right here is where we wait for the spider to return a result.
+                self.result(spider, task)
         except Empty:
             print(f'Quitting time for worker {self.name}-{self.number}!')
 
-    def result(self, scraper, task):
+    def result(self, spider, task):
         """
-        At this point, we finally received a result from the scraper, and this
-        is where the scraper object itself can be finally processed.
+        At this point, we finally received a result from the spider, and this
+        is where the spider object itself can be finally processed. We define
+        a process_exports method along with a `pre` and `post` method as hooks
+        for signals or other custom logic.
 
-        This is designated as an abstract method, for the user to implement in
-        a subclass. It can be used as-is by creating a result method in the subclass
-        and calling super().result() in the subclass result method.
-
-        :param scraper: the returned custom modified scraper object, which end
-        user must initially create from a subclassed SplashScraper object.
-        :param task: passing through the task from spawn_scraper method.
+        :param spider: the returned custom modified spider object, which end
+        user must initially create from a subclassed SplashSpider object.
+        :param task: passing through the task from spawn_spider method.
         """
-        self.events.append(scraper)
-        self.process_export(scraper, task)
+
+        self.pre_process_exports(spider, task)
+        self.process_exports(spider, task)
+        self.post_process_exports(spider, task)
         print(f'Worker {self.name}-{self.number} finished task {task}')
         gevent.sleep(0)
 
-    def process_export(self, scraper, task):
+    def pre_process_exports(self, spider, task):
         """
-        Here is where you can implement some custom logic to persist your data.
-        Check the examples/books_to_scrape folder for a fully working example
-        which saves python objects to a PostgreSQL database, while also serializing
-        them to a postgres jsonb field, using newt.db. Some support for newt.db is
-        offered in the transistor.persistence.newt_db folder for this option.
+        A hook point which executes just before process_exports in
+        the self.results method.
 
-        :param scraper: the scraper object (i.e. BookScraper())
-        :param task: just passing through the item task .
-        :return: pass or commit to your db and return a print statement.
+        :param spider: the returned custom modified spider object, which end
+        user must initially create from a subclassed SplashSpider object.
+        :param task: passing through the task from spawn_spider method.
         """
-        raise NotImplementedError('You must implement export method to use it.')
+        pass
 
-    def get_scraper(self, task, **kwargs):
+    def process_exports(self, spider, task):
         """
-        Return an instance of a custom Scraper object with parameters that you need.
+        Process the spider exports.
+
+        :param spider: the spider object (i.e. MouseKeyScraper())
+        :param task: just passing through the item.
+        :return: commit to newt db and return a print statement.
+        """
+        items = self.load_items(spider)
+        for exporter in self.get_spider_exporters():
+            exporter.export_item(items)
+
+    def post_process_exports(self, spider, task):
+        """
+        A hook point which executes just after process_exports has completed in
+        the self.results method.
+
+        :param spider: the returned custom modified spider object, which end
+        user must initially create from a subclassed SplashSpider object.
+        :param task: passing through the task from spawn_spider method.
+        """
+        pass
+
+    def get_spider(self, task, **kwargs):
+        """
+        Return an instance of a custom Spider object with parameters that you need.
         Specifically, note how `task` is passed here.
 
         In our examples/books_to_scrape, task is passed to the `book_title`
@@ -116,21 +142,41 @@ class BaseWorker:
         title is then loaded into a work queue, where it becomes a task to be
         assigned by the manager for completion.  Here, is where task is passed in.
 
-        :return: self.scraper(task, name=self.name, number=self.number, **kwargs)
+        :return: self.spider(task, name=self.name, number=self.number, **kwargs)
         """
-        scraper = self.scraper(task, name=self.name, number=self.number,
-                               **kwargs)
-        return scraper
+        spider = self.spider(task, name=self.name, number=self.number,
+                             **kwargs)
+        return spider
 
-    def get_scraper_exporter(self, scraper):
+    def get_spider_items(self):
         """
-        This is a hook point for any serialization you may want to do depending on
-        your data persistence model.  In `examples/books_to_scrape` we show a method
-        for using PostgreSQL with newt.db to store python objects in a postrgres db
-        while also automatically serializing the object to a postgres jsonb field.
+        Return an instance of a class that subclasses from Item. For example,
+        SplashSpiderItem from transistor.persistence.containers.
+        """
+        return self.items()
 
-        :param scraper: the scraper object (i.e. BooksToScrapeScraper())
-        :return: a custom ScraperExporter instance like:
-        SplashComponentScraperExporter(scraper)
+    def load_items(self, spider):
         """
-        raise NotImplementedError('You must return a custom ScraperExporter.')
+        Start with ItemLoader instance subclassed from the
+        transistor.persistence.loader ItemLoader class. But, return
+        a data loaded Item class object.
+        :return: Type[Item]
+        """
+        # at this point, self.loader will be # Type[ItemLoader], if load_items()
+        # has not yet been called. After calling, it will be Type[Item].
+        # This is tricky and so it kinda sucks. Requires a special `written` attr
+        # flag on both the Item class and the ItemLoader class. Needs refactored.
+        if not self.loader.written:
+            self.loader = self.loader()
+            self.loader.items = self.get_spider_items()
+            self.loader.spider = spider
+            self.loader = self.loader.write()  # .write returns Type[Item]
+        return self.loader  # careful, this is Type[Item] not Type[ItemLoader]
+
+    def get_spider_exporters(self) -> list:
+        """
+        Return a list of exporters. If exporters were defined in the WorkGroup
+        then just return them. Otherwise, can override this method and provide
+        the exporters here.
+        """
+        return self.exporters

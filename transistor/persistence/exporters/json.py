@@ -28,6 +28,7 @@ from transistor.persistence.item import Item
 from transistor.utility.python import to_bytes
 from transistor.utility.serialize import TransistorJSONEncoder
 
+
 class JsonLinesItemExporter(BaseItemExporter):
     """
     Exports Items in JSON format to the specified file-like object,
@@ -54,9 +55,7 @@ class JsonLinesItemExporter(BaseItemExporter):
         mode, a io.BytesIO object, etc)
         :param kwargs:
         """
-        self.scraper = kwargs.pop('scraper', None)
-        self.items = kwargs.pop('items', Item)
-        super().__init__(scraper=self.scraper, items=self.items)
+        super().__init__()
         self._configure(kwargs, dont_fail=True)
         self.file = file
         kwargs.setdefault('ensure_ascii', not self.encoding)
@@ -88,9 +87,7 @@ class JsonItemExporter(BaseItemExporter):
         in binary mode, a io.BytesIO object, etc)
         :param kwargs:
         """
-        self.scraper = kwargs.pop('scraper', None)
-        self.items = kwargs.pop('items', Item)
-        super().__init__(scraper=self.scraper, items=self.items)
+        super().__init__()
         self._configure(kwargs, dont_fail=True)
         self.file = file
         # there is a small difference between the behaviour or JsonItemExporter.indent

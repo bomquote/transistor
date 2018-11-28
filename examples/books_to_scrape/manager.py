@@ -37,7 +37,7 @@ class BooksWorkGroupManager(BaseWorkGroupManager):
         you must call target.spawn_scraper() to start the Worker.
         """
         print(f'spawning {target}')
-        target.spawn_scraper()  # this must be called. It is, required.
+        target.spawn_spider()  # this must be called. It is, required.
         # Calling spawn_scraper() above instructs the Worker object to start
         # the scrape.So there will be some wait period at this point for each
         # worker to actually run out of work and quit with a graceful shutdown.

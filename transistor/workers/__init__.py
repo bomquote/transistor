@@ -11,7 +11,7 @@ Generally, an end user needs to subclass these classes and then implement
 those few methods marked as abstract methods or other methods to work with
 a desired data persistence model.
 
-The BaseWorker wraps a scraper object.  The BaseGroup wraps the BaseWorker object
+The BaseWorker wraps a spider object.  The BaseGroup wraps the BaseWorker object
 and provides methods to scale the BaseWorker to an arbitrary number of Workers
 which can then perform scrape jobs as a coordinated Group.
 
@@ -26,4 +26,4 @@ and in composing a list of BaseGroups to pass as a parameter into a manager clas
 
 from .workgroup import WorkGroup
 from .baseworker import BaseWorker
-from .basegroup_abc import BaseGroup
+from .basegroup import BaseGroup

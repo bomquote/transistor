@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-transistor.spiders
+transistor.crawlers
 ~~~~~~~~~~~~
 This module is a placeholder work-in-progress but will eventually implement a more
 optimized design for a crawling spider class which can be scaled with gevent

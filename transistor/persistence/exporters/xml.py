@@ -77,9 +77,7 @@ class XmlItemExporter(BaseItemExporter):
               </item>
             </items>
         """
-        self.scraper = kwargs.pop('scraper', None)
-        self.items = kwargs.pop('items', Item)
-        super().__init__(scraper=self.scraper, items=self.items)
+        super().__init__()
         self.item_element = kwargs.pop('item_element', 'item')
         self.root_element = kwargs.pop('root_element', 'items')
         self._configure(kwargs)

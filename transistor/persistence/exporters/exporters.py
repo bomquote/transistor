@@ -56,9 +56,7 @@ class CsvItemExporter(BaseItemExporter):
         :param join_multivalued:
         :param kwargs:
         """
-        self.scraper = kwargs.pop('scraper', None)
-        self.items = kwargs.pop('items', Item)
-        super().__init__(scraper=self.scraper, items=self.items)
+        super().__init__()
         self._configure(kwargs, dont_fail=True)
         if not self.encoding:
             self.encoding = 'utf_8_sig'
@@ -127,10 +125,7 @@ class PickleItemExporter(BaseItemExporter):
         For more info, refer to documentation:
         https://docs.python.org/3/library/pickle.html
         """
-        self.scraper = kwargs.pop('scraper', None)
-        self.items = kwargs.pop('items', Item)
-        super().__init__(scraper=self.scraper, items=self.items)
-        self._configure(kwargs)
+        super().__init__(**kwargs)
         self.file = file
         self.protocol = protocol
 
@@ -147,18 +142,11 @@ class MarshalItemExporter(BaseItemExporter):
     https://docs.python.org/3/library/marshal.html
     """
     def __init__(self, file, **kwargs):
-        self.scraper = kwargs.pop('scraper', None)
-        self.items = kwargs.pop('items', Item)
-        super().__init__(scraper=self.scraper, items=self.items)
-        self._configure(kwargs)
         self.file = file
+        super().__init__(**kwargs)
 
     def export_item(self, item):
         marshal.dump(dict(self._get_serialized_fields(item)), self.file)
-
-    def write(self):
-        super().write()
-        # return self.items
 
 
 class PprintItemExporter(BaseItemExporter):
@@ -178,9 +166,7 @@ class PprintItemExporter(BaseItemExporter):
         in binary mode, a io.BytesIO object, etc)
         :param kwargs:
         """
-        self.scraper = kwargs.pop('scraper', None)
-        self.items = kwargs.pop('items', Item)
-        super().__init__(scraper=self.scraper, items=self.items)
+        super().__init__(**kwargs)
         self._configure(kwargs)
         self.file = file
 

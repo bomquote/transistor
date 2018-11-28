@@ -16,6 +16,7 @@ and further changes or contributions here are licensed under The MIT
 License, see LICENSE for more details.
 ~~~~~~
 """
+from transistor.persistence.loader import ItemLoader
 
 __all__ = ['BaseItemExporter']
 
@@ -39,7 +40,7 @@ class BaseItemExporter:
     SplashScraper object and pass the data into a new object which
     inherits from class:Item, called 'items' here.
 
-    A scraper which has completed a scrape job goes in. A container object
+    A spider which has completed a scrape job goes in. A container object
     encapsulating all the relevant data we want to further manipulate or
     save from the scrape job, comes out.
 
@@ -51,13 +52,9 @@ class BaseItemExporter:
     items to different files according to the value of one of their fields.
     """
 
-    def __init__(self, scraper, items, **kwargs):
+    def __init__(self, **kwargs):
         """
         Create an instance.
-        :param scraper: an instance of SplashScraper object which has
-        already finished a scrape.
-        :param items: a class in which the attributes to be persisted
-        from the scraper will be written.
         :param kwargs: fields_to_export::list(): A list with the name
         of the fields that will be exported, or None if you want to export
         all fields. Defaults to None. Some exporters (like CsvItemExporter)
@@ -81,12 +78,7 @@ class BaseItemExporter:
         `indent>0` each item on its own line, indented with the provided
         numeric value
         """
-        self.scraper = scraper
-        self.items = items()
         self._configure(kwargs)
-
-    def __repr__(self):
-        return f"<Exporter({self.scraper.__repr__()})>"
 
     def _configure(self, options, dont_fail=False):
         """
@@ -107,7 +99,7 @@ class BaseItemExporter:
         Exports the given item. This method must be implemented in subclasses.
         :param item:
         """
-        raise NotImplementedError
+        pass
 
     def serialize_field(self, field, name:str, value):
         """
@@ -124,8 +116,7 @@ class BaseItemExporter:
         :param name:  the name of the field being serialized
         :param value: the value being serialized
         """
-        serializer = field.get('serializer', lambda x: x)
-        return serializer(value)
+        return ItemLoader.serialize_field(field, name, value)
 
     def start_exporting(self):
         """
@@ -169,51 +160,3 @@ class BaseItemExporter:
                 value = default_value
 
             yield field_name, value
-
-    def write(self):
-        """
-        Create the new class::Item() container object. This is
-        the Transistor equivalent to the Scrapy API for Item Loaders.
-
-        :return: SplashScraperItems()
-        """
-        # create a new container object
-
-        # SplashBrowser properties
-        self.items['raw_content']=self.scraper.browser.raw_content
-        self.items['status']=self.scraper.browser.status
-        # SplashBrowser methods
-        self.items['current_request']=self.scraper.browser.get_current_request()
-        self.items['current_url']=self.scraper.browser.get_current_url()
-
-        # SplashBrowserMixin properties
-        self.items['encoding'] = self.scraper.browser.encoding
-        self.items['ucontent'] = self.scraper.browser.ucontent
-        self.items['resp_content'] = self.scraper.browser.resp_content
-        self.items['resp_headers'] = self.scraper.browser.resp_headers
-        self.items['resp_content_type_header'] = \
-            self.scraper.browser.resp_content_type_header
-        self.items['har'] = self.scraper.browser.har
-        self.items['png'] = self.scraper.browser.png
-        self.items['endpoint_status'] = self.scraper.browser.endpoint_status
-        self.items['crawlera_session'] = self.scraper.browser.crawlera_session
-        self.items['html'] = self.scraper.browser.html
-
-        # scraper attributes
-        self.items['name']=self.scraper.name
-        self.items['number']=self.scraper.number
-        self.items['scraper_repr']=self.scraper.__repr__()
-        self.items['cookies']=self.scraper.cookies
-        self.items['splash_args']=self.scraper.splash_args
-        self.items['http_session_valid']=self.scraper.http_session_valid
-        self.items['baseurl']=self.scraper.baseurl
-        self.items['crawlera_user']=self.scraper.crawlera_user
-        self.items['referrer']=self.scraper.referrer
-        self.items['searchurl']=self.scraper.searchurl
-        self.items['LUA_SOURCE']=self.scraper.LUA_SOURCE
-        self.items['_test_true']=self.scraper._test_true
-        self.items['_result']=self.scraper._result
-
-        # scraper properties
-        # scraper private methods
-        # public methods

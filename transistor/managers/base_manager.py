@@ -20,11 +20,6 @@ will subclass BaseManager and override the monitor method for customization.
 import gevent
 from gevent.queue import Queue, Empty
 from gevent.pool import Pool
-from gevent.event import Event
-
-
-# prepare event signal
-evt = Event()
 
 
 class BaseWorkGroupManager:
@@ -32,7 +27,8 @@ class BaseWorkGroupManager:
     Base class for a WorkGroupManager.
     """
     __attrs__ = [
-        'book', 'job_id', 'groups', 'trackers', 'pool', 'qitems', 'workgroups',
+        'book', 'exporter', 'job_id', 'groups', 'trackers', 'pool', 'qitems',
+        'workgroups',
     ]
 
     def __init__(self, job_id, book, groups:list, pool:int=20):
@@ -57,8 +53,8 @@ class BaseWorkGroupManager:
         """
         self.job_id = job_id
         self.book = book
-        self.groups = groups
         self.trackers = self.book.trackers
+        self.groups = groups
         self.pool = Pool(pool)
         self.qitems = {}
         self.workgroups = {}
@@ -98,20 +94,20 @@ class BaseWorkGroupManager:
             for group in self.groups:
                 # match the tracker name to the group name
                 if group.name == name:
-                    # assumes `group` is a WorkGroup namedtuple of the form:
-                    # WorkGroup(class_=BooksGroup, workers=2, name='mousekey.com',
-                    # kwargs={'china':True, 'timeout': (3.0, 3.0)})
+                    # assumes `group` is a WorkGroup namedtuple
 
                     # add the name to group.kwargs dict so it can be passed down
-                    # to the worker/scraper and assigned as an attr on them
+                    # to the group/worker/spider and assigned as an attr
                     group.kwargs['name'] = name
-                    workergroup = group.class_(
+                    group.kwargs['spider'] = group.spider
+                    group.kwargs['worker'] = group.worker
+                    group.kwargs['items'] = group.items
+                    group.kwargs['loader'] = group.loader
+                    # exporters is a list of exporter instances
+                    group.kwargs['exporters'] = group.exporters
+                    workergroup = group.group(
                         staff=group.workers, job_id=self.job_id, **group.kwargs)
-                    # now is the time to set the name attribute on the workergroup
-                    workergroup.name = name
-                    # now that the name is assigned, init the workers on the workgroup
-                    # this allows the encapsulated Worker to also be assigned the name
-                    # don't change this without testing, Workers will lose their name
+                    # now that attrs assigned, init the workers on the workgroup
                     workergroup.init_workers()
                     # lastly, after calling init_workers, assign the workgroup instance
                     # with workers instance to the workgroups dict with key = `name`
@@ -142,19 +138,19 @@ class BaseWorkGroupManager:
 
     def monitor(self, target):
         """
-        This method actually spawns the scraper and then the purpose is to allow
-        some additional final actions to be performed on the scraper object after
-        the worker completes the scrape job, but before it shuts down and the object
-        instance is lost.
+        This method actually spawns the spider and then the purpose is to allow
+        some additional final actions to be performed on the spider object after
+        the worker completes the spider's job, but before it shuts down and the
+        object instance is lost.
 
         The simplest example which must be implemented:
 
         def monitor(self, target):
             '''
-            The only absolute requirement is to start the scraper with
-            target.spawn_scraper() and then call gevent.sleep(0)
+            The only absolute requirement is to start the spider with
+            target.spawn_spider() and then call gevent.sleep(0)
             '''
-            target.spawn_scraper()
+            target.spawn_spider()
             gevent.sleep(0)
 
         A more useful example:
@@ -162,9 +158,9 @@ class BaseWorkGroupManager:
         def monitor(self, target):
             '''
             More useful, would be to hook in some post-scrape logic between
-            spawn_scraper() and gevent.sleep(0).
+            spawn_spider() and gevent.sleep(0).
             '''
-            target.spawn_scraper()
+            target.spawn_spider()
             # /start --> YOUR POST-SCRAPE HOOK IS HERE, ADD LOGIC AS REQUIRED.
             for event in target.events:
                 # .event is a simple list() as a class attribute, in the scraper object
@@ -176,7 +172,7 @@ class BaseWorkGroupManager:
         :param target: a worker
         :return:
         """
-        target.spawn_scraper()
+        target.spawn_spider()
         gevent.sleep(0)
 
     def manage(self):
