@@ -95,7 +95,6 @@ class BaseWorker:
         self.pre_process_exports(spider, task)
         self.process_exports(spider, task)
         self.post_process_exports(spider, task)
-        print(f'Worker {self.name}-{self.number} finished task {task}')
         gevent.sleep(0)
 
     def pre_process_exports(self, spider, task):

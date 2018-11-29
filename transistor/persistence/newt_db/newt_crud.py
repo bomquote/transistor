@@ -20,7 +20,6 @@ them in the core Transistor library.
 """
 
 # you must set ndb like `from .newt_db import ndb`
-ndb = None
 
 
 def get_job_ids(ndb):

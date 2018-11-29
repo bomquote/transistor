@@ -2,8 +2,10 @@
   transistor: CHANGES
 ========================
 
-11/28/18
+11/29/18
+- pypi 0.2.0 release
 
+11/28/18
 More API breaking changes:
 
 - previously, the Worker needed to be explicitly defined in the
@@ -78,7 +80,7 @@ same from examples/books_to_scrape/persistence.
 transistor/persistence module
 
 Nov 17, 2018
-- pypy 0.1.1 release
+- pypi 0.1.1 release
 
 Nov 16, 2018
 - standardized SplashScraper attributes: 'auth', 'baseurl', 'browser', 'cookies',
