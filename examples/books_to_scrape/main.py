@@ -53,6 +53,7 @@ from examples.books_to_scrape.persistence.newt_db import ndb
 # finally, the core of what we need to launch the scrape job
 from transistor import WorkGroup, StatefulBook
 from transistor.persistence.exporters import CsvItemExporter
+from transistor.persistence.exporters.json import JsonLinesItemExporter
 from examples.books_to_scrape.workgroup import BooksWorker
 from examples.books_to_scrape.scraper import BooksToScrapeScraper
 from examples.books_to_scrape.manager import BooksWorkGroupManager
@@ -60,7 +61,8 @@ from examples.books_to_scrape.persistence.serialization import (
     BookItems, BookItemsLoader)
 
 
-# 1) get the excel file path which has the book_titles we are interested to scrape
+# 1) Get the excel file path which has the book_titles we are interested to scrape.
+
 def get_file_path(filename):
     """
     Find the book_title excel file path.
@@ -70,42 +72,52 @@ def get_file_path(filename):
     filepath = root / 'books_to_scrape' / filename
     return r'{}'.format(filepath)
 
-
 # 2) Create a StatefulBook instance to read the excel file and load the work queue.
 # Set a list of tracker names, with one tracker name for each WorkGroup you create
-# in step three. Ensure the tracker name matches the WorkGroup.name in step three.
+# in step four. Ensure the tracker name matches the WorkGroup.name in step four.
+
 file = get_file_path('book_titles.xlsx')
 trackers = ['books.toscrape.com']
-stateful_book = StatefulBook(file, trackers, keywords='titles', autorun=True)
+tasks = StatefulBook(file, trackers, keywords='titles', autorun=True)
 
+# 3) Setup a list of exporters which than then be passed to whichever WorkGroup
+# objects you want to use them with. In this case, we are just going to use the
+# built-in CsvItemExporter but we could also use additional exporters to do
+# multiple exports at the same time, if desired.
 
-# 3) Setup the WorkGroups. You can create an arbitrary number of WorkGroups in a list.
+exporters = [CsvItemExporter(
+                fields_to_export=['book_title', 'stock', 'price'],
+                file=open('c:/tmp/book_data.csv', 'a+b')),
+             JsonLinesItemExporter(
+                fields_to_export=['book_title', 'stock', 'price'],
+                file=open('c:/tmp/book_data.json', 'a+b'),
+                encoding='utf_8_sig')]
+
+# 4) Setup the WorkGroups. You can create an arbitrary number of WorkGroups in a list.
 # For example, if there are three different domains which you want to search for
-# the book titles from the excel file. To, scrape the price and stock data on
-# each of the three different websites for each book title. You could setup three
+# the book titles from the excel file. If you wanted to scrape the price and stock data
+# on each of the three different websites for each book title. You could setup three
 # different WorkGroups here. Last, the WorkGroup.name should match the tracker name.
+
 groups = [
     WorkGroup(
         name='books.toscrape.com',
+        url='http://books.toscrape.com/',
         spider=BooksToScrapeScraper,
         worker=BooksWorker,
         items=BookItems,
         loader=BookItemsLoader,
-        exporters=[
-            CsvItemExporter(
-                fields_to_export=['book_title', 'stock', 'price'],
-                file=open('c:/tmp/book_data.csv', 'a+b'))
-        ],
+        exporters=exporters,
         workers=20,  # this creates 20 scrapers and assigns each a book as a task
-        kwargs={'url': 'http://books.toscrape.com/', 'timeout': (3.0, 20.0)})
+        kwargs={'timeout': (3.0, 20.0)})
     ]
 
-# 4) Last, setup the Manager. You can constrain the number of workers actually
+# 5) Last, setup the Manager. You can constrain the number of workers actually
 # deployed, through the `pool` parameter. For example, this is useful
 # when using a Crawlera 'C10' plan which limits concurrency to 10. To deploy all
 # the workers concurrently, set the pool to be marginally larger than the number
 # of total workers assigned in groups in step #3 above.
-manager = BooksWorkGroupManager('books_scrape', stateful_book, groups=groups, pool=25)
+manager = BooksWorkGroupManager('books_scrape', tasks, groups=groups, pool=25)
 
 
 if __name__ == "__main__":

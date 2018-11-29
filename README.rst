@@ -5,8 +5,8 @@
 
 .. image:: https://img.shields.io/badge/Python-3.6%20%7C%203.7-blue.svg
   :target: https://github.com/bomquote/transistor
-.. image:: https://img.shields.io/badge/pypi%20package-0.2.0-blue.svg
-  :target: https://pypi.org/project/transistor/0.2.0/
+.. image:: https://img.shields.io/badge/pypi%20package-0.2.1-blue.svg
+  :target: https://pypi.org/project/transistor/0.2.1/
 .. image:: https://img.shields.io/badge/Status-Beta-blue.svg
   :target: https://github.com/bomquote/transistor
 .. image:: https://img.shields.io/badge/license-MIT-lightgrey.svg
@@ -167,13 +167,13 @@ Quickstart
 
 First, install ``Transistor`` from pypi:
 
-.. code-block:: python
+.. code-block:: rest
 
     pip install transistor
 
 If you have previously installed ``Transistor``, please ensure you are using the latest version:
 
-.. code-block:: python
+.. code-block:: rest
 
     pip-install --upgrade transistor
 
@@ -404,7 +404,7 @@ Specifically, we are interested in the `book_title`, `stock` and `price` attribu
 
             return self.items
 
-Finally, to run the scrape, we will need to create a main.py file.  This is all we need for the minimal example to scrape and export targeted data to cvs.
+Finally, to run the scrape, we will need to create a main.py file.  This is all we need for the minimal example to scrape and export targeted data to csv.
 
 So, at this point, we've:
 
@@ -455,12 +455,13 @@ Third, setup the ``WorkGroup`` in a list we'll call *groups*. We use a list here
     groups = [
     WorkGroup(
         name='books.toscrape.com',
+        url='http://books.toscrape.com/',
         spider=BooksToScrapeScraper,
         items=BookItems,
         loader=BookItemsLoader,
         exporters=exporters,
         workers=20,  # this creates 20 scrapers and assigns each a book as a task
-        kwargs={'url': 'http://books.toscrape.com/', 'timeout': (3.0, 20.0)})
+        kwargs={'timeout': (3.0, 20.0)})
     ]
 
 Last, setup the ``WorkGroupManager`` and prepare the file to call the ``manager.main()`` method to start the scrape job:
@@ -506,7 +507,7 @@ Directly Using A SplashScraper
 
 Perhaps you just want to do a quick one-off scrape?
 
-It is possible to just use your custom scraper sublcassed from ``SplashScraper`` directly, without going through all the work to setup a ``StatefulBook``, ``BaseWorker``, ``BaseGroup``, ``WorkGroup``, and ``WorkGroupManager``.
+It is possible to just use your custom scraper subclassed from ``SplashScraper`` directly, without going through all the work to setup a ``StatefulBook``, ``BaseWorker``, ``BaseGroup``, ``WorkGroup``, and ``WorkGroupManager``.
 
 Just fire it up in a python repl like below and ensure the ``start_http_session`` method is run, which can generally be done by setting ``autorun=True``.
 
@@ -566,7 +567,7 @@ Next, we need to store our first two python objects in newt.db, which are:
 
 .. code-block:: python
 
-    from transistor.persistence.newt_db.collections import ScrapeList, ScrapeLists
+    from transistor.persistence.newt_db.collections import SpiderList, SpiderLists
 
 Now, from your python repl:
 
@@ -574,17 +575,17 @@ Now, from your python repl:
 
     from transistor.newt_db import ndb
 
-    >>> ndb.root.scrapes = ScrapeLists()  # Assigning ScrapeLists() is only required during initial seup. Or else, when/if you change the ScrapeLists() object, for example, to provide more functionality to the class.
-    >>> ndb.root.scrapes.add('first-scrape', ScrapeList())  # You will add a new ScrapeList() anytime you need a new list container. Like, every single scrape you save.  See ``process_exports`` method in ``examples/books_to_scrape/workgroup.py``.
+    >>> ndb.root.spiders = SpiderLists()  # Assigning SpiderLists() is only required during initial setup. Or else, when/if you change the SpiderLists() object, for example, to provide more functionality to the class.
+    >>> ndb.root.spiders.add('first-scrape', SpiderList())  # You will add a new SpiderList() anytime you need a new list container. Like, every single scrape you save.  See ``process_exports`` method in ``examples/books_to_scrape/workgroup.py``.
     >>> ndb.commit() # you must explicitly commit() after each change to newt.db.
 
 At this point, you are ready-to-go with newt.db and PostgreSQL.
 
-Later, when you have a scraper object instance, such as ``BooksToScrapeScraper()`` which has finished it's web scrape cycle, it will be stored in the ``ScrapeList()`` named ``first-scrape`` like such:
+Later, when you have a scraper object instance, such as ``BooksToScrapeScraper()`` which has finished it's web scrape cycle, it will be stored in the ``SpiderList()`` named ``first-scrape`` like such:
 
 .. code-block:: python
 
-        >>> ndb.root.scrapes['first-scrape'].add(BooksToScrapeScraper(name="books.toscrape.com", book_title="Soumission"))
+        >>> ndb.root.spiders['first-scrape'].add(BooksToScrapeScraper(name="books.toscrape.com", book_title="Soumission"))
 
 
 More on StatefulBook

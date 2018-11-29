@@ -87,7 +87,7 @@ class BaseItemExporter:
         (useful for using with keyword arguments in subclasses constructors)
         :return:
         """
-        self.encoding = options.pop('encoding', None)
+        self.encoding = options.pop('encoding', 'utf-8')
         self.fields_to_export = options.pop('fields_to_export', None)
         self.export_empty_fields = options.pop('export_empty_fields', False)
         self.indent = options.pop('indent', None)

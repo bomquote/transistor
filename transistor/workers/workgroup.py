@@ -40,6 +40,7 @@ class WorkGroup(NamedTuple):
     :param kwargs: to use for each <Worker> instance in the group
     """
     name: str
+    url : str
     # tasks: Optional[Type[Union[Type[StatefulBook], dict]]]
     spider: Type[SplashScraper]
     worker: Type[BaseWorker] = BaseWorker

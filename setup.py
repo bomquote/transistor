@@ -123,7 +123,7 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    download_url='https://github.com/bomquote/transistor/archive/v0.2.0.tar.gz',
+    download_url='https://github.com/bomquote/transistor/archive/v0.2.1.tar.gz',
     keywords=['scraping', 'crawling', 'spiders', 'requests', 'beautifulsoup4',
               'mechanicalsoup', 'framework', 'headless-browser'],
     packages=find_packages(exclude=('tests',)),

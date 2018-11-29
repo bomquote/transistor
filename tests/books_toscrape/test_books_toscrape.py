@@ -99,13 +99,14 @@ def bts_manager(_BooksToScrapeGroup, _BooksWorker):
     groups = [
         WorkGroup(
             name='books.toscrape.com',
+            url='http://books.toscrape.com/',
             spider=BooksToScrapeScraper,
             worker=_BooksWorker,
             items=BookItems,
             loader=BookItemsLoader,
             exporters=exporters,
             workers=3,  # this creates 3 scrapers and assigns each a book as a task
-            kwargs={'url': 'http://books.toscrape.com/', 'timeout': (3.0, 20.0)})
+            kwargs={'timeout': (3.0, 20.0)})
     ]
     manager = BooksWorkGroupManager('books_scrape', tasks, groups=groups, pool=5)
 

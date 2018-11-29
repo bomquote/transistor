@@ -6,9 +6,8 @@ This module implements classes that export (serialize) the data inside
 a BaseWorker from a SplashScraper to JSON.
 
 Most of this module is heavily inspired or else copied from Scrapy. It has
-been modified to fit Transistor's API in requiring a scraper and items
-object. Also, Transistor only supports python 3. Otherwise, this module
-generally follows Scrapy's API and uses Scrapy's documentation.
+been modified to fit Transistor's API only supports python 3. Otherwise, this
+module generally follows Scrapy's API and uses Scrapy's documentation.
 
 :copyright: Original scrapy.exporters from scrapy==1.5.1 is
 Copyright by it's authors and further changes or contributions here are
@@ -24,7 +23,6 @@ __all__ = ['JsonLinesItemExporter', 'JsonItemExporter']
 
 
 from .base import BaseItemExporter
-from transistor.persistence.item import Item
 from transistor.utility.python import to_bytes
 from transistor.utility.serialize import TransistorJSONEncoder
 

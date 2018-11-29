@@ -99,6 +99,7 @@ class BaseWorkGroupManager:
                     # add the name to group.kwargs dict so it can be passed down
                     # to the group/worker/spider and assigned as an attr
                     group.kwargs['name'] = name
+                    group.kwargs['url'] = group.url
                     group.kwargs['spider'] = group.spider
                     group.kwargs['worker'] = group.worker
                     group.kwargs['items'] = group.items

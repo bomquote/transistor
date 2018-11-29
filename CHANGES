@@ -3,9 +3,19 @@
 ========================
 
 11/29/18
-- pypi 0.2.0 release
+- pypi 0.2.1 release
+
+- added `url` parameter to the WorkGroup which is a bit more attractive
+API, instead of including the url in a kwarg.  The reason why the url was
+originally included as a kwarg is because depending on how the custom
+Spider is setup, the url may already be specified, and it is redundant to
+specify it again.  But for API clarity sake, now we just insist the url is
+specified in the WorkGroup. At least, it is easier to read at a quick glance.
 
 11/28/18
+
+- pypi 0.2.0 release
+
 More API breaking changes:
 
 - previously, the Worker needed to be explicitly defined in the
