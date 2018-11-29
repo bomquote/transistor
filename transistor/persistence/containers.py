@@ -33,8 +33,12 @@ from transistor.persistence.item import Item, Field
 class SplashScraperItems(Item):
     """
     A base class which should be inherited in a subclass which then implements
-    a customized SplashScraperContainer instance.
+    a customized SplashScraperContainer instance. It declares the standard
+    data attributes returned by a SplashScraper object, with Field().  Declaring
+    with Field() enables a useful data container to be created for the attribute.
     """
+    # flags used by worker objects do not need to be Field().
+    written = False
 
     # -- the Scraper's browser class -> self.browser data -- #
 

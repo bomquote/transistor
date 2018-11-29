@@ -42,7 +42,6 @@ class BookItems(newt.db.Persistent, SplashScraperItems):
     To avoid issues, ensure that the result from a beautifulsoup4 object
     is cast to string. Wrapping it with str() will avoid issues.
     """
-    written = False
     # -- names of your customized scraper class attributes go here -- #
 
     book_title = Field()  # str() # the book_title which we searched
@@ -78,6 +77,4 @@ class BookItemsLoader(ItemLoader):
         # call super() to write the built-in Items from BaseItemExporter
         super().write()
 
-        # finally, ensure you return self.items
-        self.items.written=True
         return self.items

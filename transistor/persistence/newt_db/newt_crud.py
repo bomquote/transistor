@@ -32,7 +32,7 @@ def get_job_ids(ndb):
 
     :return: list() of str(list_name)
     """
-    return [list for list in ndb.root.scrapes.lists]
+    return [list for list in ndb.root.spiders.lists]
 
 
 def get_job_results(ndb, job_id:str=None):
@@ -47,7 +47,7 @@ def get_job_results(ndb, job_id:str=None):
 
     :return: [<SplashScraperData(('books.toscrape.com', 'soulsearcher'))>, ...]
     """
-    return ndb.root.scrapes.lists[job_id].results
+    return ndb.root.spiders.lists[job_id].results
 
 
 def delete_job(ndb, job_id:str=None):
@@ -80,7 +80,7 @@ def delete_job(ndb, job_id:str=None):
     :return: a print statement
     """
     try:
-        del ndb.root.scrapes.lists[job_id]
+        del ndb.root.spiders.lists[job_id]
         ndb.commit()
         return print(f'Deleted {job_id}')
     except KeyError:

@@ -87,21 +87,22 @@ Transistor provides useful layers and objects in the following categories:
 - see: ``transistor/browsers``
 - wrap `python-requests <https://github.com/requests/requests>`_ and `beautifulsoup4 <https://www.crummy.com/software/BeautifulSoup/bs4/doc/>`_ libraries to serve our various scraping browser needs.
 - browser API is generally created by subclassing and overriding the well known `mechanicalsoup <https://github.com/MechanicalSoup/MechanicalSoup>`_ library to work with Splash and/or Splash + Crawlera.
-- if Javascript support is not needed for a simple scrape, it is nice to just use mechanicalsoup's ``StatefulBrowser`` class directly, like as shown in ``examples/cny_exchange_rate.py`` .
+- if Javascript support is not needed for a simple scrape, it is nice to just use mechanicalsoup's ``StatefulBrowser`` class directly as a Scraper, like as shown in ``examples/cny_exchange_rate.py`` .
 - a ``Browser`` object is generally instantiated inside of a ``Scraper`` object, where it handles items like fetching the page, parsing headers, creating a ``self.page`` object to parse with beautifulsoup4, handling failures with automatic retries, and setting class attributes accessible to our ``Scraper`` object.
 
 2. **scrapers**
 
 - see ``transistor/scrapers``
 - instantiates a browser to grab the ``page`` object, implements various html filter methods on ``page`` to return the target data, can use Splash headless browser/javascript rendering service to navigate links, fill out forms, and submit data.
-- for a Splash or Splash + Crawlera based scraper, the ``SplashScraper`` base class provides a minimal required Lua script and all required connection logic. However, more complex use cases will require providing your own custom modified Lua script.
+- for a Splash or Splash + Crawlera based scraper ``Spider``, the ``SplashScraper`` base class provides a minimal required Lua script and all required connection logic. However, more complex use cases will require providing your own custom modified Lua script.
 - the scraper design is built around gevent based asynchronous I/O, and this design allows to send out an arbitrarily large number of scraper workers, with each scraper worker assigned a specific scrape task to complete.
 - the current core design, in allowing to send out an arbitrarily large number of scraper workers, is not necessarily an optimal design to 'crawl' pages in search of targeted data. Where it shines is when you need to use a webpage search function on an arbitrarily large list of search tasks, await the search results for each task, and finally return a scraped result for each task.
 
 3. **crawlers** (wip, on the to-do list)
 
 - see ``transistor/crawlers`` (not yet implemented)
-- while it is straightforward to use the current Transistor scraper design to do basic crawling (see ``examples/books_to_scrape/scraper.py`` for an example) the current way to do this with Transistor is not optimal for crawling. So we'll implement modified designs for crawling spiders.
+- this crawling ``Spider`` will be supported through a base class called ``SplashCrawler``.
+- while it is straightforward to use the current Transistor scraper ``SplashScraper`` design to do basic crawling (see ``examples/books_to_scrape/scraper.py`` for an example) the current way to do this with Transistor is not optimal for crawling. So we'll implement modified designs for crawling spiders.
 - specifics TBD, may be fully custom or else may reuse some good architecture parts of `scrapy <https://github.com/scrapy/scrapy>`_, although if we do that, it will be done so we don't need a scrapy dependency and further it will be using gevent for asynchronous I/O.
 
 
@@ -117,25 +118,39 @@ Transistor provides useful layers and objects in the following categories:
 
 2. **workers**:
 
-- a ``BaseWorker`` object encapsulates a ``SplashScraper`` object, which has been customized by the end user to navigate and extract the targeted data from a structured web page.
-- a ``WorkGroup`` object can then be created, to encapsulate the ``BaseWorker`` object which contains the ``SplashScraper`` object.
-- The purpose of this ``WorkGroup`` object is to enable concurrency and scale by being able to spin up an arbitrarily large number of ``BaseWorker`` objects, each assigned a different scrape task for execution.
-- the ``WorkGroup`` object can then receive tasks to execute, like individual book titles or electronic component part numbers to search, delegated by a ``WorkGroupManager`` class.
-- each ``BaseWorker`` in the ``WorkGroup`` also processes web request results, as they are returned from it's wrapped ``SplashScraper`` object.  ``BaseWorker`` methods include hooks for saving data to the db of your choice.
+- a ``BaseWorker`` object encapsulates a ``Spider`` object like the ``SplashScraper`` or ``SplashCrawler`` objects, which has been customized by the end user to navigate and extract the targeted data from a structured web page.
+- a ``BaseGroup`` object can then be created, to encapsulate the ``BaseWorker`` object which contains the ``Spider`` object.
+- The purpose of this ``BaseGroup`` object is to enable concurrency and scale by being able to spin up an arbitrarily large number of ``BaseWorker`` objects, each assigned a different scrape task for execution.
+- the ``BaseGroup`` object can then receive tasks to execute, like individual book titles or electronic component part numbers to search, delegated by a ``WorkGroupManager`` class.
+- each ``BaseWorker`` in the ``BaseGroup`` also processes web request results, as they are returned from it's wrapped ``SplashScraper`` object.  ``BaseWorker`` methods include hooks for exporting data to mutiple formats like csv/xml or saving it to the db of your choice.
+- each ``BaseGroup`` should be wrapped in a ``WorkGroup`` which is passed to the ``WorkGroupManager``. Objects which the ``BaseWorker`` will use to process the ``Spider`` after it returns from the scrape should also be specified in ``WorkGroup``, like ``Items``, ``ItemLoader``, and ``Exporter``.
 
 3. **managers**:
 
 - the overall purpose of the ``WorkGroupManager`` object is to provide yet more scale and concurrency through asynchronous I/O.
-- The ``WorkGroupManager`` can spin up an arbitrarily large number of ``WorkGroup`` objects while assigning each ``BaseWorker/SplashScraper`` in each of the ``WorkGroup`` objects, individual scrape tasks.
+- The ``WorkGroupManager`` can spin up an arbitrarily large number of ``WorkGroup`` objects while assigning each ``BaseWorker/Spider`` in each of the ``WorkGroup`` objects, individual scrape tasks.
 - This design approach is most useful when you have a finite pipeline of scrape tasks which you want to search and compare the same terms, across multiple different websites, with each website targeted by one ``WorkGroup``.
 - for example, we may have a list of 50 electronic component part numbers, which we want to search each part number in ten different regional websites. The ``WorkGroupManager`` can spin up a ``WorkGroup`` for each of the 10 websites, assign 50 workers to each ``WorkGroup``, and send out 500 ``BaseWorkers`` each with 1 task to fill, concurrently.
 - to further describe the ``WorkGroupManager``, it is a middle-layer between ``StatefulBook`` and ``BaseGroup``. It ingests ``TaskTracker`` objects from the ``StatefulBook`` object. It is also involved to switch states for ``TaskTracker`` objects, useful to track the task state like completed, in progress, or failed (this last detail is a work-in-progress).
 
-**Persistent Object Storage, Search, and Retreival**
+**Persistence**
 
-Transistor can be used with the whichever data persistence model you choose to implement. But, it will offer some open-source code in support of the below data model:
+1. **exporters**
 
-1. **object-relational database** using `PostgreSQL <https://www.postgresql.org/>`_ with `newt.db <https://github.com/newtdb/db>`_.
+- see ``transistor/persistence/exporters``
+- export data from a ``Spider`` to various formats, including *csv*, *xml*, *json*, *xml*, *pickle*, and *pretty print* to a *file* object.
+
+
+**Object Storage, Search, and Retrieval**
+
+Transistor can be used with the whichever database or persistence model you choose to implement. But, it will offer some open-source code in support of below:
+
+1. **SQLAlchemy**
+
+- we use `SQL Alchemy <https://www.sqlalchemy.org/>`_ extensively and may include some contributed code as we find appropriate or useful to keep in the Transistor repository. At least, an example for reference will be included in the `examples` folder.
+
+
+2. **object-relational database** using `PostgreSQL <https://www.postgresql.org/>`_ with `newt.db <https://github.com/newtdb/db>`_.
 
 - persist and store your custom python objects containing your web scraped data, directly in a PostgreSQL database, while also converting your python objects to JSON, *automatically* indexing them for super-quick searches, and making it available to be used from within your application or externally.
 - leverage PostgreSQL's strong JSON support as a document database while also enabling "ease of working with your data as ordinary objects in memory".
@@ -146,15 +161,21 @@ Transistor can be used with the whichever data persistence model you choose to i
 .. [1] `Why Postgres Should Be Your Document Database (blog.jetbrains.com) <https://blog.jetbrains.com/pycharm/2017/03/interview-with-jim-fulton-for-why-postgres-should-be-your-document-database-webinar/>`_
 .. [2] `Newt DB, the amphibious database (newtdb.org) <http://www.newtdb.org/en/latest/>`_.
 
+
 Quickstart
 ----------
 
-
-First, install from pypi:
+First, install ``Transistor`` from pypi:
 
 .. code-block:: python
 
     pip install transistor
+
+If you have previously installed ``Transistor``, please ensure you are using the latest version:
+
+.. code-block:: python
+
+    pip-install --upgrade transistor
 
 Next, setup Splash, following the Quickstart instructions. Finally, follow the minimal abbreviated Quickstart example ``books_to_scrape`` as detailed below.
 
@@ -234,13 +255,15 @@ Finally, you should set environment variables on your computer/server with the a
 Quickstart: ``books_to_scrape`` example
 ---------------------------------------
 
-See ``examples/books_to_scrape`` for a fully working example with more detailed notes in the source code.  We'll go through an abbreviated setup here, without many of the longer notes and database/persistence parts that you can find in the ``examples`` folder souce code.
+See ``examples/books_to_scrape`` for a fully working example with more detailed notes in the source code.  We'll go through an abbreviated setup here, without many of the longer notes and database/persistence parts that you can find in the ``examples`` folder source code.
 
-The ``books_to_scrape`` example assumes we have a column of 20 book titles in an excel file, with a column heading *item*.  We plan to scrape the domain ``books.toscrape.com`` to find the book titles. For the book titles we find, we will scrape the sale price and stock status.
+In this abbreviated example, we will create a ``Spider`` to crawl the books.toscrape.com website to search for 20 different book titles, which the titles are ingested from an excel spreadsheet. After we find the book titles, we will export the targeted data to a different csv file.
 
-First, let's setup a custom scraper by subclassing ``SplashScraper``. This will enable it to use the Splash headless browser.
+The ``books_to_scrape`` example assumes we have a column of 20 book titles in an excel file, with a column heading in the spreadsheet named *item*.  We plan to scrape the domain ``books.toscrape.com`` to find the book titles. For the book titles we find, we will scrape the sale price and stock status.
 
-Next, create a few custom methods to parse the html in the ``self.page`` objects with beautifulsoup4.
+First, let's setup a custom scraper Spider by subclassing ``SplashScraper``. This will enable it to use the Splash headless browser.
+
+Next, create a few custom methods to parse the html found by the ``SplashScraper`` and saved in the ``self.page`` attribute, with beautifulsoup4.
 
 .. code-block:: python
 
@@ -324,57 +347,73 @@ Next, create a few custom methods to parse the html in the ``self.page`` objects
                 {ord(c): None for c in '\n\t\r'}).strip()
             print('Found the Title, Price, and Stock.')
 
+Next, we need to setup two more subclasses from baseclasses ``SplashScraperItem`` and ``ItemLoader``. This will allow us to export the data from the ``SplashScraper`` spider to the csv spreadsheet.
 
-Now, let's setup a ``BaseGroup`` object, in which a ``BaseWorker`` object wraps our ``BooksToScrapeScraper``.
-
-This ultimately allows us to scale up the number of ``BooksToScrapeScraper`` objects by an arbitrary amount, using gevent.
-
-Setting up a ``BaseGroup`` is all that is required for the minimal example.
+Specifically, we are interested in the `book_title`, `stock` and `price` attributes. We need to do this so we can export those specific columns later. See more detail in ``examples/books_to_scrape/persistence/serialization.py`` file.
 
 .. code-block:: python
 
-    from transistor import BaseWorker, BaseGroup
-    from examples.books_to_scrape.scraper import BooksToScrapeScraper
+    from transistor.persistence.item import Field
+    from transistor.persistence import SplashScraperItems
+    from transistor.persistence.loader import ItemLoader
 
-    class BooksToScrapeGroup(BaseGroup):
-    """
-    A BaseGroup enables us to organize a Group of Workers from a single BaseWorker.
-    Note how, the `BooksToScrapeScraper` is assigned in the `hired_worker` method.
-    """
 
-    def hired_worker(self):
+    class BookItems(SplashScraperItems):
+        # -- names of your customized scraper class attributes go here -- #
+
+        book_title = Field()  # the book_title which we searched
+        price = Field()  # the self.price attribute
+        stock = Field()  # the self.stock attribute
+
+
+    def serialize_price(value):
         """
-        Encapsulate your custom scraper, inside of a Worker object. This will
-        eventually allow us to run an arbitrary number of Scrapers in a Group.
-
-        :returns <Worker>, the worker object which will go into a WorkGroup
+        A simple serializer used in BookItemsLoader to ensure USD is
+        prefixed on the `price` Field, for the data returned in the scrape.
+        :param value: the scraped value for the `price` Field
         """
-        worker = BaseWorker(job_id=self.job_id, scraper=BooksToScrapeScraper,
-                             http_session={'url': self.url, 'timeout': self.timeout},
-                             **self.kwargs)
+        if value:
+            return f"UK {str(value)}"
 
-        # NOTE: assign custom class attrs on your workers here, as needed.  You pretty
-        # much always need to assign worker.name here, but you may need others as well.
-        # For example, if our scraper logic depended on china=True as a flag directing
-        # it to scrape the books.toscrape.com.cn domain, we should set that flag here.
+    class BookItemsLoader(ItemLoader):
+        def write(self):
+            """
+            Write your scraper's exported custom data attributes to the
+            BookScraperItems class. Call super() to also capture attributes
+            built-in from the Base ItemLoader class.
 
-        # worker.china = self.china
-        worker.name = self.name
+            Last, ensure you assign the attributes from `self.items` to
+            `self.spider.<attribute>` and finally you must return
+            self.items in this method.
+            """
 
-        return worker
+            # now, define your custom items
+            self.items['book_title'] = self.spider.book_title
+            self.items['stock'] = self.spider.stock
+            # set the value with self.serialize_field(field, name, value) as needed,
+            # for example, `serialize_price` below turns '£50.10' into 'UK £50.10'
+            # the '£50.10' is the original scraped value from the website stored in
+            # self.scraper.price, but we think it is more clear as 'UK £50.10'
+            self.items['price'] = self.serialize_field(
+                field=Field(serializer=serialize_price),
+                name='price',
+                value=self.spider.price)
 
-A more robust use case will also first subclass the ``BaseWorker`` class. Because, it provides several methods as hooks for data persistence and post-scrape manipulation.
+            # call super() to write the built-in SplashScraper Items from ItemLoader
+            super().write()
 
-Refer to the full example in the ``examples/books_to_scrape/workgroup.py`` file for an example of customizing ``BaseWorker`` methods to fit your data persistence needs.
+            return self.items
+
+Finally, to run the scrape, we will need to create a main.py file.  This is all we need for the minimal example to scrape and export targeted data to cvs.
 
 So, at this point, we've:
 
 1. Setup a custom scraper ``BooksToScrapeScraper`` by subclassing ``SplashScraper``.
-2. Decided not to set up a database or object persistence model just yet, which would require explicitly subclassing the ``BaseWorker`` class and customizing a few methods.
-3. Due to #2 above, we can just use the standard ``BaseWorker`` class to encapsulate our custom ``BooksToScrapeScraper`` and get on with our first scrape.
-4. We setup a custom ``BooksToScrapeGroup`` by subclassing ``BaseGroup``.
+2. Setup ``BookItems`` by subclassing ``SplashScraperItems``.
+3. Setup ``BookItemsLoader`` by subclassing ``ItemLoader``.
+4. Wrote a simple ``serializer`` with the ``serialize_price`` function, which appends 'UK' to the returned `price` attribute data.
 
-Next, we are ready to setup a ``main.py`` file as an entry point to run our first scrape.
+Next, we are ready to setup a ``main.py`` file as the final entry point to run our first scrape and export the data to a csv file.
 
 The first thing we need to do is perform some imports.
 
@@ -386,8 +425,10 @@ The first thing we need to do is perform some imports.
     monkey.patch_all()
 
     from transistor import StatefulBook, WorkGroup, BaseWorkGroupManager
-    # Use the subclassed BooksToScrapeGroup you created above
-    from <path-to-your-BooksToScrapeGroup> import BooksToScrapeGroup
+    from transistor.persistence.exporters import CsvItemExporter
+    from <path-to-your-custom-scraper> import BooksToScrapeScraper
+    from <path-to-your-custom-Items/ItemsLoader> import BookItems, BookItemsLoader
+
 
 Second, setup a ``StatefulBook`` which will read the ``book_titles.xlsx`` file and transform the book titles from the spreadsheet "titles" column into task queues for our ``WorkGroups``.
 
@@ -395,7 +436,17 @@ Second, setup a ``StatefulBook`` which will read the ``book_titles.xlsx`` file a
 
     filepath = 'your/path/to/book_titles.xlsx'
     trackers = ['books.toscrape.com']
-    stateful_book = StatefulBook(filepath, trackers, keywords="titles")
+    tasks = StatefulBook(filepath, trackers, keywords="titles")
+
+Third, setup a list of exporters which than then be passed to whichever ``WorkGroup`` objects you want to use them with.  In this case, we are just going to use the built-in ``CsvItemExporter`` but we could also use additional exporters to do multiple exports at the same time, if desired.
+
+.. code-block:: python
+
+    exporters=[
+            CsvItemExporter(
+                fields_to_export=['book_title', 'stock', 'price'],
+                file=open('c:/book_data.csv', 'a+b'))
+        ]
 
 Third, setup the ``WorkGroup`` in a list we'll call *groups*. We use a list here because you can setup as many ``WorkGroup`` objects with unique target websites and as many individual workers, as you need:
 
@@ -403,9 +454,12 @@ Third, setup the ``WorkGroup`` in a list we'll call *groups*. We use a list here
 
     groups = [
     WorkGroup(
-        class_=BooksToScrapeGroup,
-        workers=20,  # this creates 20 scrapers and assigns each a unique book title as a task
         name='books.toscrape.com',
+        spider=BooksToScrapeScraper,
+        items=BookItems,
+        loader=BookItemsLoader,
+        exporters=exporters,
+        workers=20,  # this creates 20 scrapers and assigns each a book as a task
         kwargs={'url': 'http://books.toscrape.com/', 'timeout': (3.0, 20.0)})
     ]
 
@@ -418,21 +472,27 @@ Last, setup the ``WorkGroupManager`` and prepare the file to call the ``manager.
     # list of WorkGroup objects. However, sometimes you may want to constrain your pool
     # to a specific number less than your scrapers. That's also OK. This is useful
     # like Crawlera's C10 instance, only allows 10 concurrent workers. Set pool=10.
-    manager = BaseWorkGroupManager(job_id='books_scrape', book=stateful_book, groups=groups, pool=25)
+    manager = BaseWorkGroupManager(job_id='books_scrape', book=tasks, groups=groups, pool=25)
 
     if __name__ == "__main__":
         manager.main()  # call manager.main() to start the job.
 
-Finally, run ``python main.py`` and then **profit**.
+Finally, run ``python main.py`` and then **profit**. After a several-minute Spider runtime to crawl the books.toscrape.com website and write the data, you should have a newly exported csv file in the filepath you setup, 'c:/book_data.csv' in our example above.
 
 To summarize what we did in ``main.py``:
 
-We setup a ``WorkGroupManager``, wrapped our ``BooksToScrapeGroup`` inside a ``WorkGroup`` and then passed a list called *groups* containing the ``WorkGroup`` to the ``WorkGroupManager``.
+We setup a ``BaseWorkGroupManager``, wrapped our spider ``BooksToScrapeScraper`` inside a list of ``WorkGroup`` objects called *groups*. Then we passed the *groups* list to the ``BaseWorkGroupManager``.
 
-- Wrapping the ``BooksToScrapeGroup`` inside a ``WorkGroup`` allows the  ``WorkGroupManager`` to run multiple ``BaseGroup`` objects with different website targets, concurrently.
-- In this simple example, we are only scraping ``books.toscrape.com``, but if we wanted to also scrape ``books.toscrape.com.cn``, then we'd setup two ``BaseGroup`` objects and wrap them each in their own ``WorkGroup``. One ``WorkGroup`` for each domain.
+- Passing a list of ``WorkGroup`` objects allows the ``WorkGroupManager`` to run multiple jobs targeting different websites, concurrently.
+- In this simple example, we are only scraping ``books.toscrape.com``, but if we wanted to also scrape ``books.toscrape.com.cn``, then we'd setup two ``BaseGroup`` objects and wrap them each in their own ``WorkGroup``, one for each domain.
 
-NOTE: If you do try to follow the more detailed example  in ``examples/books_to_scrape``, including data persistence with postgresql and newt.db, you may need to set the environment variable:
+
+NOTE-1: A more robust use case will also subclass the ``BaseWorker`` class. Because, it provides several methods as hooks for data persistence and post-scrape manipulation.
+Also, one may also consider to sublcass the ``WorkGroupManager`` class and override it's ``monitor`` method. This is another hook point to have access to the ``BaseWorker`` object before it shuts down for good.
+
+Refer to the full example in the ``examples/books_to_scrape/workgroup.py`` file for an example of customizing ``BaseWorker`` and ``WorkGroupManager`` methods. In the example, we show how to to save data to postgresql with newt.db but you can use whichever db you choose.
+
+NOTE-2: If you do try to follow the more detailed example  in ``examples/books_to_scrape``, including data persistence with postgresql and newt.db, you may need to set the environment variable:
 
 .. code-block:: python
 

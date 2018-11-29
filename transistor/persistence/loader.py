@@ -97,6 +97,9 @@ class ItemLoader:
         self.items['_test_true']=self.spider._test_true
         self.items['_result']=self.spider._result
 
+        # finally, set the written flag for the worker use
+        self.items.written = True
+
         # scraper properties
         # scraper private methods
         # public methods
