@@ -5,8 +5,8 @@
 
 .. image:: https://img.shields.io/badge/Python-3.6%20%7C%203.7-blue.svg
   :target: https://github.com/bomquote/transistor
-.. image:: https://img.shields.io/badge/pypi%20package-0.1.1-blue.svg
-  :target: https://pypi.org/project/transistor/0.1.1/
+.. image:: https://img.shields.io/badge/pypi%20package-0.2.0-blue.svg
+  :target: https://pypi.org/project/transistor/0.2.0/
 .. image:: https://img.shields.io/badge/Status-Beta-blue.svg
   :target: https://github.com/bomquote/transistor
 .. image:: https://img.shields.io/badge/license-MIT-lightgrey.svg
