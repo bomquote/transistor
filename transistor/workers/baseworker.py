@@ -118,7 +118,8 @@ class BaseWorker:
         """
         items = self.load_items(spider)
         for exporter in self.get_spider_exporters():
-            exporter.export_item(items)
+           exporter.export_item(items)
+
 
     def post_process_exports(self, spider, task):
         """

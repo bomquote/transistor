@@ -69,7 +69,7 @@ def get_file_path(filename):
     """
     root_dir = d(d(abspath(__file__)))
     root = Path(root_dir)
-    filepath = root / 'books_to_scrape' / filename
+    filepath = root / 'stateful_book' / filename
     return r'{}'.format(filepath)
 
 # 2) Create a StatefulBook instance to read the excel file and load the work queue.
@@ -87,7 +87,8 @@ tasks = StatefulBook(file, trackers, keywords='titles', autorun=True)
 
 exporters = [CsvItemExporter(
                 fields_to_export=['book_title', 'stock', 'price'],
-                file=open('c:/tmp/book_data.csv', 'a+b')),
+                file=open('c:/tmp/book_data.csv', 'a+b'),
+                encoding='utf_8_sig'),
              JsonLinesItemExporter(
                 fields_to_export=['book_title', 'stock', 'price'],
                 file=open('c:/tmp/book_data.json', 'a+b'),
@@ -108,7 +109,7 @@ groups = [
         items=BookItems,
         loader=BookItemsLoader,
         exporters=exporters,
-        workers=20,  # this creates 20 scrapers and assigns each a book as a task
+        workers=3,  # this creates 3 scrapers and assigns each a book as a task
         kwargs={'timeout': (3.0, 20.0)})
     ]
 
@@ -117,7 +118,7 @@ groups = [
 # when using a Crawlera 'C10' plan which limits concurrency to 10. To deploy all
 # the workers concurrently, set the pool to be marginally larger than the number
 # of total workers assigned in groups in step #3 above.
-manager = BooksWorkGroupManager('books_scrape', tasks, groups=groups, pool=25)
+manager = BooksWorkGroupManager('books_scrape', tasks, workgroups=groups, pool=5)
 
 
 if __name__ == "__main__":

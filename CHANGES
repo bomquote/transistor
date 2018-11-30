@@ -2,6 +2,22 @@
   transistor: CHANGES
 ========================
 
+11/30/18
+- BaseGroup.hired_worker() method name has been changed to `get_worker()`
+
+- transistor/books folder is now moved to transistor/schedulers/books
+
+- Added AMPQ support through Kombu
+
+- modified WorkGroupManager to act as a Consumer, accepting tasks from a
+Producer, working with RabbitMQ broker. It will probably also work with
+Redis as long as the appropriate connection string is applied.
+
+- added transistor/schedulers/brokers queues.py which contains a class
+ExchangQueue, which an instance can be passed to WorkGroupManager task parameter,
+enabling it to work with RabbitMQ (and maybe Redis).
+ 
+
 11/29/18
 - pypi 0.2.1 release
 

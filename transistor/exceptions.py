@@ -30,6 +30,10 @@ class BrokenSpider(Exception):
     pass
 
 
+class IncompatibleTasks(Exception):
+    pass
+
+
 class KeywordError(Exception):
     """
     Raise when a StatefulBook keyword does not match the spreadsheet column
@@ -41,13 +45,16 @@ class KeywordError(Exception):
 
 # Items
 
+
 class DropItem(Exception):
     """Drop item from the item pipeline"""
     pass
 
+
 class NotSupported(Exception):
     """Indicates a feature or method is not supported"""
     pass
+
 
 class BadRequest(Exception):
 

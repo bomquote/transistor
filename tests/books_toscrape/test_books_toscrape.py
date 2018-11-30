@@ -88,7 +88,8 @@ def bts_manager(_BooksToScrapeGroup, _BooksWorker):
     exporters = [
         CsvItemExporter(
             fields_to_export=['book_title', 'stock', 'price'],
-            file=book_data_file
+            file=book_data_file,
+            encoding='utf_8_sig'
         )
     ]
 
@@ -108,7 +109,7 @@ def bts_manager(_BooksToScrapeGroup, _BooksWorker):
             workers=3,  # this creates 3 scrapers and assigns each a book as a task
             kwargs={'timeout': (3.0, 20.0)})
     ]
-    manager = BooksWorkGroupManager('books_scrape', tasks, groups=groups, pool=5)
+    manager = BooksWorkGroupManager('books_scrape', tasks, workgroups=groups, pool=5)
 
     return manager
 

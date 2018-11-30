@@ -9,7 +9,7 @@ Web data collection and storage for intelligent use cases.
 ~~~~~~~~~~~~
 """
 
-from transistor.books import StatefulBook
+from transistor.schedulers.books import StatefulBook
 from transistor.browsers import SplashBrowser
 from transistor.managers import BaseWorkGroupManager
 from transistor.scrapers import SplashScraper

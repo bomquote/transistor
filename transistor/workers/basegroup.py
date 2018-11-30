@@ -13,9 +13,9 @@ more notes on this module.
 
 class BaseGroup:
     """
-    Inherit this class to create a Group of Worker objects. It allows to
-    easily index and combine groups of workers. For example, this class
-    enables class WorkerGroup<#>(BaseGroup) to be combined like:
+    This class creates a Group of Worker objects. It allows to easily index
+    and combine groups of workers. For example, it enables class
+    WorkerGroup<#>(BaseGroup) objects to be combined like:
 
     WorkerGroup3 = WorkerGroup1 + WorkerGroup2
     """
@@ -79,9 +79,9 @@ class BaseGroup:
         """
         worker_list = []
         for number in range(0, self.staff):
-            worker = self.hired_worker()
+            worker = self.get_worker()
             worker.job_id = self.job_id
-            worker.number = number + 1  # I don't want a zero index worker number
+            worker.number = number + 1
             worker.items = self.items
             worker.loader = self.loader
             worker.exporter = self.exporter
@@ -91,11 +91,12 @@ class BaseGroup:
 
     @property
     def workers(self):
-        """return a list of all individual workers in the workgroup"""
-
+        """
+        Return a list of all individual workers in the worker group.
+        """
         return self.worker_list
 
-    def hired_worker(self):
+    def get_worker(self):
         """
         Encapsulates the custom spider, inside of a Worker object. This helps
         enable running an arbitrary amount of Spider objects.

@@ -15,7 +15,7 @@ from collections import deque
 from pathlib import Path
 from os.path import dirname as d
 from os.path import abspath
-from transistor.books.taskstate import TaskTracker
+from transistor.schedulers.books.taskstate import TaskTracker
 from transistor.exceptions import KeywordError
 
 root_dir = d(d(abspath(__file__)))

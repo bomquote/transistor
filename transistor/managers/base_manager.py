@@ -18,27 +18,43 @@ will subclass BaseManager and override the monitor method for customization.
 """
 
 import gevent
+import json
+from typing import List, Type, Union
 from gevent.queue import Queue, Empty
 from gevent.pool import Pool
+from kombu import Connection
+from kombu.mixins import ConsumerMixin
+from transistor.schedulers.books.bookstate import StatefulBook
+from transistor.schedulers.brokers.queues import ExchangeQueue
+from transistor.workers.workgroup import WorkGroup
+from transistor.exceptions import IncompatibleTasks
+from kombu.log import get_logger
+from kombu.utils.functional import reprcall
+logger = get_logger(__name__)
+debug, info, warn, error = logger.debug, logger.info, logger.warn, logger.error
 
 
-class BaseWorkGroupManager:
+class BaseWorkGroupManager(ConsumerMixin):
     """
     Base class for a WorkGroupManager.
     """
     __attrs__ = [
-        'book', 'exporter', 'job_id', 'groups', 'trackers', 'pool', 'qitems',
+        'book', 'exporter', 'job_id', 'wgroups', 'trackers', 'pool', 'qitems',
         'workgroups',
     ]
 
-    def __init__(self, job_id, book, groups:list, pool:int=20):
+    def __init__(self, job_id, tasks: Type[Union[Type[StatefulBook],
+                                                 Type[ExchangeQueue]]],
+                 workgroups: List[WorkGroup], pool: int=20,
+                 connection: Connection = None, should_stop=False):
         """
 
         Create the instance.
 
         :param job_id: will save the result of the workers Scrapes to `job_id` list.
         If this job_id is "NONE" then it will pass on the save.
-        :param book:  a StatefulBook instance
+        :param tasks:  a StatefulBook instance or other class which passes
+        an object which can be turned into a task queue in _init_tasks() method.
         :param pool: size of the greenlets pool. If you want to utilize all the
         workers concurrently, it should be at least the total number
         of all workers + 1 for the manager. Otherwise, the pool is useful to
@@ -52,32 +68,50 @@ class BaseWorkGroupManager:
         :param pool: number of greenlets to create
         """
         self.job_id = job_id
-        self.book = book
-        self.trackers = self.book.trackers
-        self.groups = groups
+        self.tasks = tasks
+        self.groups = workgroups
         self.pool = Pool(pool)
         self.qitems = {}
         self.workgroups = {}
         self._init_tasks()
+        self.connection = connection
+        self.kombu = False
+        self.manager_should_stop = should_stop
 
     def _init_tasks(self):
         """
-        Create individual task queues for the workers. The tracker names
-        should be extracted from self.book.to_do() and the tracker
-        name should match the worker name.
+        Create individual task queues for the workers.
 
-        Extract the tracker name and then create the qitems. Example:
+        If, Type[StatefulBook] is passed as the `tasks` parameter, the tracker with
+        a name that matches a workgroup name, is effectively the workgroup's
+        task queue. So, extract the tracker name from self.book.to_do()
+        and the tracker name should match the worker name.
 
-        >>> qitems = {}
-        >>> for tracker in book.to_do():
-        >>>    qitems.[self.tracker.name] = tracker.to_do()
-        returns:
+        Extract the tracker name and then create qitems:
+
+        Example hint, `self.tasks.to_do()` looks like this:
         deque([<TaskTracker(name=mousekey.cn)>, <TaskTracker(name=mousekey.com)>])
         """
+        if isinstance(self.tasks, StatefulBook):
+            for tracker in self.tasks.to_do():
+                # set the name of qitems key to tracker.name
+                self.qitems[tracker.name] = Queue(items=tracker.to_do())
 
-        for tracker in self.book.to_do():
-            # set the name of qitems key to tracker.name
-            self.qitems[tracker.name] = Queue(items=tracker.to_do())
+        elif isinstance(self.tasks, ExchangeQueue):
+            for tracker in self.tasks.trackers:
+               self.qitems[tracker] = Queue()
+            self.kombu = True
+
+        else:
+            raise IncompatibleTasks('`task` parameter must be an instance of '
+                                    'StatefulBook or ExchangeQueue')
+
+        # if not a stateful book. The class should have some attribute which
+        # presents a list-like object, where this list-like object is a
+        # list of queues.
+
+        # classes of type Type[X], where X has attributes X.name and X.to_do(),
+        # where X.to_do() returns object appropriate for Queue(items=X.to_do())
 
         self._init_workers()
 
@@ -110,9 +144,34 @@ class BaseWorkGroupManager:
                         staff=group.workers, job_id=self.job_id, **group.kwargs)
                     # now that attrs assigned, init the workers on the workgroup
                     workergroup.init_workers()
-                    # lastly, after calling init_workers, assign the workgroup instance
-                    # with workers instance to the workgroups dict with key = `name`
+                    # lastly, after calling init_workers, assign the workgroup
+                    # instance to the workgroups dict with key = `name`
                     self.workgroups[name] = workergroup
+
+    def get_consumers(self, Consumer, channel):
+        """
+        Must be implemented for Kombu ConsumerMixin
+        """
+        return [Consumer(queues=self.tasks.task_queues,
+                         accept=['json'],
+                         callbacks=[self.process_task])]
+
+    def process_task(self, body, message):
+        """
+        Process messages to extract the task keywords and then
+        load them into a gevent Queue for each tracker.
+        """
+        keywords = body['keywords']
+        logger.info(f'Got task: {reprcall(keywords)}')
+        try:
+            kwds = json.loads(keywords)
+            for key in self.qitems.keys():
+                self.qitems[key] = Queue(items=kwds)
+            self.manage()
+        except Exception as exc:
+            # logger.error('task raised exception: %r', exc)
+            print(f'task raised exception: {exc}')
+        message.ack()
 
     def spawn_list(self):
         """"
@@ -126,10 +185,15 @@ class BaseWorkGroupManager:
         :return: A list of the newly started greenlets.
         """
 
-        # workgroups is a list of BaseGroup objects
+        # here, workgroups is a list of Type[BaseGroup] objects
         workgroups = [val for val in self.workgroups.values()]
 
-        spawn_list = [self.pool.spawn(self.monitor, worker) for work_group in
+        spawn_run = []
+        if self.kombu:
+            spawn_run = [self.pool.spawn(self.run)]
+
+        spawn_list = spawn_run + \
+                     [self.pool.spawn(self.monitor, worker) for work_group in
                       workgroups for worker in work_group]
 
         # we get a blocking error if we spawn the manager first, so spawn it last
@@ -179,20 +243,25 @@ class BaseWorkGroupManager:
     def manage(self):
         """"
         Manage will hand out work when the appropriate Worker is free.
-        The manager timeout must be less than worker timeout, or else, the workers
-        will be idled and shutdown.
+        The manager timeout must be less than worker timeout, or else, the
+        workers will be idled and shutdown.
         """
         try:
             while True:
                 for name, workgroup in self.workgroups.items():
                     for qname, q in self.qitems.items():
-                        if name == qname: # workgroup name must match the tracker name
+                        if name == qname: # workgroup name must match tracker name
+                            # a tracker with the same name as workgroup name, is...
+                            # ...effectively, the workgroup's task queue, so now...
+                            # assign a task to a worker from the workgroup's task queue
                             for worker in workgroup:
                                 one_task = q.get(timeout=0.5)
                                 worker.tasks.put(one_task)
                 gevent.sleep(0)
         except Empty:
             print(f'Assigned all {name} work!')
+            if self.manager_should_stop:
+                self.should_stop = True
 
     def main(self):
         spawny = self.spawn_list()

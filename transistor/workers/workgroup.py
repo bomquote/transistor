@@ -9,13 +9,14 @@ See transistor.workers.__init__ for more notes on this module.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
-from typing import NamedTuple, Type, Union, List
+from typing import NamedTuple, Type, Union, List, Optional
 from transistor.workers.basegroup import BaseGroup
 from transistor.persistence.loader import ItemLoader
 from transistor.persistence.exporters.base import BaseItemExporter
 from transistor.persistence.containers import Item
 from transistor.scrapers.splash_scraper_abc import SplashScraper
 from transistor.workers.baseworker import BaseWorker
+from transistor.schedulers.books.bookstate import StatefulBook
 
 class WorkGroup(NamedTuple):
     """
@@ -32,11 +33,13 @@ class WorkGroup(NamedTuple):
     >>> manager = WorkGroupManager('part_number_job_1', book, groups=groups, pool=5)
 
     :param name: name the group
-    :param tasks: an instance of StatefulBook or dict or list
+    :param url: the starting url for the group of Workers
+    :param spider: the custom defined Spider, i.e. subclass of SplashScraper
+    :param worker: the BaseWorker class or else a subclass of it
     :param group: the <WorkerGroup> class object
-    :param items: the number of workers to spawn
-    :param loader:
-    :param exporter:
+    :param items: a subclass of SplashItems, or some subclass of Item
+    :param loader: the ItemLoader class or else a subclass of it
+    :param exporter: the BaseItemExporter class or else a subclass of it
     :param kwargs: to use for each <Worker> instance in the group
     """
     name: str
