@@ -16,7 +16,7 @@ Redis as long as the appropriate connection string is applied.
 - added transistor/schedulers/brokers queues.py which contains a class
 ExchangQueue, which an instance can be passed to WorkGroupManager task parameter,
 enabling it to work with RabbitMQ (and maybe Redis).
- 
+
 
 11/29/18
 - pypi 0.2.1 release

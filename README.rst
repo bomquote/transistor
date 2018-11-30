@@ -277,7 +277,7 @@ Specifically, we are interested to export the ``book_title``, ``stock`` and ``pr
         def write(self):
             """
             Write your scraper's exported custom data attributes to the
-            BookScraperItems class. Call super() to also capture attributes
+            BookItems class. Call super() to also capture attributes
             built-in from the Base ItemLoader class.
 
             Last, ensure you assign the attributes from `self.items` to
@@ -346,7 +346,7 @@ Third, setup a list of exporters which than then be passed to whichever ``WorkGr
                 file=open('c:/book_data.csv', 'a+b'))
         ]
 
-Third, setup the ``WorkGroup`` in a list we'll call *groups*. We use a list here because you can setup as many ``WorkGroup`` objects with unique target websites and as many individual workers, as you need:
+Fourth, setup the ``WorkGroup`` in a list we'll call *groups*. We use a list here because you can setup as many ``WorkGroup`` objects with unique target websites and as many individual workers, as you need:
 
 .. code-block:: python
 
@@ -358,11 +358,11 @@ Third, setup the ``WorkGroup`` in a list we'll call *groups*. We use a list here
         items=BookItems,
         loader=BookItemsLoader,
         exporters=exporters,
-        workers=20,  # this creates 20 scrapers and assigns each a book as a task
+        workers=20,  # this creates 20 Spiders and assigns each a book as a task
         kwargs={'timeout': (3.0, 20.0)})
     ]
 
-Last, setup the ``WorkGroupManager`` and prepare the file to call the ``manager.main()`` method to start the scrape job:
+Fifth, setup the ``WorkGroupManager`` and prepare the file to call the ``manager.main()`` method to start the scrape job:
 
 .. code-block:: python
 
@@ -376,7 +376,7 @@ Last, setup the ``WorkGroupManager`` and prepare the file to call the ``manager.
     if __name__ == "__main__":
         manager.main()  # call manager.main() to start the job.
 
-Finally, run ``python main.py`` and then **profit**. After a several-minute Spider runtime to crawl the books.toscrape.com website and write the data, you should have a newly exported csv file in the filepath you setup, 'c:/book_data.csv' in our example above.
+Finally, run ``python main.py`` and then **profit**. After a brief Spider runtime to crawl the books.toscrape.com website and write the data, you should have a newly exported csv file in the filepath you setup, 'c:/book_data.csv' in our example above.
 
 To summarize what we did in ``main.py``:
 
@@ -481,11 +481,12 @@ Transistor provides useful layers and objects in the following categories:
 - after importing the keyword search terms, the book will transform each search term into a task contained in a ``TaskTracker`` object
 - each ``TaskTracker`` will contain a queue of tasks to be assigned by the ``WorkGroupManager``, and will ultimately allow an arbitrarily large number of ``WorkGroups`` of ``BaseWorkers`` to execute the tasks, concurrently.
 
-*RabbitMQ*
+*RabbitMQ & Redis*
 
-- see ``transistor/schedulers/rabbitmq``
-- provides a ``producer`` with base functionality to send messages to a RabbitMQ message broker Exchange
-- provides a ``consumer`` with base functionallity to receive messages from a RabbitMQ message broker Exchange
+- see ``transistor/schedulers/brokers``
+- provides the ``ExchangeQueue`` class in transistor.scheulers.brokers.queues which can be passed to the ``tasks`` parameter of ``BaseWorkGroupManager``
+- in this case, the ``BaseWorkGroupManager`` also acts as a AMQP ``consumer`` which can receive messages from RabbitMQ message broker
+
 
 2. **workers**:
 
