@@ -172,7 +172,7 @@ def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks,
             workers=2,  # this creates 2 scrapers and assigns each a book as a task
             kwargs={'timeout': (3.0, 20.0)})
     ]
-    manager = BooksWorkGroupManager('books_scrape', broker_tasks,
+    manager = BooksWorkGroupManager('books_broker_scrape', broker_tasks,
                                     workgroups=groups, pool=5, connection=rabbit_conn)
 
     return manager
@@ -312,9 +312,6 @@ class TestLiveBooksToScrape:
         class passed to the Manager tasks parameter.
         """
 
-        ndb.root._spiders = SpiderLists()
-        ndb.commit()
-
         # first, use a producer to send the tasks to RabbitMQ
         keyword_1 = '["Soumission"]'
         keyword_2 = '["Rip it Up and Start Again"]'
@@ -327,13 +324,19 @@ class TestLiveBooksToScrape:
         send_as_task(rabbit_conn, keywords=keywords, routing_key='books.toscrape.com',
                      exchange=broker_tasks.task_exchange, kwargs={})
         # give it a few seconds to ensure the tasks are registered in RabbitMQ
-        time.sleep(10)
+        time.sleep(3)
+
+        # setup newt.db for testing
+        ndb.root._spiders = SpiderLists()
+        ndb.commit()
+        time.sleep(2)
+
         # now, perform the scrape
         bts_broker_manager.main()
 
         # when the scrape is completed then check the results
 
-        result = get_job_results('books_scrape')
+        result = get_job_results('books_broker_scrape')
 
         book_titles = []
         prices = []
@@ -364,7 +367,7 @@ class TestLiveBooksToScrape:
         assert result[0]['crawlera_session'] is None
         assert result[0]['resp_content_type_header'] is None
 
-        delete_job('books_scrape')
+        delete_job('books_broker_scrape')
         del ndb.root._spiders
         ndb.commit()
 
