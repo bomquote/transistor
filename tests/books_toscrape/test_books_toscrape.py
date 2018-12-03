@@ -312,8 +312,6 @@ class TestLiveBooksToScrape:
         class passed to the Manager tasks parameter.
         """
 
-        # todo: move this to a setup fixture
-        # first, setup newt.db for testing
         ndb.root._spiders = SpiderLists()
         ndb.commit()
 
@@ -329,7 +327,7 @@ class TestLiveBooksToScrape:
         send_as_task(rabbit_conn, keywords=keywords, routing_key='books.toscrape.com',
                      exchange=broker_tasks.task_exchange, kwargs={})
         # give it a few seconds to ensure the tasks are registered in RabbitMQ
-        time.sleep(3)
+        time.sleep(10)
         # now, perform the scrape
         bts_broker_manager.main()
 
@@ -366,7 +364,6 @@ class TestLiveBooksToScrape:
         assert result[0]['crawlera_session'] is None
         assert result[0]['resp_content_type_header'] is None
 
-        # todo: move this to a teardown fixture
         delete_job('books_scrape')
         del ndb.root._spiders
         ndb.commit()
