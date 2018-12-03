@@ -31,6 +31,7 @@ from examples.books_to_scrape.scraper import BooksToScrapeScraper
 from examples.books_to_scrape.manager import BooksWorkGroupManager
 from examples.books_to_scrape.persistence.serialization import (
     BookItems, BookItemsLoader)
+from examples.books_to_scrape.schedulers.brokers.client_main import send_as_task
 
 root_dir = d(d(abspath(__file__)))
 
@@ -306,31 +307,21 @@ class TestLiveBooksToScrape:
         del ndb.root._spiders
         ndb.commit()
 
-    def test_live_broker_scheduled_manager(self, bts_broker_manager, broker_tasks):
+    def test_live_broker_scheduled_manager(self, bts_broker_manager, broker_tasks,
+                                           rabbit_conn):
         """
         Test a live scrape using RabbitMQ broker and the ExchangeQueue
         class passed to the Manager tasks parameter.
         """
-
-        def send_as_task(connection, keywords, routing_key, exchange, kwargs={}):
-            payload = {'keywords': keywords, 'kwargs': kwargs}
-
-            with producers[connection].acquire(block=True) as producer:
-                producer.publish(payload,
-                                 serializer='json',
-                                 # if there is more than one tracker, use something like
-                                 # the _publish above, with a for loop for each tracker
-                                 routing_key=routing_key,
-                                 exchange=exchange,
-                                 declare=[exchange],
-                                 )
+        for queue in broker_tasks.task_queues:
+            queue(rabbit_conn).declare()
 
         # first, use a producer to send the tasks to RabbitMQ
         keyword_1 = '["Soumission"]'
         keyword_2 = '["Rip it Up and Start Again"]'
         keywords = '["Black Dust", "When We Collided"]'
 
-        with Connection("pyamqp://guest:guest@localhost:5672//") as conn:
+        with rabbit_conn as conn:
             send_as_task(conn, keywords=keyword_1, routing_key='books.toscrape.com',
                          exchange=broker_tasks.task_exchange, kwargs={})
             send_as_task(conn, keywords=keyword_2, routing_key='books.toscrape.com',
