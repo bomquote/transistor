@@ -317,12 +317,14 @@ class TestLiveBooksToScrape:
         keyword_2 = '["Rip it Up and Start Again"]'
         keywords = '["Black Dust", "When We Collided"]'
 
-        send_as_task(rabbit_conn, keywords=keyword_1, routing_key='books.toscrape.com',
-                     exchange=broker_tasks.task_exchange, kwargs={})
-        send_as_task(rabbit_conn, keywords=keyword_2, routing_key='books.toscrape.com',
-                     exchange=broker_tasks.task_exchange, kwargs={})
-        send_as_task(rabbit_conn, keywords=keywords, routing_key='books.toscrape.com',
-                     exchange=broker_tasks.task_exchange, kwargs={})
+        with rabbit_conn as conn:
+            send_as_task(conn, keywords=keyword_1, routing_key='books.toscrape.com',
+                         exchange=broker_tasks.task_exchange, kwargs={})
+            send_as_task(conn, keywords=keyword_2, routing_key='books.toscrape.com',
+                         exchange=broker_tasks.task_exchange, kwargs={})
+            send_as_task(conn, keywords=keywords, routing_key='books.toscrape.com',
+                         exchange=broker_tasks.task_exchange, kwargs={})
+
         # give it a few seconds to ensure the tasks are registered in RabbitMQ
         time.sleep(3)
 
