@@ -20,6 +20,7 @@ from pathlib import Path
 from os.path import dirname as d
 from os.path import abspath
 from kombu import Connection
+from kombu.pools import producers
 from transistor.schedulers.brokers.queues import ExchangeQueue
 from transistor import StatefulBook, WorkGroup
 from transistor.persistence.newt_db.collections import SpiderLists
@@ -30,7 +31,6 @@ from examples.books_to_scrape.scraper import BooksToScrapeScraper
 from examples.books_to_scrape.manager import BooksWorkGroupManager
 from examples.books_to_scrape.persistence.serialization import (
     BookItems, BookItemsLoader)
-from examples.books_to_scrape.schedulers.brokers.client_main import send_as_task
 
 root_dir = d(d(abspath(__file__)))
 
@@ -311,6 +311,19 @@ class TestLiveBooksToScrape:
         Test a live scrape using RabbitMQ broker and the ExchangeQueue
         class passed to the Manager tasks parameter.
         """
+
+        def send_as_task(connection, keywords, routing_key, exchange, kwargs={}):
+            payload = {'keywords': keywords, 'kwargs': kwargs}
+
+            with producers[connection].acquire(block=True) as producer:
+                producer.publish(payload,
+                                 serializer='json',
+                                 # if there is more than one tracker, use something like
+                                 # the _publish above, with a for loop for each tracker
+                                 routing_key=routing_key,
+                                 exchange=exchange,
+                                 declare=[exchange],
+                                 )
 
         # first, use a producer to send the tasks to RabbitMQ
         keyword_1 = '["Soumission"]'
