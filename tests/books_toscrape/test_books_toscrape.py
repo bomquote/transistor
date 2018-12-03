@@ -136,16 +136,17 @@ def broker_tasks():
 
 
 @pytest.fixture(scope='function')
-def rabbit_conn():
+def broker_conn():
     """
-    A Kombu connection object with RabbitMQ URI.
+    A Kombu connection object. Connect with RabbitMQ or Redis.
     """
     connection = Connection("pyamqp://guest:guest@localhost:5672//")
+    # connection = Connection("redis://127.0.0.1:6379")
     return connection
 
 
 @pytest.fixture(scope='function')
-def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks):
+def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks, broker_conn):
     """
     A BooksToScrape Manager test fixture for live network call.
     Here, we use a broker (RabbitMQ) to test.
@@ -160,8 +161,6 @@ def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks):
         )
     ]
 
-    conn = Connection("pyamqp://guest:guest@localhost:5672//")
-
     groups = [
         WorkGroup(
             name='books.toscrape.com',
@@ -175,7 +174,7 @@ def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks):
             kwargs={'timeout': (3.0, 20.0)})
     ]
     manager = BooksWorkGroupManager('books_broker_scrape', broker_tasks,
-                                    workgroups=groups, pool=5, connection=conn)
+                                    workgroups=groups, pool=5, connection=broker_conn)
 
     return manager
 
@@ -308,20 +307,20 @@ class TestLiveBooksToScrape:
         ndb.commit()
 
     def test_live_broker_scheduled_manager(self, bts_broker_manager, broker_tasks,
-                                           rabbit_conn):
+                                           broker_conn):
         """
         Test a live scrape using RabbitMQ broker and the ExchangeQueue
         class passed to the Manager tasks parameter.
         """
         for queue in broker_tasks.task_queues:
-            queue(rabbit_conn).declare()
+            queue(broker_conn).declare()
 
         # first, use a producer to send the tasks to RabbitMQ
         keyword_1 = '["Soumission"]'
         keyword_2 = '["Rip it Up and Start Again"]'
         keywords = '["Black Dust", "When We Collided"]'
 
-        with rabbit_conn as conn:
+        with broker_conn as conn:
             send_as_task(conn, keywords=keyword_1, routing_key='books.toscrape.com',
                          exchange=broker_tasks.task_exchange, kwargs={})
             send_as_task(conn, keywords=keyword_2, routing_key='books.toscrape.com',
