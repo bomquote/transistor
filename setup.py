@@ -33,31 +33,31 @@ REQUIRES_PYTHON = '>=3.6.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'mechanicalsoup>=0.11.0',
-    'requests>=2.20.1',
-    'urllib3>=1.24.1',
-    'keyring>=16.1.1',
-    'lxml>=4.2.5',
-    'lz4>=2.1.2',
-    'pyexcel>=0.5.9.1',
-    'pyexcel-io>=0.5.10',
-    'pyexcel-ods3>=0.5.3',
-    'pyexcel-webio>=0.1.4',
-    'pyexcel-xls>=0.5.8',
-    'pyexcel-xlsx>=0.5.6',
-    'cookiecutter>=1.6.0',
-    'cssselect>=1.0.3',
-    'w3lib>=1.19.0',
-    'pycryptodome>=3.7.2',
-    'gevent>=1.3.7',
+    'mechanicalsoup>=0.11.0,<0.12.0',
+    'requests>=2.20.1,<3.0',
+    'urllib3>=1.24.1,<2.0',
+    'keyring>=17.0.0,<18.0',
+    'lxml>=4.2.5,<5.0',
+    'lz4>=2.1.2,<3.0',
+    'pyexcel>=0.5.9.1,<0.6.0',
+    'pyexcel-io>=0.5.10,<0.6.0',
+    'pyexcel-ods3>=0.5.3,<0.6.0',
+    'pyexcel-webio>=0.1.4,<0.2.0',
+    'pyexcel-xls>=0.5.8,<0.6.0',
+    'pyexcel-xlsx>=0.5.6,<0.6.0',
+    'cookiecutter>=1.6.0,<2.0',
+    'cssselect>=1.0.3,<2.0',
+    'w3lib>=1.19.0,<2.0',
+    'pycryptodome>=3.7.2,<4.0',
+    'gevent>=1.3.7,<2.0',
 
 ]
 
 test_requirements = [
-    'pytest>=4.0.1',
-    'pytest-cov==2.6.0',
-    'coverage==4.5.2',
-    'mock==2.0.0'
+    'pytest>=4.0.1,<5.0',
+    'pytest-cov==2.6.0,<3.0',
+    'coverage==4.5.2,<5.0',
+    'mock==2.0.0,<3.0'
 ]
 
 # What packages are optional?
@@ -124,7 +124,7 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    download_url='https://github.com/bomquote/transistor/archive/v0.2.1.tar.gz',
+    download_url='https://github.com/bomquote/transistor/archive/v0.2.2.tar.gz',
     keywords=['scraping', 'crawling', 'spiders', 'requests', 'beautifulsoup4',
               'mechanicalsoup', 'framework', 'headless-browser'],
     packages=find_packages(exclude=('tests',)),

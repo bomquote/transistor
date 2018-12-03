@@ -105,8 +105,9 @@ install:
     - cmd: pip install mechanicalsoup==0.11.0
     - cmd: pip install requests==2.20.1
     - cmd: pip install urllib3==1.24.1
-    - cmd: pip install keyring==16.1.1
+    - cmd: pip install keyring==17.0.0
     - cmd: pip install kombu==4.2.1
+    - cmd: python x:\host\transistor\appveyor\check_rabbitmq_connection.py
     - cmd: pip install lxml==4.2.5
     - cmd: pip install lz4==2.1.2
     - cmd: pip install openpyxl==2.5.2

@@ -3,6 +3,8 @@
 ========================
 
 12/3/18
+- pypi 0.2.2 release
+
 - Fixed a bug in BaseWorker.load_items() method which previously resulted
 in losing scrape data when the number of workers did not equal number of
 tasks. Now, using any number of workers or pool size will result in
