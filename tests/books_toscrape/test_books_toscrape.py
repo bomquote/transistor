@@ -144,8 +144,7 @@ def rabbit_conn():
 
 
 @pytest.fixture(scope='function')
-def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks,
-                       rabbit_conn):
+def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks):
     """
     A BooksToScrape Manager test fixture for live network call.
     Here, we use a broker (RabbitMQ) to test.
@@ -160,6 +159,8 @@ def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks,
         )
     ]
 
+    conn = Connection("pyamqp://guest:guest@localhost:5672//")
+
     groups = [
         WorkGroup(
             name='books.toscrape.com',
@@ -173,7 +174,7 @@ def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks,
             kwargs={'timeout': (3.0, 20.0)})
     ]
     manager = BooksWorkGroupManager('books_broker_scrape', broker_tasks,
-                                    workgroups=groups, pool=5, connection=rabbit_conn)
+                                    workgroups=groups, pool=5, connection=conn)
 
     return manager
 
@@ -305,8 +306,7 @@ class TestLiveBooksToScrape:
         del ndb.root._spiders
         ndb.commit()
 
-    def test_live_broker_scheduled_manager(self, bts_broker_manager, rabbit_conn,
-                                           broker_tasks):
+    def test_live_broker_scheduled_manager(self, bts_broker_manager, broker_tasks):
         """
         Test a live scrape using RabbitMQ broker and the ExchangeQueue
         class passed to the Manager tasks parameter.
@@ -317,7 +317,7 @@ class TestLiveBooksToScrape:
         keyword_2 = '["Rip it Up and Start Again"]'
         keywords = '["Black Dust", "When We Collided"]'
 
-        with rabbit_conn as conn:
+        with Connection("pyamqp://guest:guest@localhost:5672//") as conn:
             send_as_task(conn, keywords=keyword_1, routing_key='books.toscrape.com',
                          exchange=broker_tasks.task_exchange, kwargs={})
             send_as_task(conn, keywords=keyword_2, routing_key='books.toscrape.com',

@@ -20,20 +20,18 @@ The result should be the worker will process the `keywords` tasks.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
-import time
 from kombu import Connection
 from kombu.pools import producers
 from transistor.schedulers.brokers.queues import ExchangeQueue
 from transistor.utility.logging import logger
-# from examples.books_to_scrape.schedulers.brokers.worker_main import tasks
 
 trackers = ['books.toscrape.com']
 tasks = ExchangeQueue(trackers)
 connection = Connection("pyamqp://guest:guest@localhost:5672//")
 
+
 def _publish(producer, payload, routing_key, exchange):
     """
-
     :param producer: example ->
         >>> with producers[connection].acquire(block=True) as producer:
     :param payload: example ->
