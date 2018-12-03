@@ -3,7 +3,7 @@
 transistor.schedulers.brokers.queues
 ~~~~~~~~~~~~
 Exchange and task queue with support for using different queues for each
-tracker. Works with RabbitMQ. Mabye, also works with Redis.
+tracker. Works with RabbitMQ or Redis acting as a broker.
 
 :copyright: Copyright (C) 2018 by BOM Quote Limited
 :license: The MIT License, see LICENSE for more details.

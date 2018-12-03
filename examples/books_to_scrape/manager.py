@@ -12,7 +12,7 @@ concurrency, and ability to scale an arbitrary number of Scraper WorkGroups.
 """
 import gevent
 from transistor import BaseWorkGroupManager
-
+from transistor.utility.logging import logger
 
 class BooksWorkGroupManager(BaseWorkGroupManager):
     """
@@ -36,7 +36,7 @@ class BooksWorkGroupManager(BaseWorkGroupManager):
         :param target: the target parameter here is a <Worker()> class object and
         you must call target.spawn_scraper() to start the Worker.
         """
-        print(f'spawning {target}')
+        logger.info(f'spawning {target}')
         target.spawn_spider()  # this must be called. It is, required.
         # Calling spawn_scraper() above instructs the Worker object to start
         # the scrape.So there will be some wait period at this point for each
@@ -49,7 +49,7 @@ class BooksWorkGroupManager(BaseWorkGroupManager):
             # here, event represents returned scraper objects which the worker has
             # completed. We can iterate through the event objects and, for example,
             # apply some data transformation, delete failed scrapes, or save data
-            print(f'THIS IS A MONITOR EVENT - > {event}')
+            logger.info(f'THIS IS A MONITOR EVENT - > {event}')
         # This last line is required, ensure the below gevent.sleep(0) remains.
         gevent.sleep(0)
 

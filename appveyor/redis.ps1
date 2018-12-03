@@ -1,7 +1,7 @@
 ﻿# """
 # transistor.appveyor.redis
 # ~~~~~~~~~~~~
-# This is a powershell script to install redis in a windows server environment.
+# This is a powershell script to install Redis on Windows.
 # It is included here to facilitate various test cases in appveyor CI.
 #
 # :copyright: Copyright (C) 2018 by BOM Quote Limited

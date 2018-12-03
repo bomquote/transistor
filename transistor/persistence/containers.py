@@ -37,8 +37,6 @@ class SplashScraperItems(Item):
     data attributes returned by a SplashScraper object, with Field().  Declaring
     with Field() enables a useful data container to be created for the attribute.
     """
-    # flags used by worker objects do not need to be Field().
-    written = False
 
     # -- the Scraper's browser class -> self.browser data -- #
 

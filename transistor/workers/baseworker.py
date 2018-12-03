@@ -11,7 +11,7 @@ for more notes on this module.
 """
 import gevent
 from gevent.queue import Queue, Empty
-
+from transistor.utility.logging import logger
 
 class BaseWorker:
     """
@@ -72,13 +72,13 @@ class BaseWorker:
         try:
             while True:
                 task = self.tasks.get(timeout=self.qtimeout)  # decrements queue by 1
-                print(f'Worker {self.name}-{self.number} got task {task}')
+                logger.info(f'Worker {self.name}-{self.number} got task {task}')
                 spider = self.get_spider(task, **kwargs)
                 spider.start_http_session(**self.http_session)
                 # OK, right here is where we wait for the spider to return a result.
                 self.result(spider, task)
         except Empty:
-            print(f'Quitting time for worker {self.name}-{self.number}!')
+            logger.info(f'Quitting time for worker {self.name}-{self.number}!')
 
     def result(self, spider, task):
         """
@@ -118,8 +118,7 @@ class BaseWorker:
         """
         items = self.load_items(spider)
         for exporter in self.get_spider_exporters():
-           exporter.export_item(items)
-
+            exporter.export_item(items)
 
     def post_process_exports(self, spider, task):
         """
@@ -150,10 +149,11 @@ class BaseWorker:
 
     def get_spider_items(self):
         """
-        Return an instance of a class that subclasses from Item. For example,
+        Return a class that subclasses from Item. For example,
         SplashSpiderItem from transistor.persistence.containers.
+        The instance will be created in load_items.
         """
-        return self.items()
+        return self.items
 
     def load_items(self, spider):
         """
@@ -162,16 +162,12 @@ class BaseWorker:
         a data loaded Item class object.
         :return: Type[Item]
         """
-        # at this point, self.loader will be # Type[ItemLoader], if load_items()
-        # has not yet been called. After calling, it will be Type[Item].
-        # This is tricky and so it kinda sucks. Requires a special `written` attr
-        # flag on both the Item class and the ItemLoader class. Needs refactored.
-        if not self.loader.written:
-            self.loader = self.loader()
-            self.loader.items = self.get_spider_items()
-            self.loader.spider = spider
-            self.loader = self.loader.write()  # .write returns Type[Item]
-        return self.loader  # careful, this is Type[Item] not Type[ItemLoader]
+        # make a new instance of self.loader()
+        self._loader_items = self.loader()
+        self._loader_items.items = self.get_spider_items()()
+        self._loader_items.spider = spider
+        self._loader_items = self._loader_items.write()  # .write returns Type[Item]
+        return self._loader_items  # careful, this is Type[Item] not Type[ItemLoader]
 
     def get_spider_exporters(self) -> list:
         """

@@ -2,6 +2,13 @@
   transistor: CHANGES
 ========================
 
+12/3/18
+- Fixed a bug in BaseWorker.load_items() method which previously resulted
+in losing scrape data when the number of workers did not equal number of
+tasks. Now, using any number of workers or pool size will result in
+consistent export/save results. While, scrape time will change proportional
+to the number of workers assigned. Wrote tests to ensure the same.
+
 11/30/18
 - BaseGroup.hired_worker() method name has been changed to `get_worker()`
 

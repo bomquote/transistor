@@ -45,7 +45,7 @@ class BaseGroup:
         self.name = kwargs.get('name', None)
         self.items = kwargs.get('items', None)
         self.loader = kwargs.get('loader', None)
-        self.exporter = kwargs.get('exporter', None)
+        self.exporters = kwargs.get('exporters', None)
         self.worker = kwargs.get('worker', None)
         self.spider = kwargs.pop('spider', None)
         self.url = kwargs.get('url', None)
@@ -82,9 +82,6 @@ class BaseGroup:
             worker = self.get_worker()
             worker.job_id = self.job_id
             worker.number = number + 1
-            worker.items = self.items
-            worker.loader = self.loader
-            worker.exporter = self.exporter
             worker_list.append(worker)
         self.worker_list = worker_list
         return worker_list

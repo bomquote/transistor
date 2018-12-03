@@ -92,7 +92,7 @@ class CsvItemExporter(BaseItemExporter):
         fields = self._get_serialized_fields(item, default_value='',
                                              include_empty=True)
         values = list(self._build_row(x for _, x in fields))
-        self.csv_writer.writerow(values)
+        return self.csv_writer.writerow(values)
 
     def _build_row(self, values):
         for s in values:

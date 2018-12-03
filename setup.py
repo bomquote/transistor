@@ -46,6 +46,7 @@ REQUIRED = [
     'pyexcel-xls>=0.5.8',
     'pyexcel-xlsx>=0.5.6',
     'cookiecutter>=1.6.0',
+    'cssselect>=1.0.3',
     'w3lib>=1.19.0',
     'pycryptodome>=3.7.2',
     'gevent>=1.3.7',

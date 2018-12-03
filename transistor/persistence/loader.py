@@ -21,7 +21,7 @@ class ItemLoader:
     """
     spider = None
     items = None
-    written = False
+
 
     _write_attrs = [
         'browser.raw_content', 'browser.status', 'browser.get_current_request()'
@@ -96,9 +96,6 @@ class ItemLoader:
         self.items['LUA_SOURCE']=self.spider.LUA_SOURCE
         self.items['_test_true']=self.spider._test_true
         self.items['_result']=self.spider._result
-
-        # finally, set the written flag for the worker use
-        self.items.written = True
 
         # scraper properties
         # scraper private methods

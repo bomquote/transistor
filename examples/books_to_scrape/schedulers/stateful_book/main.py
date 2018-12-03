@@ -116,8 +116,8 @@ groups = [
 # 5) Last, setup the Manager. You can constrain the number of workers actually
 # deployed, through the `pool` parameter. For example, this is useful
 # when using a Crawlera 'C10' plan which limits concurrency to 10. To deploy all
-# the workers concurrently, set the pool to be marginally larger than the number
-# of total workers assigned in groups in step #3 above.
+# the workers concurrently, set the pool +1 higher than the number of total
+# workers assigned in groups in step #3 above. The +1 is for pool manager.
 manager = BooksWorkGroupManager('books_scrape', tasks, workgroups=groups, pool=5)
 
 

@@ -54,7 +54,7 @@ Development of Transistor is sponsored by `BOM Quote Manufacturing <https://www.
 4. Easily integrate within a web app like `Flask <https://github.com/pallets/flask>`_, `Django <https://github.com/django/django>`_ , or other python based `web frameworks <https://github.com/vinta/awesome-python#web-frameworks>`_.
 5. Provide spreadsheet based data ingest and export options, like import a list of search terms from excel, ods, csv, and export data to each as well.
 6. Utilize quick and easy integrated task work queues which can be automatically filled with data search terms by a simple spreadsheet import.
-7. Able to integrate with more robust task queues like `Celery <https://github.com/celery/celery>`_ while using `rabbitmq <https://www.rabbitmq.com/>`_ or `redis <https://redis.io/>`_ as needed.
+7. Able to integrate with more robust task queues like `Celery <https://github.com/celery/celery>`_ while using `rabbitmq <https://www.rabbitmq.com/>`_ or `redis <https://redis.io/>`_ as a message broker as desired.
 8. Provide hooks for users to persist data via any method they choose, while also supporting our own opinionated choice which is a `PostgreSQL <https://www.postgresql.org/>`_ database along with `newt.db <https://github.com/newtdb/db>`_.
 9. Contain useful abstractions, classes, and interfaces for scraping and crawling with machine learning assistance (wip, timeline tbd).
 10. Further support data science use cases of the persisted data, where convenient and useful for us to provide in this library (wip, timeline tbd).
@@ -485,6 +485,7 @@ Transistor provides useful layers and objects in the following categories:
 
 - see ``transistor/schedulers/brokers``
 - provides the ``ExchangeQueue`` class in transistor.scheulers.brokers.queues which can be passed to the ``tasks`` parameter of ``BaseWorkGroupManager``
+- Just pass the appropriate connection string to ``ExchangeQueue`` and ``BaseWorkGroupManager`` and you can use either RabbitMQ or Redis as a message broker, thanks to `kombu <https://github.com/celery/kombu>`_.
 - in this case, the ``BaseWorkGroupManager`` also acts as a AMQP ``consumer`` which can receive messages from RabbitMQ message broker
 
 

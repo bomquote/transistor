@@ -4,6 +4,17 @@ transistor.examples.books_to_scrape.main
 ~~~~~~~~~~~~
 Entry point to run the books_to_scrape example.
 
+To run this example, first run:
+
+>>> python client_main.py
+
+This will start the producer and send the tasks to the broker Exchange queue.
+Then, in a separate command prompt, run:
+
+>>> python client_worker.py
+
+The result should be the worker will process the `keywords` tasks.
+
 Note:
 
 The primary use case where the current Transistor design shines, is when you need to
@@ -15,9 +26,10 @@ For the search term use case, this design is good. You can send an arbitrary num
 of workers to the search page. Each worker has one task issued, a task to execute the
 search for the term it has been assigned, and return to us with the response.
 
-The example highlighted here, employs a "crawl" mechanism inside each
-of the scraper objects. This is not really showcasing the optimal use case for
-a Transistor SplashScraper with Manager/WorkGroups, per the current design.
+The example highlighted here in `books_to_scrape`, employs a "crawl" mechanism
+inside each of the scraper objects. This is not really showcasing the optimal
+use case for a Transistor SplashScraper with Manager/WorkGroups, per the
+current design.
 
 The reason is, in this example, we send out 20 workers at once. Each worker
 crawls through EACH PAGE on the books.toscrape.com website, until the worker finds
@@ -58,10 +70,11 @@ from examples.books_to_scrape.scraper import BooksToScrapeScraper
 from examples.books_to_scrape.manager import BooksWorkGroupManager
 from examples.books_to_scrape.persistence.serialization import (
     BookItems, BookItemsLoader)
+from transistor.utility.logging import logger
 
 
-# 1) Create a FanoutTask instance and connection object to prepare to use
-# RabbitMQ message broker.
+# 1) Create an ExchangeQueue instance and connection object to prepare
+# to use RabbitMQ message broker.
 # Set a list of tracker names, with one tracker name for each WorkGroup you create
 # in step three. Ensure the tracker name matches the WorkGroup.name in step four.
 
@@ -98,8 +111,8 @@ groups = [
         items=BookItems,
         loader=BookItemsLoader,
         exporters=exporters,
-        workers=3,  # this creates 3 scrapers and assigns each a book as a task
-        kwargs={'timeout': (3.0, 20.0), 'qtimeout': 10})
+        workers=2,  # this creates x scrapers and assigns each a book as a task
+        kwargs={'timeout': (3.0, 20.0)})
     ]
 
 # 4) Last, setup the Manager. You can constrain the number of workers actually
@@ -107,8 +120,8 @@ groups = [
 # when using a Crawlera 'C10' plan which limits concurrency to 10. To deploy all
 # the workers concurrently, set the pool to be marginally larger than the number
 # of total workers assigned in groups in step #3 above.
-manager = BooksWorkGroupManager('books_scrape', tasks, workgroups=groups, pool=5,
-                                connection=connection, should_stop=True)
+manager = BooksWorkGroupManager('books_scrape', tasks, workgroups=groups, pool=10,
+                                connection=connection)
 
 if __name__ == "__main__":
 
@@ -117,13 +130,15 @@ if __name__ == "__main__":
     setup_logging(loglevel='INFO', loggers=[''])
     with Connection('amqp://guest:guest@localhost:5672//') as conn:
         try:
+
             manager.main()  # call manager.main() to start the job.
         except KeyboardInterrupt:
             print('bye bye')
     # below shows an example of navigating your persisted data after the scrape
 
     result = get_job_results(ndb, 'books_scrape')
-    print(f'Printing: books_scrape result')
-    for r in result:
-        print(f"{r['book_title']}, {r['price']}, {r['stock']}")
-    delete_job(ndb, 'books_scrape')
+    logger.info(f'Printing: books_scrape result =>')
+    if result:
+        for r in result:
+            logger.info(f"{r['book_title']}, {r['price']}, {r['stock']}")
+        delete_job(ndb, 'books_scrape')

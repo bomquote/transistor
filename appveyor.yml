@@ -120,6 +120,7 @@ install:
     - cmd: pip install pytest==4.0.1
     - cmd: pip install pytest-cov==2.6.0
     - cmd: pip install coverage==4.5.2
+    - cmd: pip install cssselect==1.0.3
     - cmd: pip install mock==2.0.0
     - cmd: pip install gevent==1.3.7
     - cmd: pip install newt.db==0.9.0

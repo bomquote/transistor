@@ -12,7 +12,7 @@ This module implements a working example of a BaseWorker and BaseGroup.
 from transistor import BaseWorker
 from examples.books_to_scrape.persistence import ndb
 from transistor.persistence.newt_db.collections import SpiderList
-
+from transistor.utility.logging import logger
 
 class BooksWorker(BaseWorker):
     """
@@ -44,8 +44,8 @@ class BooksWorker(BaseWorker):
             try:
                 # create the list with the job name if it doesnt already exist
                 ndb.root.spiders.add(self.job_id, SpiderList())
-                print(f'Worker {self.name}-{self.number} created a new scrape_list for '
-                      f'{self.job_id}')
+                logger.info(f'Worker {self.name}-{self.number} created a new spider '
+                            f'list for {self.job_id}')
             except KeyError:
                 # will be raised if there is already a list with the same job_name
                 pass
@@ -54,11 +54,11 @@ class BooksWorker(BaseWorker):
             # save the items object to newt.db
             ndb.root.spiders[self.job_id].add(items)
             ndb.commit()
-            print(f'Worker {self.name}-{self.number} saved {items.__repr__()} to '
+            logger.info(f'Worker {self.name}-{self.number} saved {items.__repr__()} to '
                   f'scrape_list "{self.job_id}" for task {task}.')
         else:
             # if job_id is NONE then we'll skip saving the objects
-            print(f'Worker {self.name}-{self.number} said job_name is {self.job_id} '
+            logger.info(f'Worker {self.name}-{self.number} said job_name is {self.job_id} '
                   f'so will not save it.')
 
     def post_process_exports(self, spider, task):
@@ -70,6 +70,6 @@ class BooksWorker(BaseWorker):
 
         """
         self.events.append(spider)
-        print(f'{self.name} has {spider.stock} inventory status.')
-        print(f'pricing: {spider.price}')
-        print(f'Worker {self.name}-{self.number} finished task {task}')
+        logger.info(f'{self.name} has {spider.stock} inventory status.')
+        logger.info(f'pricing: {spider.price}')
+        logger.info(f'Worker {self.name}-{self.number} finished task {task}')

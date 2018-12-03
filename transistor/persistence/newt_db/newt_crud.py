@@ -18,7 +18,7 @@ them in the core Transistor library.
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
-
+from transistor.utility.logging import logger
 # you must set ndb like `from .newt_db import ndb`
 
 
@@ -46,7 +46,10 @@ def get_job_results(ndb, job_id:str=None):
 
     :return: [<SplashScraperData(('books.toscrape.com', 'soulsearcher'))>, ...]
     """
-    return ndb.root.spiders.lists[job_id].results
+    try:
+        return ndb.root.spiders.lists[job_id].results
+    except KeyError:
+        logger.info(f'Job-ID {job_id} does not exist.')
 
 
 def delete_job(ndb, job_id:str=None):
@@ -83,7 +86,7 @@ def delete_job(ndb, job_id:str=None):
         ndb.commit()
         return print(f'Deleted {job_id}')
     except KeyError:
-        print(f'Job-ID {job_id} does not exist.')
+        logger.info(f'Job-ID {job_id} does not exist.')
 
 
 def update_newt_container(ndb):
