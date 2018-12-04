@@ -6,7 +6,7 @@ kombu==4.2.1
 lxml==4.2.5
 lz4==2.1.2
 pyexcel==0.5.9.1
-pyexcel-io==0.5.10
+pyexcel-io==0.5.11
 pyexcel-ods3==0.5.3
 pyexcel-webio==0.1.4
 pyexcel-xls==0.5.8
