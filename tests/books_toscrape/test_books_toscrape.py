@@ -11,30 +11,17 @@ check Transistor source code.
 """
 from gevent import monkey
 monkey.patch_all()
-import pytest
 import time
-from requests import Response
-from bs4 import BeautifulSoup
-from pkgutil import get_data
 from pathlib import Path
 from os.path import dirname as d
 from os.path import abspath
-from kombu import Connection
-from kombu.pools import producers
-from transistor.schedulers.brokers.queues import ExchangeQueue
-from transistor import StatefulBook, WorkGroup
-from transistor.persistence.newt_db.collections import SpiderLists
-from transistor.persistence.exporters.exporters import CsvItemExporter
-from ..conftest import get_job_results, delete_job
-from examples.books_to_scrape.persistence.newt_db import ndb
-from examples.books_to_scrape.scraper import BooksToScrapeScraper
-from examples.books_to_scrape.manager import BooksWorkGroupManager
-from examples.books_to_scrape.persistence.serialization import (
-    BookItems, BookItemsLoader)
+from requests import Response
+from bs4 import BeautifulSoup
+from pkgutil import get_data
+from tests.conftest import get_job_results
 from examples.books_to_scrape.schedulers.brokers.client_main import send_as_task
 
 root_dir = d(d(abspath(__file__)))
-
 
 def get_html(filename):
     """
@@ -47,136 +34,6 @@ def get_html(filename):
     file_to_open = data_folder / filename
     f = open(file_to_open, encoding='utf-8')
     return f.read()
-
-
-def get_file_path(filename):
-    """
-    Find the book_title excel file path.
-    """
-    root_dir = d(d(abspath(__file__)))
-    root = Path(root_dir)
-    filepath = root / 'books_toscrape' / filename
-    return r'{}'.format(filepath)
-
-
-@pytest.fixture(scope='function')
-def bts_static_scraper(test_dict):
-    """
-    A BooksToScrapeScraper static test fixture.
-    """
-    book_title = 'Soumission'
-    page = get_html("books_toscrape/books_toscrape_index.html")
-    test_dict['_test_page_text'] = page
-    test_dict['url'] = 'http://books.toscrape.com'
-    scraper = BooksToScrapeScraper(book_title=book_title, **test_dict)
-    scraper.start_http_session()
-    return scraper
-
-
-@pytest.fixture(scope='function')
-def bts_live_scraper():
-    """
-    A BooksToScrapeScraper live fixture for TestLiveBooksToScrape.
-    """
-    scraper = BooksToScrapeScraper(book_title='Black Dust')
-    scraper.start_http_session(url='http://books.toscrape.com')
-    return scraper
-
-
-@pytest.fixture(scope='function')
-def bts_book_manager(_BooksToScrapeGroup, _BooksWorker):
-    """
-    A BooksToScrape Manager test fixture for live network call.
-    Here, we are spinning up two workers, while we have three
-    tasks. It is important to test this as such, in spinning up
-    a less number of workers vs total tasks.  There are plenty
-    of ways to break this test when refactoring. One likely
-    source would be the BaseWorker class method `load_items`.
-    It took me half-a-day to track down a bug in that method
-    which resulted in this test only working if the # workers
-    was equal to the number of tasks. That was the previous
-    default way to run this test, so the bug went un-found.
-    """
-    # ensure to open this file in binary mode
-    book_data_file = open('c:/tmp/book_data.csv', 'a+b')
-    exporters = [
-        CsvItemExporter(
-            fields_to_export=['book_title', 'stock', 'price'],
-            file=book_data_file,
-            encoding='utf_8_sig'
-        )
-    ]
-
-    file = get_file_path('book_titles.xlsx')
-    trackers = ['books.toscrape.com']
-    tasks = StatefulBook(file, trackers, keywords='titles', autorun=True)
-
-    groups = [
-        WorkGroup(
-            name='books.toscrape.com',
-            url='http://books.toscrape.com/',
-            spider=BooksToScrapeScraper,
-            worker=_BooksWorker,
-            items=BookItems,
-            loader=BookItemsLoader,
-            exporters=exporters,
-            workers=2,  # this creates 2 scrapers and assigns each a book as a task
-            kwargs={'timeout': (3.0, 20.0)})
-    ]
-    manager = BooksWorkGroupManager('books_scrape', tasks, workgroups=groups, pool=5)
-
-    return manager
-
-
-@pytest.fixture(scope='function')
-def broker_tasks():
-    trackers = ['books.toscrape.com']
-    tasks = ExchangeQueue(trackers)
-    return tasks
-
-
-@pytest.fixture(scope='function')
-def broker_conn():
-    """
-    A Kombu connection object. Connect with RabbitMQ or Redis.
-    """
-    connection = Connection("pyamqp://guest:guest@localhost:5672//")
-    # connection = Connection("redis://127.0.0.1:6379")
-    return connection
-
-
-@pytest.fixture(scope='function')
-def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks, broker_conn):
-    """
-    A BooksToScrape Manager test fixture for live network call.
-    Here, we use a broker (RabbitMQ) to test.
-    """
-    # ensure to open this file in binary mode
-    book_data_file = open('c:/tmp/broker_data.csv', 'a+b')
-    exporters = [
-        CsvItemExporter(
-            fields_to_export=['book_title', 'stock', 'price'],
-            file=book_data_file,
-            encoding='utf_8_sig'
-        )
-    ]
-
-    groups = [
-        WorkGroup(
-            name='books.toscrape.com',
-            url='http://books.toscrape.com/',
-            spider=BooksToScrapeScraper,
-            worker=_BooksWorker,
-            items=BookItems,
-            loader=BookItemsLoader,
-            exporters=exporters,
-            workers=2,  # this creates 2 scrapers and assigns each a book as a task
-            kwargs={'timeout': (3.0, 20.0)})
-    ]
-    manager = BooksWorkGroupManager('books_broker_scrape', broker_tasks,
-                                    workgroups=groups, pool=5, connection=broker_conn)
-
-    return manager
 
 
 class TestStaticBooksToScrapeScraper:
@@ -260,12 +117,6 @@ class TestLiveBooksToScrape:
         Test a live scrape using an excel workbook and the StatefulBook
         class scheduler.
         """
-
-        # todo: move this to a setup fixture
-        # first, setup newt.db for testing
-        ndb.root._spiders = SpiderLists()
-        ndb.commit()
-
         # now, perform the scrape
         bts_book_manager.main()
 
@@ -301,19 +152,12 @@ class TestLiveBooksToScrape:
         assert result[0]['crawlera_session'] is None
         assert result[0]['resp_content_type_header'] is None
 
-        # todo: move this to a teardown fixture
-        delete_job('books_scrape')
-        del ndb.root._spiders
-        ndb.commit()
-
     def test_live_broker_scheduled_manager(self, bts_broker_manager, broker_tasks,
                                            broker_conn):
         """
         Test a live scrape using RabbitMQ broker and the ExchangeQueue
         class passed to the Manager tasks parameter.
         """
-        for queue in broker_tasks.task_queues:
-            queue(broker_conn).declare()
 
         # first, use a producer to send the tasks to RabbitMQ
         keyword_1 = '["Soumission"]'
@@ -330,11 +174,6 @@ class TestLiveBooksToScrape:
 
         # give it a few seconds to ensure the tasks are registered in RabbitMQ
         time.sleep(3)
-
-        # setup newt.db for testing
-        ndb.root._spiders = SpiderLists()
-        ndb.commit()
-        time.sleep(2)
 
         # now, perform the scrape
         bts_broker_manager.main()
@@ -371,10 +210,6 @@ class TestLiveBooksToScrape:
         assert result[0]['endpoint_status'] is None
         assert result[0]['crawlera_session'] is None
         assert result[0]['resp_content_type_header'] is None
-
-        delete_job('books_broker_scrape')
-        del ndb.root._spiders
-        ndb.commit()
 
     def test_live_scraper_browser_open(self, bts_live_scraper):
         """Test the scraper.browser.open method returns Response"""

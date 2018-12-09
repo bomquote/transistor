@@ -68,6 +68,9 @@ EXTRAS = {
         'persistent>=4.4.3',
         'zodb>=5.5.1'
     ],
+    'redis':[
+        'redis>=3.0.1'
+    ]
 }
 
 # The rest you shouldn't have to touch too much :)

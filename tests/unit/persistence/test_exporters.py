@@ -27,9 +27,8 @@ import tempfile
 import unittest
 from io import BytesIO
 from datetime import datetime
-from tests.books_toscrape.test_books_toscrape import bts_static_scraper
 import lxml.etree
-
+from tests.conftest import bts_static_scraper
 from transistor import Item, Field
 from transistor.utility.python import to_unicode
 from transistor.persistence.exporters import (
@@ -120,7 +119,8 @@ class BaseItemExporterTest(unittest.TestCase):
         self.assertEqual(ie.serialize_field(i.fields['age'], 'age', i['age']), '24')
 
 
-class PythonItemExporterTest(BaseItemExporterTest):
+class TestPythonItemExporter(BaseItemExporterTest):
+
     def _get_exporter(self, **kwargs):
         return PythonItemExporter(binary=False, **kwargs)
 

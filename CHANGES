@@ -16,7 +16,7 @@ to the number of workers assigned. Wrote tests to ensure the same.
 
 - transistor/books folder is now moved to transistor/schedulers/books
 
-- Added AMPQ support through Kombu
+- Added AMQP support through Kombu
 
 - modified WorkGroupManager to act as a Consumer, accepting tasks from a
 Producer, working with RabbitMQ broker. It will probably also work with

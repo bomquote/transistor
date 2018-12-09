@@ -16,7 +16,10 @@ from typing import List
 class ExchangeQueue:
     """
     Setup an Exchange and a separate Queue for each named tracker in
-    the `trackers` parameter.
+    the `trackers` parameter.  Note: best practice is to explicitly
+    declare the queues when using this. It would probably look like:
+    >>> for queue in tasks.task_queues:
+    >>>     queue(broker_connection).declare()
     """
     def __init__(self, trackers: List[str], exchange_name: str='transistor',
                  exchange_type: str='direct'):
