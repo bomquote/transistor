@@ -1,6 +1,6 @@
 -r prod.txt
 
 pytest==4.0.1
-pytest-cov==2.6.0
+pytest-cov==2.6.1
 coverage==4.5.2
 mock==2.0.0
