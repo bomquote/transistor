@@ -129,7 +129,7 @@ install:
     - cmd: pip install persistent==4.4.3
     - cmd: pip install zodb==5.5.1
     - cmd: pip install w3lib==1.19.0
-    # - cmd: netstat -a
+    - cmd: netstat -a
 
 # Skip .NET project specific build phase.
 build: off
