@@ -60,6 +60,7 @@ environment:
 services:
   - postgresql101      # start PostgreSQL 10.1 service
   - iis                 # start IIS
+  - docker
 
 install:
     # If there is a newer build queued for the same PR, cancel this one.
@@ -79,7 +80,13 @@ install:
             {$root = "C:\Miniconda36-x64"}
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
     - cmd: mkdir c:\tmp
-
+    # deal with switching docker to linux containers
+    # see: https://ci.appveyor.com/project/appveyor-tests/docker-ce/build/1.0.29
+    - ps: gcim Win32_Processor | % { "$($_.NumberOfCores) cores" }
+    - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
+    - cmd: docker-switch-linux
+    # start aquarium
+    - ps: x:\host\transistor\appveyor\docker-compose-up.ps1
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: x:\host\transistor\appveyor\redis.ps1
@@ -95,15 +102,7 @@ install:
     - cmd: set PYTHONPATH=C:\Miniconda36-x64\envs\python36
     # upgrade pip
     - cmd: python -m pip install --upgrade pip
-
-    # deal with switching docker to linux containers
-    # see: https://ci.appveyor.com/project/appveyor-tests/docker-ce/build/1.0.29
-    - ps: gcim Win32_Processor | % { "$($_.NumberOfCores) cores" }
-    - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
-    - cmd: docker-switch-linux
-    # start aquarium
-    - ps: x:\host\transistor\appveyor\docker-compose-up.ps1
-      # install packages from pip
+    # install packages from pip
     - cmd: pip install mechanicalsoup==0.11.0
     - cmd: pip install requests==2.20.1
     - cmd: pip install urllib3==1.24.1
