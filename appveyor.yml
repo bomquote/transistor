@@ -79,13 +79,7 @@ install:
             {$root = "C:\Miniconda36-x64"}
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
     - cmd: mkdir c:\tmp
-    # deal with switching docker to linux containers
-    # see: https://ci.appveyor.com/project/appveyor-tests/docker-ce/build/1.0.29
-    - ps: gcim Win32_Processor | % { "$($_.NumberOfCores) cores" }
-    - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
-    - cmd: docker-switch-linux
-    # start aquarium
-    - ps: x:\host\transistor\appveyor\docker-compose-up.ps1
+
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: x:\host\transistor\appveyor\redis.ps1
@@ -101,7 +95,15 @@ install:
     - cmd: set PYTHONPATH=C:\Miniconda36-x64\envs\python36
     # upgrade pip
     - cmd: python -m pip install --upgrade pip
-    # install packages from pip
+
+    # deal with switching docker to linux containers
+    # see: https://ci.appveyor.com/project/appveyor-tests/docker-ce/build/1.0.29
+    - ps: gcim Win32_Processor | % { "$($_.NumberOfCores) cores" }
+    - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
+    - cmd: docker-switch-linux
+    # start aquarium
+    - ps: x:\host\transistor\appveyor\docker-compose-up.ps1
+      # install packages from pip
     - cmd: pip install mechanicalsoup==0.11.0
     - cmd: pip install requests==2.20.1
     - cmd: pip install urllib3==1.24.1
@@ -129,7 +131,7 @@ install:
     - cmd: pip install persistent==4.4.3
     - cmd: pip install zodb==5.5.1
     - cmd: pip install w3lib==1.19.0
-    - cmd: netstat -a
+    # - cmd: netstat -a
 
 # Skip .NET project specific build phase.
 build: off
