@@ -14,7 +14,7 @@
 .. image:: https://img.shields.io/badge/license-MIT-lightgrey.svg
   :target: https://github.com/bomquote/transistor/blob/master/LICENSE
 .. image:: https://ci.appveyor.com/api/projects/status/xfg2yedwyrbyxysy/branch/master?svg=true
-    :target: https://ci.appveyor.com/project/bomquote/transistor
+    :target: https://ci.appveyor.com/project/bmjjr/transistor
 .. image:: https://pyup.io/repos/github/bomquote/transistor/shield.svg?t=1542037265283
     :target: https://pyup.io/account/repos/github/bomquote/transistor/
     :alt: Updates
