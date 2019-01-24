@@ -1,6 +1,6 @@
 # transistor.appveyor.yml
 # ~~~~~~~~~~~~
-# Configuration file for testing Transistor with appveyor CI.
+# Configuration file for testing Transistor with appveyor CI
 #
 # :copyright: Copyright (C) 2018 by BOM Quote Limited
 # :license: The MIT License, see LICENSE for more details.
