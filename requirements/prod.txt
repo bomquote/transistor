@@ -10,7 +10,7 @@ pyexcel-io==0.5.10
 pyexcel-ods3==0.5.3
 pyexcel-webio==0.1.4
 pyexcel-xls==0.5.8
-pyexcel-xlsx==0.5.6
+pyexcel-xlsx==0.5.7
 cookiecutter==1.6.0
 cssselect==1.0.3
 w3lib==1.19.0
