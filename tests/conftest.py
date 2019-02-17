@@ -216,7 +216,7 @@ def bts_book_manager(_BooksToScrapeGroup, _BooksWorker):
     ndb.commit()
 
     # ensure to open this file in binary mode
-    book_data_file = open('c:/tmp/book_data.csv', 'a+b')
+    book_data_file = open('c:/temp/book_data.csv', 'a+b')
     exporters = [
         CsvItemExporter(
             fields_to_export=['book_title', 'stock', 'price'],
@@ -284,7 +284,7 @@ def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks, broker_c
     ndb.commit()
 
     # ensure to open this file in binary mode
-    book_data_file = open('c:/tmp/broker_data.csv', 'a+b')
+    book_data_file = open('c:/temp/broker_data.csv', 'a+b')
     exporters = [
         CsvItemExporter(
             fields_to_export=['book_title', 'stock', 'price'],

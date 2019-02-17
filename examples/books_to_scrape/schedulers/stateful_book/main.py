@@ -87,11 +87,11 @@ tasks = StatefulBook(file, trackers, keywords='titles', autorun=True)
 
 exporters = [CsvItemExporter(
                 fields_to_export=['book_title', 'stock', 'price'],
-                file=open('c:/tmp/book_data.csv', 'a+b'),
+                file=open('c:/temp/book_data.csv', 'a+b'),
                 encoding='utf_8_sig'),
              JsonLinesItemExporter(
                 fields_to_export=['book_title', 'stock', 'price'],
-                file=open('c:/tmp/book_data.json', 'a+b'),
+                file=open('c:/temp/book_data.json', 'a+b'),
                 encoding='utf_8_sig')]
 
 # 4) Setup the WorkGroups. You can create an arbitrary number of WorkGroups in a list.

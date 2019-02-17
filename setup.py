@@ -37,8 +37,10 @@ REQUIRED = [
     'requests>=2.20.1,<3.0',
     'urllib3>=1.24.1,<2.0',
     'keyring>=17.0.0,<18.0',
+    'kombu>=4.2.1',
     'lxml>=4.2.5,<5.0',
     'lz4>=2.1.2,<3.0',
+    'openpyxl>=2.5.2',
     'pyexcel>=0.5.9.1,<0.6.0',
     'pyexcel-io>=0.5.10,<0.6.0',
     'pyexcel-ods3>=0.5.3,<0.6.0',
@@ -148,6 +150,7 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
