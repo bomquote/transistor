@@ -144,7 +144,7 @@ class TestLiveBooksToScrape:
         assert None not in prices
         assert None not in stocks
 
-        assert result[0]['har']['log']['browser']['comment'] == 'PyQt 5.9, Qt 5.9.1'
+        assert 'PyQt' in result[0]['har']['log']['browser']['comment']
         assert result[0]['png']
 
         # the below should currently return None if not using Crawlera
@@ -203,7 +203,7 @@ class TestLiveBooksToScrape:
         assert None not in prices
         assert None not in stocks
 
-        assert result[0]['har']['log']['browser']['comment'] == 'PyQt 5.9, Qt 5.9.1'
+        assert 'PyQt' in result[0]['har']['log']['browser']['comment']
         assert result[0]['png']
 
         # the below should currently return None if not using Crawlera
