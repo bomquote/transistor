@@ -113,7 +113,7 @@ install:
 build: off
 
 test_script:
-    - cmd: python -m pytest x:\host\transistor\tests
+    - cmd: python -m pytest x:\host\transistor\tests -rfs --tb=short --disable-warnings
 
 
 # after_test:
