@@ -10,7 +10,6 @@ channels:
 dependencies:
 - python=3.7.2
 - pandas=0.24.0
-- smesh=6.7.6
 - scipy=1.2.0
 - scikit-learn=0.20.2
 - matplotlib=3.0.2
