@@ -105,7 +105,7 @@ install:
     # install packages from pip
     - cmd: python -m pip install -r x:\host\transistor\requirements\dev.txt
     # check the rabbit connection
-    - cmd: python x:\host\aoscrdb_app\appveyor\check_rabbitmq_connection.py
+    - cmd: python x:\host\transistor\appveyor\check_rabbitmq_connection.py
 
     # - cmd: netstat -a
 
