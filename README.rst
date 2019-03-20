@@ -147,13 +147,19 @@ But, if you want to use Crawlera with Transistor, first, register for the servic
 
 After registering for Crawlera, create accounts in scrapinghub.com for each region you would like to present a proxied ip address from. For our case, we are setup to handle three regions, ALL for global, China, and USA.
 
-Finally, you should set environment variables on your computer/server with the api key for each region you need, like below:
+Next, you should set environment variables on your computer/server with the api key for each region you need, like below:
 
 .. code-block:: python
 
     CRAWLERA_ALL = '<your crawlera account api key for ALL regions>'
     CRAWLERA_CN = '<your crawlera account api key for China region>'
     CRAWLERA_USA = '<your crawlera account api key for USA region>'
+
+Finally, to use Crawlera, you will need to pass a keyword arg like ``crawlera_user=<your api key>`` into your custom Scraper spider which has been subclassed from the ``SplashScraper`` class.
+Alternately, you can directly set ``crawlera_user`` in your custom subclassed Scraper's ``__init__()`` method like ``self.crawlera_user = os.environ.get('CRAWLERA_USA', None)``.
+
+Last, you must pass in a Lua script in the ``script`` argument which supports the Crawlera service. We have included two Lua scripts in ``transistor\scrapers\scripts`` folder which will be helpful to work out-of-the-box.
+Of course, to get the full power of Splash + Crawlera you will need to read their documentations and also come up to speed on how to customize the Lua script to fully use Splash, to do things like fill out forms and navigate pages.
 
 Quickstart: ``books_to_scrape`` example
 ---------------------------------------
