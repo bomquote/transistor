@@ -105,16 +105,16 @@ The easiest way to get setup with Splash is to use `Aquarium <https://github.com
 
 **Windows Setup**
 
-On Windows, the easiest way to get started with Docker is to use `Chocolately <https://chocolatey.org/>`_ to install docker-for-windows. Using Chocolately requires
+On Windows, the easiest way to get started with Docker is to use `Chocolately <https://chocolatey.org/>`_ to install docker-desktop (the successor to docker-for-windows, which has now been depreciated). Using Chocolately requires
 `installing Chocolately <https://chocolatey.org/install>`_.
 
-Then, to install Docker-for-windows with Chocolately:
+Then, to install docker-desktop with Chocolately:
 
 .. code-block:: rest
 
-    C:\> choco install docker-for-windows
+    C:\> choco install docker-desktop
 
-You will likely need to restart your Windows box after installing docker-for-windows, even if it doesn't tell you to do so.
+You will likely need to restart your Windows box after installing docker-desktop, even if it doesn't tell you to do so.
 
 **All Platforms**
 
@@ -127,7 +127,7 @@ After setting up Splash with Aquarium, ensure you set the following environment 
     SPLASH_USERNAME = '<username you set during Aquarium setup>'
     SPLASH_PASSWORD = '<password you set during Aquarium setup>'
 
-Finally, to run Splash service, cd to the Aquarium repo on your hard drive, and then run ``docker-compose up`` in your command prompt.
+Finally, to run Splash service, *cd to the Aquarium repo on your hard drive*, and then run ``docker-compose up`` in your command prompt.
 
 **Troubleshooting Aquarium and Splash service**:
 
