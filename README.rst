@@ -154,6 +154,9 @@ Next, you should set environment variables on your computer/server with the api 
     CRAWLERA_ALL = '<your crawlera account api key for ALL regions>'
     CRAWLERA_CN = '<your crawlera account api key for China region>'
     CRAWLERA_USA = '<your crawlera account api key for USA region>'
+    CRAWLERA_REGIONS = 'CRAWLERA_ALL,CRAWLERA_USA,CRAWLERA_CN'
+
+There are some utility functions which are helpful for working with crawlera found in ``transistor/utility/crawlera.py`` which require the ``CRAWLERA_REGIONS`` environment variable to be set. ``CRAWLERA_REGIONS`` should just be a comma separated string of whatever region environment variables you have set.
 
 Finally, to use Crawlera, you will need to pass a keyword arg like ``crawlera_user=<your api key>`` into your custom Scraper spider which has been subclassed from the ``SplashScraper`` class.
 Alternately, you can directly set ``crawlera_user`` in your custom subclassed Scraper's ``__init__()`` method like ``self.crawlera_user = os.environ.get('CRAWLERA_USA', None)``.
