@@ -10,6 +10,7 @@ Web data collection and storage for intelligent use cases.
 """
 
 from transistor.schedulers.books import StatefulBook
+from transistor.schedulers.brokers import ExchangeQueue
 from transistor.browsers import SplashBrowser
 from transistor.managers import BaseWorkGroupManager
 from transistor.scrapers import SplashScraper
@@ -20,6 +21,6 @@ from transistor.persistence import (delete_job, Field, get_job_results, Item,
 name = "transistor"
 
 __all__ = ['BaseGroup', 'BaseWorker', 'BaseWorkGroupManager', 'delete_job',
-           'Field', 'get_job_results', 'Item', 'SplashBrowser', 'SplashScraper',
-           'SplashScraperItems', 'StatefulBook', 'BaseItemExporter',
+           'ExchangeQueue', 'Field', 'get_job_results', 'Item', 'SplashBrowser',
+           'SplashScraper', 'SplashScraperItems', 'StatefulBook', 'BaseItemExporter',
            'WorkGroup']

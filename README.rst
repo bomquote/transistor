@@ -39,11 +39,11 @@ Transistor's current strengths are in being able to:
     - includes *optional* support for using the scrapinghub.com `Crawlera <https://scrapinghub.com/crawlera>`_  'smart' proxy service.
     - ingest keyword search terms from a spreadsheet or use RabbitMQ or Redis as a message broker, transforming keywords into task queues.
     - scale one ``Spider`` into an arbitrary number of workers combined into a ``WorkGroup``.
-    - coordinate an arbitary number of ``WorkGroups`` searching an arbitrary number of websites, into one scrape job.
+    - coordinate an arbitrary number of ``WorkGroups`` searching an arbitrary number of websites, into one scrape job.
     - send out all the ``WorkGroups`` concurrently, using gevent based asynchronous I/O.
     - return data from each website for each search term 'task' in our list, for easy website-to-website comparison.
     - export data to CSV, XML, JSON, pickle, file object, and/or your own custom exporter.
-    - save targeted scrape data to database of your choice.
+    - save targeted scrape data to the database of your choice.
 
 Suitable use cases include:
     - comparing attributes like stock status and price, for a list of ``book titles`` or ``part numbers``, across multiple websites.

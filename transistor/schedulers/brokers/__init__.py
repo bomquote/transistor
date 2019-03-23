@@ -14,3 +14,4 @@ https://www.rabbitmq.com/tutorials/tutorial-one-python.html
 :license: The MIT License, see LICENSE for more details.
 ~~~~~~~~~~~~
 """
+from .queues import ExchangeQueue
