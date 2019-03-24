@@ -49,7 +49,7 @@ Suitable use cases include:
     - comparing attributes like stock status and price, for a list of ``book titles`` or ``part numbers``, across multiple websites.
     - concurrently process a large list of search terms on a search engine and then scrape results, or follow links first and then scrape results.
 
-Development of Transistor is sponsored by `BOM Quote Manufacturing <https://www.bomquote.com>`_.
+Development of Transistor is sponsored by `BOM Quote Manufacturing <https://www.bomquote.com>`_. Here is a Medium story from the author about creating Transistor: `That time I coded 90-hours in one week <https://medium.com/bomquote/that-time-i-coded-90-hours-in-one-week-a28732cac754>`_.
 
 **Primary goals**:
 
