@@ -117,32 +117,6 @@ def _BooksWorker():
 
 
 @pytest.fixture(scope='function')
-def _BooksToScrapeGroup(_BooksWorker):
-    """
-    Create an Group for testing which uses the _BooksWorker
-    """
-    class _BookstoScrapeGroup(BaseGroup):
-        """
-        A _BooksWorker instance which overrides the process_exports method to
-        make it useful for testing.
-        """
-        def hired_worker(self):
-            """
-            Encapsulate your custom scraper, inside of a Worker object. This will
-            eventually allow us to run an arbitrary amount of Scraper objects.
-
-            :returns <Worker>, the worker object which will go into a Workgroup
-            """
-            worker = _BooksWorker(job_id=self.job_id, scraper=BooksToScrapeScraper,
-                                 http_session={'url': self.url,
-                                               'timeout': self.timeout},
-                                 **self.kwargs)
-            return worker
-
-    return _BookstoScrapeGroup
-
-
-@pytest.fixture(scope='function')
 def splash_browser():
     """
     A SplashBrowser instance for the unit tests.
@@ -198,7 +172,7 @@ def bts_live_scraper():
 
 
 @pytest.fixture(scope='function')
-def bts_book_manager(_BooksToScrapeGroup, _BooksWorker):
+def bts_book_manager(_BooksWorker):
     """
     A BooksToScrape Manager test fixture for live network call.
     Here, we are spinning up two workers, while we have three
@@ -274,7 +248,7 @@ def broker_conn():
 
 
 @pytest.fixture(scope='function')
-def bts_broker_manager(_BooksToScrapeGroup, _BooksWorker, broker_tasks, broker_conn):
+def bts_broker_manager(_BooksWorker, broker_tasks, broker_conn):
     """
     A BooksToScrape Manager test fixture for live network call.
     Here, we use a broker (RabbitMQ) to test.

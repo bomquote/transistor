@@ -138,7 +138,7 @@ class SplashScraper(ABC):
         self.user_agent = kwargs.pop('user_agent',
                                      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                                      "AppleWebKit/537.36 (KHTML, like Gecko) "
-                                     "Chrome/69.0.3497.100 Safari/537.36")
+                                     "Chrome/73.0.3683.86 Safari/537.36")
         self.max_retries = kwargs.pop('max_retries', 5)
         self.http_session_timeout = kwargs.pop('http_session_timeout', (3.05, 10.05))
         self.splash_args = kwargs.pop('splash_args', None)

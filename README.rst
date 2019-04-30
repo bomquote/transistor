@@ -562,7 +562,7 @@ After you have a valid PostgreSQL installation, you should install newt.db:
     pip install newt.db
 
 After installation of newt.db you need to provide a URI connection string for newt.db to connect to PostgreSQL. An example setup might use two files for this, with a URI as shown
-in ``examples/books_to_scrape/settings.py`` and a second file to setup newt.db as shown in ``examples/books_to_scrape/newt_db.py`` as shown below:
+in ``examples/books_to_scrape/settings.py`` and a second file to setup newt.db as shown in ``examples/books_to_scrape/persistence/newt_db.py`` as shown below:
 
 1. ``examples/books_to_scrape/settings.py``
 

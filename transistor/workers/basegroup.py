@@ -108,5 +108,4 @@ class BaseGroup:
         worker = self.worker(job_id=self.job_id, spider=self.spider,
                              http_session={'url': self.url, 'timeout': self.timeout},
                              **self.kwargs)
-
         return worker

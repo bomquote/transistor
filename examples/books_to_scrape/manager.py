@@ -18,7 +18,7 @@ class BooksWorkGroupManager(BaseWorkGroupManager):
     """
     Create a manager to assign tasks and direct an arbitrary number of WorkGroups.
     Inherit the BaseWorkGroupManager and implement a monitor method which calls
-    target.spawn_scraper() at some point.  This is generally all that is required.
+    target.spawn_spider() at some point.  This is generally all that is required.
     """
 
     def monitor(self, target):
@@ -34,11 +34,11 @@ class BooksWorkGroupManager(BaseWorkGroupManager):
         persistence method, if you don't want to use postgresql with newt.db.
 
         :param target: the target parameter here is a <Worker()> class object and
-        you must call target.spawn_scraper() to start the Worker.
+        you must call target.spawn_spider() to start the Worker.
         """
         logger.info(f'spawning {target}')
         target.spawn_spider()  # this must be called. It is, required.
-        # Calling spawn_scraper() above instructs the Worker object to start
+        # Calling spawn_spider() above instructs the Worker object to start
         # the scrape.So there will be some wait period at this point for each
         # worker to actually run out of work and quit with a graceful shutdown.
         # Therefore, A GOOD SPOT TO HOOK SOME POST-SCRAPE LOGIC ON YOUR WORKERS
