@@ -15,10 +15,10 @@ init:
   # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # clone directory
-clone_folder: x:\host\transistor
+clone_folder: D:\host\transistor
 
 # Build worker image (VM template)
-image: Visual Studio 2017
+image: Windows Server 2019
 
 # setting up etc\hosts file
 hosts:
@@ -30,9 +30,9 @@ environment:
   PYTHONUNBUFFERED: 1
   PYTHON_EXE: 'C:\Miniconda37-x64\envs\python37\python.exe'
   PYTHON_LIB: 'C:\Miniconda37-x64\envs\python37\Lib\site-packages'
-  BASE_PATH: 'x:host\transistor\transistor\'
-  APP_DIR: 'x:\host\transistor\transistor'
-  PROJECT_ROOT: 'x:\host\transistor'
+  BASE_PATH: 'D:host\transistor\transistor\'
+  APP_DIR: 'D:\host\transistor\transistor'
+  PROJECT_ROOT: 'D:\host\transistor'
   TEMP: 'C:\temp\'
   SPLASH_USERNAME: 'user'
   SPLASH_PASSWORD: 'userpass'
@@ -86,26 +86,26 @@ install:
     - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
     - cmd: docker-switch-linux
     # start aquarium
-    - ps: x:\host\transistor\appveyor\docker-compose-up.ps1
+    - ps: D:\host\transistor\appveyor\docker-compose-up.ps1
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
-    - ps: x:\host\transistor\appveyor\redis.ps1
+    - ps: D:\host\transistor\appveyor\redis.ps1
     # install rabbitmq
-    - ps: x:\host\transistor\appveyor\rabbitmq.ps1
+    - ps: D:\host\transistor\appveyor\rabbitmq.ps1
     # Load the conda root environment, configure and install packages
     - cmd: conda config --set show_channel_urls true
     - cmd: conda config --set always_yes yes --set changeps1 no
     - cmd: conda update --yes --quiet conda
-    - cmd: conda env create --file=x:\host\transistor\environment.yml
+    - cmd: conda env create --file=D:\host\transistor\environment.yml
     - cmd: activate python37
     - cmd: set PYTHONUNBUFFERED=1
     - cmd: set PYTHONPATH=C:\Miniconda37-x64\envs\python37;
     # upgrade pip
     - cmd: python -m pip install --upgrade pip
     # install packages from pip
-    - cmd: python -m pip install -r x:\host\transistor\requirements\dev.txt
+    - cmd: python -m pip install -r D:\host\transistor\requirements\dev.txt
     # check the rabbit connection
-    - cmd: python x:\host\transistor\appveyor\check_rabbitmq_connection.py
+    - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
 
     # - cmd: netstat -a
 
@@ -113,7 +113,7 @@ install:
 build: off
 
 test_script:
-    - cmd: python -m pytest x:\host\transistor\tests -rfs --tb=short --disable-warnings
+    - cmd: python -m pytest D:\host\transistor\tests -rfs --tb=short --disable-warnings
 
 
 # after_test:

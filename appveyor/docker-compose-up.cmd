@@ -1,1 +1,1 @@
-START "" /D X:\host\transistor\appveyor\aquarium "docker-compose" up
+START "" /D D:\host\transistor\appveyor\aquarium "docker-compose" up

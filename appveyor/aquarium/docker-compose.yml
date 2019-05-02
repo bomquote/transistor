@@ -16,7 +16,7 @@ services:
             - splash3
             - splash4
         volumes:
-            - x:/host/transistor/appveyor/aquarium/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+            - D:/host/transistor/appveyor/aquarium/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
 
     splash0:
         image: scrapinghub/splash:master
@@ -29,8 +29,8 @@ services:
         links:
             - tor
         volumes:
-            - x:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - x:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
 
     splash1:
         image: scrapinghub/splash:master
@@ -43,8 +43,8 @@ services:
         links:
             - tor
         volumes:
-            - x:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - x:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
 
     splash2:
         image: scrapinghub/splash:master
@@ -57,8 +57,8 @@ services:
         links:
             - tor
         volumes:
-            - x:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - x:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
 
     splash3:
         image: scrapinghub/splash:master
@@ -71,8 +71,8 @@ services:
         links:
             - tor
         volumes:
-            - x:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - x:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
 
     splash4:
         image: scrapinghub/splash:master
@@ -85,8 +85,8 @@ services:
         links:
             - tor
         volumes:
-            - x:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - x:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
 
     tor:
         image: jess/tor-proxy

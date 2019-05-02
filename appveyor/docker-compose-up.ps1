@@ -11,6 +11,6 @@
 
 Write-Host "Installing Aquarium..." -ForegroundColor Cyan
 
-Start-Job -ScriptBlock {X:\host\transistor\appveyor\docker-compose-up.cmd}
+Start-Job -ScriptBlock {D:\host\transistor\appveyor\docker-compose-up.cmd}
 
 Write-Host "Let's move on while Aquarium starts..." -ForegroundColor Green
