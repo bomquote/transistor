@@ -44,7 +44,7 @@ class BaseWorkGroupManager(ConsumerMixin):
     Base class for a WorkGroupManager.
     """
     __attrs__ = [
-        'book', 'exporter', 'job_id', 'wgroups', 'trackers', 'pool', 'qitems',
+        'book', 'exporter', 'job_id', 'trackers', 'pool', 'qitems',
         'workgroups',
     ]
 
