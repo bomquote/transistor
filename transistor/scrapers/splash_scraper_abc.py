@@ -51,14 +51,19 @@ class SplashScraper(ABC):
     number = None
 
     @abstractmethod
-    def __init__(self, script=None, **kwargs):
+    def __init__(self, script:str=None, **kwargs):
         """
         Create the instance. Required attributes are listed below as kwarg
         parameters. They can be set with kwargs or else should be explicitly
         specified in a sublcass __init__ and then have a call to
         super().__init__() made.
 
-        :param script:() your custom lua script, if any, passed to LUA_SOURCE
+        :param script:() your custom lua script, if any, which is passed to
+        LUA_SOURCE. Pass it as a string containing the contents of the
+        specified resource. One way to accomplish this is to use the
+        `get_data` function from from pkgutil which returns the contents of a
+        file as a binary string. Import it like `from pkgutil import get_data`
+        and then use .decode('utf-8') to go from binary to string.
 
         :param: kwargs: <item>:str() where <item> is an appropriate keyword search
         term, like 'book_title' or 'part_number'.  Set this keyword in your subclassed

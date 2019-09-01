@@ -68,7 +68,7 @@ class BookItemsLoader(ItemLoader):
         # set the value with self.serialize_field(field, name, value) as needed,
         # for example, `serialize_price` below turns '£50.10' into 'UK £50.10'
         # the '£50.10' is the original scraped value from the website stored in
-        # self.scraper.price, but we think it is more clear as 'UK £50.10'
+        # self.spider.price, but we think it is more clear as 'UK £50.10'
         self.items['price'] = self.serialize_field(
             field=Field(serializer=serialize_price),
             name='price',

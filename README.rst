@@ -335,7 +335,11 @@ The first thing we need to do is perform some imports.
     # in main.py, monkey patching for gevent must be done first
     from gevent import monkey
     monkey.patch_all()
+    # you probably need to add your project directory to the pythonpath like below
+    import sys
+    sys.path.insert(0, "C:/Users/<username>/repos/books_to_scrape")
 
+    # finally, import from transistor and your own custom code
     from transistor import StatefulBook, WorkGroup, BaseWorkGroupManager
     from transistor.persistence.exporters import CsvItemExporter
     from <path-to-your-custom-scraper> import BooksToScrapeScraper
@@ -346,7 +350,27 @@ Second, setup a ``StatefulBook`` which will read the ``book_titles.xlsx`` file a
 
 .. code-block:: python
 
-    filepath = 'your/path/to/book_titles.xlsx'
+    # we need to get the filepath to your book_titles.xlsx excel file, you can copy it
+    # from transistor/examples/books_to_scrape/schedulers/stateful_book/book_titles.xlsx
+    # need a variable like below:
+    # filepath = 'your/path/to/book_titles.xlsx'
+
+    # including some file path code here as a hint because it's not so straightforward
+    from pathlib import Path
+    from os.path import dirname as d
+    from os.path import abspath
+    root_dir = d(d(abspath(__file__)))
+    def get_file_path(filename):
+        """
+        Find the book_titles excel file path.
+        """
+        root = Path(root_dir)
+        filepath = root / 'files' / filename
+        return r'{}'.format(filepath)
+
+    # now we can use get_file_path to set the variable named `filepath`
+
+    filepath = get_file_path('book_titles.xlsx')
     trackers = ['books.toscrape.com']
     tasks = StatefulBook(filepath, trackers, keywords="titles")
 
@@ -385,7 +409,7 @@ Fifth, setup the ``WorkGroupManager`` and prepare the file to call the ``manager
     # list of WorkGroup objects. However, sometimes you may want to constrain your pool
     # to a specific number less than your scrapers. That's also OK. This is useful
     # like Crawlera's C10 instance, only allows 10 concurrent workers. Set pool=10.
-    manager = BaseWorkGroupManager(job_id='books_scrape', book=tasks, groups=groups, pool=25)
+    manager = BaseWorkGroupManager(job_id='books_scrape', tasks=tasks, workgroups=groups, pool=25)
 
     if __name__ == "__main__":
         manager.main()  # call manager.main() to start the job.
@@ -401,7 +425,7 @@ We setup a ``BaseWorkGroupManager``, wrapped our spider ``BooksToScrapeScraper``
 
 
 NOTE-1: A more robust use case will also subclass the ``BaseWorker`` class. Because, it provides several methods as hooks for data persistence and post-scrape manipulation.
-Also, one may also consider to sublcass the ``WorkGroupManager`` class and override it's ``monitor`` method. This is another hook point to have access to the ``BaseWorker`` object before it shuts down for good.
+Also, one may also consider to subclass the ``WorkGroupManager`` class and override it's ``monitor`` method. This is another hook point to have access to the ``BaseWorker`` object before it shuts down for good.
 
 Refer to the full example in the ``examples/books_to_scrape/workgroup.py`` file for an example of customizing ``BaseWorker`` and ``WorkGroupManager`` methods. In the example, we show how to to save data to postgresql with newt.db but you can use whichever db you choose.
 
