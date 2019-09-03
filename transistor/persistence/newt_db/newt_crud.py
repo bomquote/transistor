@@ -84,7 +84,7 @@ def delete_job(ndb, job_id:str=None):
     try:
         del ndb.root.spiders.lists[job_id]
         ndb.commit()
-        return print(f'Deleted {job_id}')
+        return logger.info(f'Deleted {job_id}')
     except KeyError:
         logger.info(f'Job-ID {job_id} does not exist.')
 

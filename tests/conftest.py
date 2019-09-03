@@ -11,13 +11,11 @@ This module defines pytest fixtures and other constants available to all tests.
 
 import pytest
 from kombu import Connection
-from kombu.pools import producers
 from pathlib import Path
 from os.path import dirname as d
 from os.path import abspath
 from requests.adapters import HTTPAdapter
 from transistor import SplashBrowser
-from transistor import BaseGroup
 from transistor.persistence.newt_db.collections import SpiderList
 from examples.books_to_scrape.workgroup import BooksWorker
 from examples.books_to_scrape.persistence.newt_db import ndb

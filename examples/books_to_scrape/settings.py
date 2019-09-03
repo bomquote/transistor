@@ -106,21 +106,21 @@ class Config(Constants):
     default_exchange_type = 'direct'
     # /end rabbitmq
 
-class ProdConfig(Constants):
+class ProdConfig(Config):
     """Production configuration."""
     ENV = 'prod'
     DEBUG = False
     NEWT_DB_URI = f"host=localhost port=5433 dbname=newtdb user={os.environ.get('PG_USER')} password={os.environ.get('PG_PW')}"
 
 
-class DevConfig(Constants):
+class DevConfig(Config):
     """Development configuration."""
     ENV = 'dev'
     DEBUG = True
     NEWT_DB_URI = "host=localhost port=5432 dbname=newtdb user=postgres password=password"
 
 
-class TestConfig(Constants):
+class TestConfig(Config):
     """Testing configuration"""
     TESTING = True
 
