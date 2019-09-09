@@ -33,7 +33,7 @@ REQUIRES_PYTHON = '>=3.6.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'mechanicalsoup>=0.11.0,<0.12.0',
+    'mechanicalsoup>=0.11.0,<0.13.0',
     'requests>=2.20.1,<3.0',
     'urllib3>=1.24.1,<2.0',
     'keyring>=17.0.0,<20.0',
