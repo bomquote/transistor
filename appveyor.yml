@@ -59,7 +59,6 @@ environment:
 # enable service required for build/tests
 services:
   - postgresql101      # start PostgreSQL 10.1 service
-  - iis                 # start IIS
   - docker
 
 install:
@@ -90,8 +89,6 @@ install:
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: D:\host\transistor\appveyor\redis.ps1
-    # install erlang
-    - ps: choco install erlang
     # install rabbitmq
     - ps: D:\host\transistor\appveyor\rabbitmq.ps1
     # Load the conda root environment, configure and install packages
@@ -109,7 +106,7 @@ install:
     # check the rabbit connection
     # - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
 
-    # - cmd: netstat -a
+    - cmd: netstat -a
 
 # Skip .NET project specific build phase.
 build: off

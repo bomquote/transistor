@@ -20,6 +20,5 @@ dependencies:
 - pywin32=224
 - shapely=1.6.4
 
-prefix: C:\Miniconda37-x64\envs\python37
 
 # updated 2/3/2019
