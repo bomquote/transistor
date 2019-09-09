@@ -58,7 +58,7 @@ environment:
 
 # enable service required for build/tests
 services:
-  - postgresql111      # start PostgreSQL 10.1 service
+  - postgresql11     # start PostgreSQL 11 service
   - docker
 
 install:

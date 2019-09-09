@@ -15,7 +15,7 @@ import os
 from transistor.utility.utils import get_debug_flag
 
 
-class Constants(object):
+class Constants:
     """Constants used throughout the application.
     All constants settings/data that are not actual/official configuration
     options for libraries like Flask, Celery, or other extensions goes here.
