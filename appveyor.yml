@@ -9,7 +9,7 @@
 # scripts that are called at very beginning, before repo cloning.
 init:
   - git config --global core.autocrlf input
-  - SET PATH=C:\Program Files\PostgreSQL\10\bin\;C:\Program Files\Docker\Docker\resources\bin;X:\host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
+  - SET PATH=C:\Program Files\PostgreSQL\11\bin\;C:\Program Files\Docker\Docker\resources\bin;X:\host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
   - SET PGUSER=postgres
   - SET PGPASSWORD=Password12!
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
@@ -43,7 +43,7 @@ environment:
     CONDA_PY: 3.7
     PY_CONDITION: python >=3.7
     CONDA_INSTALL_LOCN: C:\\Miniconda37-x64
-    db: postgresql101
+    db: postgresql11
 
   global:
       # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
@@ -58,7 +58,7 @@ environment:
 
 # enable service required for build/tests
 services:
-  - postgresql101      # start PostgreSQL 10.1 service
+  - postgresql111      # start PostgreSQL 10.1 service
   - docker
 
 install:
