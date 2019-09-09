@@ -9,7 +9,7 @@
 # scripts that are called at very beginning, before repo cloning.
 init:
   - git config --global core.autocrlf input
-  - SET PATH=C:\Program Files\PostgreSQL\11\bin\;C:\Program Files\Docker\Docker\resources\bin;X:\host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
+  - SET PATH=C:\Program Files\PostgreSQL\11\bin\;C:\Program Files\Docker\Docker\resources\bin;D:\host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # clone directory
@@ -49,6 +49,7 @@ environment:
       # See: http://stackoverflow.com/a/13751649/163740
       # CMD_IN_ENV: "cmd /E:ON /V:ON /C obvci_appveyor_python_build_env.cmd"
       CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_env.cmd"
+      Test__Npgsql__DefaultConnection: Host=localhost;Database=postgres;Username=postgres;Password=Password12!
       PGUSER: postgres
       PGPASSWORD: Password12!
 
@@ -100,11 +101,11 @@ install:
     - cmd: set PYTHONUNBUFFERED=1
     - cmd: set PYTHONPATH=C:\Miniconda37-x64\envs\python37;
     # upgrade pip
-    - cmd: python -m pip install --upgrade pip
+    - cmd: C:\Miniconda37-x64\envs\python37\python.exe -m pip install --upgrade pip
     # install packages from pip
-    - cmd: python -m pip install -r D:\host\transistor\requirements\dev.txt
+    - cmd: C:\Miniconda37-x64\envs\python37\python.exe -m pip install -r D:\host\transistor\requirements\dev.txt
     # check the rabbit connection
-    # - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
+    - cmd: C:\Miniconda37-x64\envs\python37\python.exe D:\host\transistor\appveyor\check_rabbitmq_connection.py
 
     - cmd: netstat -a
 
@@ -112,7 +113,7 @@ install:
 build: off
 
 test_script:
-    - cmd: python -m pytest D:\host\transistor\tests -rfs --tb=short --disable-warnings
+    - cmd: C:\Miniconda37-x64\envs\python37\python.exe -m pytest D:\host\transistor\tests -rfs --tb=short --disable-warnings
 
 
 # after_test:
