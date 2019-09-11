@@ -95,7 +95,7 @@ install:
     - cmd: conda config --set always_yes yes --set changeps1 no
     - cmd: conda update --yes --quiet conda
     - cmd: conda env create --file=D:\host\transistor\environment.yml
-    - cmd: conda activate python37
+    - cmd: activate python37
     - cmd: set PYTHONUNBUFFERED=1
     - cmd: set PYTHONPATH=C:\Miniconda37-x64\envs\python37;
     # upgrade pip
@@ -103,7 +103,7 @@ install:
     # install packages from pip
     - cmd: python -m pip install -r D:\host\transistor\requirements\dev.txt
     # check the rabbit connection
-    - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
+    # - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
     - cmd: netstat -a
 
 # Skip .NET project specific build phase.
