@@ -1,1 +1,1 @@
-START "" /D pg_ctl -D "C:\Program Files\PostgreSQL\11\data" start
+START "" /D "C:\Program Files\PostgreSQL\11\bin\pg_ctl.exe" -D "C:\Program Files\PostgreSQL\11\data" start
