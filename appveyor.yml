@@ -104,6 +104,7 @@ install:
     - cmd: python -m pip install -r D:\host\transistor\requirements\dev.txt
     # check the rabbit connection
     # - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
+    - cmd: pg_ctl -D "C:\Program Files\PostgreSQL\11\data" start
     - cmd: netstat -a
 
 # Skip .NET project specific build phase.
