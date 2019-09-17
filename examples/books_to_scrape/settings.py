@@ -124,7 +124,7 @@ class TestConfig(Config):
     """Testing configuration"""
     TESTING = True
 
-    if 'APPVEYOR' in os.environ:
+    if 'appveyor' in os.environ['USERNAME']:
         NEWT_DB_URI = "host=localhost port=5432 dbname=postgres user=postgres password=Password12!"
 
     else:

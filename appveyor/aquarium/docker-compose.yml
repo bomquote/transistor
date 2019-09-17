@@ -1,99 +1,116 @@
 version: '2.4'
-
 services:
-    haproxy:
-        image: haproxy:1.7
-        ports:
-            # stats
-            - "8036:8036"
+  haproxy:
+    image: haproxy:2.0.3
+    restart: on-failure
+    networks:
+      - aquariumnet
+    ports:
+      # stats
+      - "8036:8036"
 
-            # splash
-            - "8050:8050"
-        links:
-            - splash0
-            - splash1
-            - splash2
-            - splash3
-            - splash4
-        volumes:
-            - D:/host/transistor/appveyor/aquarium/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      # splash
+      - "8050:8050"
+    links:
+      - splash0
+      - splash1
+      - splash2
+      - splash3
+      - splash4
+    volumes:
+      - D:/host/transistor/appveyor/aquarium/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
 
-    splash0:
-        image: scrapinghub/splash:master
-        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
-        expose:
-            - 8050
-        mem_limit: 1050m
-        memswap_limit: 1350m
-        restart: always
-        links:
-            - tor
-        volumes:
-            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+  splash0:
+    image: scrapinghub/splash:master
+    networks:
+      - aquariumnet
+    command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1 --browser-engines=webkit
+    expose:
+      - 8050
+    restart: on-failure
+    links:
+      - tor
+    volumes:
+      - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+      - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+    mem_limit: 1050m
+    memswap_limit: 1350m
 
-    splash1:
-        image: scrapinghub/splash:master
-        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
-        expose:
-            - 8050
-        mem_limit: 1050m
-        memswap_limit: 1350m
-        restart: always
-        links:
-            - tor
-        volumes:
-            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+  splash1:
+    image: scrapinghub/splash:master
+    networks:
+      - aquariumnet
+    command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1 --browser-engines=webkit
+    expose:
+      - 8050
+    restart: on-failure
+    links:
+      - tor
+    volumes:
+      - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+      - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+    mem_limit: 1050m
+    memswap_limit: 1350m
 
-    splash2:
-        image: scrapinghub/splash:master
-        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
-        expose:
-            - 8050
-        mem_limit: 1050m
-        memswap_limit: 1350m
-        restart: always
-        links:
-            - tor
-        volumes:
-            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+  splash2:
+    image: scrapinghub/splash:master
+    networks:
+      - aquariumnet
+    command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1 --browser-engines=webkit
+    expose:
+      - 8050
+    restart: on-failure
+    links:
+      - tor
+    volumes:
+      - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+      - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+    mem_limit: 1050m
+    memswap_limit: 1350m
 
-    splash3:
-        image: scrapinghub/splash:master
-        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
-        expose:
-            - 8050
-        mem_limit: 1050m
-        memswap_limit: 1350m
-        restart: always
-        links:
-            - tor
-        volumes:
-            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+  splash3:
+    image: scrapinghub/splash:master
+    networks:
+      - aquariumnet
+    command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1 --browser-engines=webkit
+    expose:
+      - 8050
+    restart: on-failure
+    links:
+      - tor
+    volumes:
+      - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+      - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+    mem_limit: 1050m
+    memswap_limit: 1350m
 
-    splash4:
-        image: scrapinghub/splash:master
-        command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1
-        expose:
-            - 8050
-        mem_limit: 1050m
-        memswap_limit: 1350m
-        restart: always
-        links:
-            - tor
-        volumes:
-            - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
-            - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+  splash4:
+    image: scrapinghub/splash:master
+    networks:
+      - aquariumnet
+    command: --max-timeout 3600 --slots 8 --maxrss 3000 --verbosity 1 --browser-engines=webkit
+    expose:
+      - 8050
+    restart: on-failure
+    links:
+      - tor
+    volumes:
+      - D:/host/transistor/appveyor/aquarium/proxy-profiles:/etc/splash/proxy-profiles:ro
+      - D:/host/transistor/appveyor/aquarium/filters:/etc/splash/filters:ro
+    mem_limit: 1050m
+    memswap_limit: 1350m
 
-    tor:
-        image: jess/tor-proxy
-        expose:
-            - 9050
-        logging:
-            driver: "none"
-        restart: always
+  tor:
+    image: jess/tor-proxy:latest
+    restart: on-failure
+    networks:
+      - aquariumnet
+    expose:
+      - 9050
+    logging:
+      driver: "none"
 
+networks:
+  aquariumnet:
+    driver: bridge
     
