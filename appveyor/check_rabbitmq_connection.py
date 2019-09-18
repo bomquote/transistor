@@ -19,7 +19,7 @@ try:
         print('OK - successfully connected to RabbitMQ')
     else:
         print('FAIL - did not connect to RabbitMQ')
-    connection.close()
+    connection.release()
     exit(0)
 except Exception as error:
   print('Error:', error.__class__.__name__)

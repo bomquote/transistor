@@ -97,7 +97,7 @@ install:
     - cmd: conda config --set always_yes yes --set changeps1 no
     - cmd: conda update --yes --quiet conda
     - cmd: conda env create --file=D:\host\transistor\environment.yml
-    - cmd: activate C:\Miniconda37-x64\envs\python37
+    - cmd: activate python37
     - cmd: set PYTHONUNBUFFERED=1
     - cmd: set PYTHONPATH=C:\Miniconda37-x64\envs\python37;
     # upgrade pip
