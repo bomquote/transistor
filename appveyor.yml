@@ -20,8 +20,8 @@ image: Windows Server 2019
 
 # setting up etc\hosts file
 hosts:
-    local: 127.0.0.1
-    localhost: 127.0.0.1
+  local: 127.0.0.1
+  localhost: 127.0.0.1
 
 # environment variables
 environment:
@@ -90,6 +90,8 @@ install:
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: D:\host\transistor\appveyor\redis.ps1
+    # install erlang
+    - ps: choco install erlang
     # install rabbitmq
     - ps: D:\host\transistor\appveyor\rabbitmq.ps1
     # Load the conda root environment, configure and install packages
