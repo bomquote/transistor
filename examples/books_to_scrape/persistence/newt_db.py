@@ -17,7 +17,7 @@ from transistor.utility.utils import get_debug_flag
 
 
 def get_config():
-    if 'APPVEYOR' in os.environ:
+    if 'appveyor' in os.environ['USERNAME']:
         return TestConfig
     return DevConfig if get_debug_flag() else ProdConfig
 
