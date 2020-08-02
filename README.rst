@@ -3,13 +3,13 @@
 
 **Web data collection and storage for intelligent use cases.**
 
-.. image:: https://img.shields.io/badge/Python-3.6%20%7C%203.7-blue.svg
+.. image:: https://img.shields.io/badge/Python-3.6%20%7C%203.7%20%7C%203.8-blue.svg
   :target: https://github.com/bomquote/transistor
 .. image:: https://img.shields.io/badge/pypi%20package-0.2.2-blue.svg
   :target: https://pypi.org/project/transistor/0.2.2/
 .. image:: https://img.shields.io/pypi/dm/transistor.svg
   :target: https://pypistats.org/packages/transistor
-.. image:: https://img.shields.io/badge/Status-Beta-blue.svg
+.. image:: https://img.shields.io/badge/Status-Stable-blue.svg
   :target: https://github.com/bomquote/transistor
 .. image:: https://img.shields.io/badge/license-MIT-lightgrey.svg
   :target: https://github.com/bomquote/transistor/blob/master/LICENSE

@@ -96,7 +96,6 @@ install:
     # install rabbitmq
     - ps: D:\host\transistor\appveyor\rabbitmq.ps1
     # Load the conda root environment, configure and install packages
-    - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
     - cmd: conda config --set show_channel_urls true
     - cmd: conda config --set always_yes yes --set changeps1 no
     - cmd: conda update --yes --quiet conda
@@ -109,6 +108,7 @@ install:
     # install packages from pip
     - cmd: python -m pip install -r D:\host\transistor\requirements\dev.txt
     # check the rabbit connection
+    - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
     # - cmd: netstat -a
 
 # Skip .NET project specific build phase.
