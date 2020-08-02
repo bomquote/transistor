@@ -75,7 +75,7 @@ def _BooksWorker():
         """
 
         def pre_process_exports(self, spider, task):
-            if self.job_id is not 'NONE':
+            if self.job_id != 'NONE':
                 try:
                     # create the list with the job name if it doesnt already exist
                     ndb.root._spiders.add(self.job_id, SpiderList())

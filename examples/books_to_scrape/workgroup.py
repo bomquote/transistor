@@ -40,7 +40,7 @@ class BooksWorker(BaseWorker):
         :param spider: the Scraper or Crawler object (i.e. MouseKeyScraper())
         :param task: just passing through the task item for printing.
         """
-        if self.job_id is not 'NONE':
+        if self.job_id != 'NONE':
             try:
                 # create the list with the job name if it doesnt already exist
                 ndb.root.spiders.add(self.job_id, SpiderList())

@@ -1,14 +1,13 @@
 version: '2.4'
 services:
   haproxy:
-    image: haproxy:2.0.3
+    image: haproxy:latest
     restart: on-failure
     networks:
       - aquariumnet
     ports:
       # stats
       - "8036:8036"
-
       # splash
       - "8050:8050"
     links:

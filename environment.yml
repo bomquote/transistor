@@ -1,4 +1,4 @@
-name: python37
+name: transistor
 channels:
 - trelau
 - peterjc123
@@ -8,18 +8,13 @@ channels:
 - dlr-sc
 - defaults
 dependencies:
-- python=3.7.2
-- pandas=0.24.0
-- scipy=1.2.0
-- scikit-learn=0.20.2
-- matplotlib=3.0.2
-- cython=0.29.4
-- graphviz=2.41
-- pygraphviz=1.5
-- freetype=2.9.1
-- pywin32=224
-- shapely=1.6.4
+- python=3.8.3
+- pandas>=1.1.0
+- scipy>=1.5.0
+- scikit-learn>=0.23.1
+- matplotlib>=3.3.0
+- cython>=0.29.21
 
-prefix: C:\Miniconda37-x64\envs\python37
+# prefix: C:\Miniconda37-x64\envs\python37
 
 # updated 2/3/2019
