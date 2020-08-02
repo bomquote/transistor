@@ -86,7 +86,7 @@ install:
     # start aquarium
     - ps: D:\host\transistor\appveyor\docker-compose-up.ps1
     # start postgreSQL
-    - ps: net start 'postgresql-x64-12 - PostgreSQL Server 12'
+    - ps: net start postgresql'
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: D:\host\transistor\appveyor\redis.ps1
