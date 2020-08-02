@@ -15,6 +15,6 @@ dependencies:
 - matplotlib>=3.3.0
 - cython>=0.29.21
 
-# prefix: C:\Miniconda37-x64\envs\python37
+prefix: C:\Miniconda37-x64\envs\transistor
 
-# updated 2/3/2019
+# updated 8/2/2020
