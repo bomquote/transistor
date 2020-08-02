@@ -10,7 +10,7 @@
 init:
   - git config --global core.autocrlf input
   - SET PATH=C:\Program Files\PostgreSQL\12\bin\;C:\Miniconda38-x64\Scripts;C:\Program Files\Docker\Docker\resources\bin;D:\host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
-  # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # clone directory
 clone_folder: D:\host\transistor
@@ -86,7 +86,7 @@ install:
     # start aquarium
     - ps: D:\host\transistor\appveyor\docker-compose-up.ps1
     # start postgreSQL
-    - ps: net start postgresql'
+    - ps: net start postgresql-x64-12 - PostgreSQL Server 12
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: D:\host\transistor\appveyor\redis.ps1
