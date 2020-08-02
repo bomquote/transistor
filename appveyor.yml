@@ -9,7 +9,7 @@
 # scripts that are called at very beginning, before repo cloning.
 init:
   - git config --global core.autocrlf input
-  - SET PATH=C:\Program Files\PostgreSQL\12\bin\;C:\Miniconda38-x64\Scripts;C:\Program Files\Docker\Docker\resources\bin;D:\host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
+  - SET PATH=C:\Program Files\PostgreSQL\12\bin\;C:\Program Files\Docker\Docker\resources\bin;D:\host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # clone directory
@@ -26,8 +26,8 @@ hosts:
 # environment variables
 environment:
   PYTHONUNBUFFERED: 1
-  PYTHON_EXE: 'C:\Miniconda38-x64\envs\transistor\python.exe'
-  PYTHON_LIB: 'C:\Miniconda38-x64\envs\transistor\Lib\site-packages'
+  PYTHON_EXE: 'C:\Miniconda37-x64\envs\transistor\python.exe'
+  PYTHON_LIB: 'C:\Miniconda37-x64\envs\transistor\Lib\site-packages'
   BASE_PATH: 'D:host\transistor\transistor\'
   APP_DIR: 'D:\host\transistor\transistor'
   PROJECT_ROOT: 'D:\host\transistor'
@@ -37,9 +37,9 @@ environment:
 
   matrix:
   - TARGET_ARCH: x64
-    CONDA_PY: 3.8
-    PY_CONDITION: python >=3.8
-    CONDA_INSTALL_LOCN: C:\\Miniconda38-x64
+    CONDA_PY: 3.7
+    PY_CONDITION: python >=3.7
+    CONDA_INSTALL_LOCN: C:\\Miniconda37-x64
     db: postgresql121
 
   global:
@@ -73,9 +73,9 @@ install:
 
     # Use the pre-installed Miniconda3 for the desired arch
     - ps: if($env:TARGET_ARCH -eq 'x86')
-            {$root = "C:\Miniconda38"}
+            {$root = "C:\Miniconda37"}
           else
-            {$root = "C:\Miniconda38-x64"}
+            {$root = "C:\Miniconda37-x64"}
           $env:path="$root;$root\Scripts;$root\Library\bin;$root\Library\usr\bin;$($env:path)"
     - cmd: mkdir c:\temp
     # deal with switching docker to linux containers
@@ -102,7 +102,7 @@ install:
     - cmd: conda env create --file=D:\host\transistor\environment.yml
     - cmd: activate transistor
     - cmd: set PYTHONUNBUFFERED=1
-    - cmd: set PYTHONPATH=C:\Miniconda38-x64\envs\transistor;
+    - cmd: set PYTHONPATH=C:\Miniconda37-x64\envs\transistor;
     # upgrade pip
     - cmd: python -m pip install --upgrade pip
     # install packages from pip
