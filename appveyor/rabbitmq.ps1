@@ -15,14 +15,14 @@
 Write-Host "Installing RabbitMQ..." -ForegroundColor Cyan
 
 Write-Host "Downloading..."
-$exePath = "$($env:USERPROFILE)\rabbitmq-server-3.7.17.exe"
-(New-Object Net.WebClient).DownloadFile('https://dl.bintray.com/rabbitmq/all/rabbitmq-server/3.7.17/rabbitmq-server-3.7.17.exe', $exePath)
+$exePath = "$($env:USERPROFILE)\rabbitmq-server-3.8.5.exe"
+(New-Object Net.WebClient).DownloadFile('https://dl.bintray.com/rabbitmq/all/rabbitmq-server/3.8.5/rabbitmq-server-3.8.5.exe', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /S
 del $exePath
 
-$rabbitPath = 'C:\Program Files\RabbitMQ Server\rabbitmq_server-3.7.17'
+$rabbitPath = 'C:\Program Files\RabbitMQ Server\rabbitmq_server-3.8.5'
 
 Write-Host "Installing service..."
 Start-Process -Wait "$rabbitPath\sbin\rabbitmq-service.bat" "install"
