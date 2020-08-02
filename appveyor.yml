@@ -9,7 +9,7 @@
 # scripts that are called at very beginning, before repo cloning.
 init:
   - git config --global core.autocrlf input
-  - SET PATH=C:\Program Files\PostgreSQL\11\bin\;C:\Program Files\Docker\Docker\resources\bin;D:\host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
+  - SET PATH=C:\Program Files\PostgreSQL\12\bin\;C:\Miniconda38-x64\Scripts;C:\Program Files\Docker\Docker\resources\bin;D:\host\transistor\tests\;%PATH%;%PYTHONPATH%;%PYTHONPATH%\Scripts%PATH%,
   # - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # clone directory
@@ -40,7 +40,7 @@ environment:
     CONDA_PY: 3.8
     PY_CONDITION: python >=3.8
     CONDA_INSTALL_LOCN: C:\\Miniconda38-x64
-    db: postgresql111
+    db: postgresql121
 
   global:
       # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
@@ -57,7 +57,7 @@ environment:
 
 # enable service required for build/tests
 services:
-  - postgresql111     # start PostgreSQL 11 service
+  - postgresql121     # start PostgreSQL 12 service
   - docker
 
 install:
@@ -86,7 +86,7 @@ install:
     # start aquarium
     - ps: D:\host\transistor\appveyor\docker-compose-up.ps1
     # start postgreSQL
-    - ps: net start postgresql-x64-11
+    - ps: net start postgresql-x64-12
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: D:\host\transistor\appveyor\redis.ps1
@@ -95,6 +95,7 @@ install:
     # install rabbitmq
     - ps: D:\host\transistor\appveyor\rabbitmq.ps1
     # Load the conda root environment, configure and install packages
+    - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
     - cmd: conda config --set show_channel_urls true
     - cmd: conda config --set always_yes yes --set changeps1 no
     - cmd: conda update --yes --quiet conda
@@ -107,7 +108,6 @@ install:
     # install packages from pip
     - cmd: python -m pip install -r D:\host\transistor\requirements\dev.txt
     # check the rabbit connection
-    # - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
     # - cmd: netstat -a
 
 # Skip .NET project specific build phase.
