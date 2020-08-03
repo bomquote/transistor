@@ -36,12 +36,12 @@ REQUIRED = [
     'mechanicalsoup>=0.11.0,<0.13.0',
     'requests>=2.20.1,<3.0',
     'urllib3>=1.24.1,<2.0',
-    'keyring>=17.0.0,<20.0',
+    'keyring>=17.0.0,<22.0',
     'kombu>=4.2.1',
     'lxml>=4.2.5,<5.0',
-    'lz4>=2.1.2,<3.0',
-    'openpyxl>=2.5.0,<2.6.0',
-    'pyexcel>=0.5.15,<0.6.0',
+    'lz4>=2.1.2,<4.0',
+    'openpyxl>=2.5.0,<4.0',
+    'pyexcel>=0.5.15,<0.7.0',
     'pyexcel-io>=0.5.19,<0.6.0',
     'pyexcel-ods3>=0.5.3,<0.6.0',
     'pyexcel-webio>=0.1.4,<0.2.0',
@@ -51,15 +51,15 @@ REQUIRED = [
     'cssselect>=1.0.3,<2.0',
     'w3lib>=1.19.0,<2.0',
     'pycryptodome>=3.7.2,<4.0',
-    'gevent>=1.3.7,<2.0',
+    'gevent>=1.3.7,<21.0',
 
 ]
 
 test_requirements = [
-    'pytest>=4.0.1,<5.0',
+    'pytest>=4.0.1,<7.0',
     'pytest-cov==2.6.0,<3.0',
-    'coverage==4.5.2,<5.0',
-    'mock==2.0.0,<3.0'
+    'coverage==4.5.2,<6.0',
+    'mock==2.0.0,<5.0'
 ]
 
 # What packages are optional?
@@ -130,7 +130,7 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    download_url='https://github.com/bomquote/transistor/archive/v0.2.2.tar.gz',
+    download_url='https://github.com/bomquote/transistor/archive/v0.2.3.tar.gz',
     keywords=['scraping', 'crawling', 'spiders', 'requests', 'beautifulsoup4',
               'mechanicalsoup', 'framework', 'headless-browser'],
     packages=find_packages(exclude=('tests',)),

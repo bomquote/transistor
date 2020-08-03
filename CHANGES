@@ -2,6 +2,11 @@
   transistor: CHANGES
 ========================
 
+08/03/2-
+- pypi 0.2.3 release
+
+- update setup.py requirements
+
 12/3/18
 - pypi 0.2.2 release
 
