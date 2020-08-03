@@ -108,7 +108,7 @@ install:
     # install packages from pip
     - cmd: python -m pip install -r D:\host\transistor\requirements\dev.txt
     # check the rabbit connection
-    - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
+    # - cmd: python D:\host\transistor\appveyor\check_rabbitmq_connection.py
     # - cmd: netstat -a
 
 # Skip .NET project specific build phase.
