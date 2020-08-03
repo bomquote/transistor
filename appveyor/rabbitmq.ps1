@@ -12,7 +12,7 @@
 # installs into C:\Program Files\RabbitMQ Server
 
 
-$rabbitVersion = '3.7.12'
+$rabbitVersion = '3.7.27'
 
 Write-Host "Installing RabbitMQ $rabbitVersion..." -ForegroundColor Cyan
 
