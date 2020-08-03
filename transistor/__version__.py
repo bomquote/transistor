@@ -12,7 +12,7 @@ Web data collection and storage for intelligent use cases.
 __title__ = 'transistor'
 __description__ = 'A web scraping framework for intelligent use cases.'
 __url__ = 'https://github.com/bomquote/transistor'
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 __author__ = 'Bob Jordan'
 __author_email__ = 'bmjjr@bomquote.com'
 __license__ = 'MIT'
