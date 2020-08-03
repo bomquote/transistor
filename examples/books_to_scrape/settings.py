@@ -101,7 +101,7 @@ class Config(Constants):
     CRAWLERA_REGIONS = ['CRAWLERA_ALL', 'CRAWLERA_USA', 'CRAWLERA_CN']
 
     # /rabbitmq - only relevant if you use rabbitmq
-    broker_url = 'pyamqp://guest:guest@localhost:5672//'
+    broker_url = 'amqp://guest:guest@localhost:5672//'
     broker_heartbeat = 0
     default_exchange_type = 'direct'
     # /end rabbitmq

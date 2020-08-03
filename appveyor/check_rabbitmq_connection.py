@@ -13,7 +13,7 @@ from kombu import Connection
 
 # try to establish connection and check its status
 try:
-    connection = Connection("pyamqp://guest:guest@localhost:5672//")
+    connection = Connection("amqp://guest:guest@localhost:5672//")
     connection.connect()
     if connection.connected:
         print('OK - successfully connected to RabbitMQ')
