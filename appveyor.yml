@@ -34,6 +34,9 @@ environment:
   TEMP: 'C:\temp\'
   SPLASH_USERNAME: 'user'
   SPLASH_PASSWORD: 'userpass'
+  rabbitmq_version: 3.8.0
+  rabbitmq_installer_download_url: "https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.0/rabbitmq-server-3.8.0.exe"
+  rabbitmq_installer_path: "C:\\Users\\appveyor\\rabbitmq-server-3.8.0.exe"
 
   matrix:
   - TARGET_ARCH: x64
@@ -94,10 +97,44 @@ install:
     # download and install redis for windows
     - cmd: cd c:\ && mkdir c:\redis-3.2.100
     - ps: D:\host\transistor\appveyor\redis.ps1
-    # install erlang
+    # install erlang 22.3
     - ps: D:\host\transistor\appveyor\install_erlang.ps1
     # install rabbitmq
-    - ps: D:\host\transistor\appveyor\rabbitmq.ps1
+    - echo Installing Erlang...
+    - start /B /WAIT %erlang_exe_path% /S /D=%erlang_home_dir%
+    - set ERLANG_HOME=%erlang_home_dir%
+
+    - echo Downloading RabbitMQ...
+    - ps: if (-Not (Test-Path "$env:rabbitmq_installer_path")) { $webclient.DownloadFile("$env:rabbitmq_installer_download_url", "$env:rabbitmq_installer_path") } else { Write-Host "Found" $env:rabbitmq_installer_path "in cache." }
+
+    - echo Creating directory %AppData%\RabbitMQ...
+    - ps: New-Item -ItemType Directory -ErrorAction Continue -Path "$env:AppData/RabbitMQ"
+
+    - echo Creating RabbitMQ configuration file in %AppData%\RabbitMQ...
+    - ps: Get-Content D:/host/transistor/appveyor/rabbitmq.conf.in | %{ $_ -replace 'TRANSISTOR_DIR', 'D:/host/transistor' } | Set-Content -Path "$env:AppData/RabbitMQ/rabbitmq.conf"
+    - ps: Get-Content "$env:AppData/RabbitMQ/rabbitmq.conf"
+
+    - echo Creating Erlang cookie files...
+    - ps: '[System.IO.File]::WriteAllText("C:\Users\appveyor\.erlang.cookie", "TRANSISTORISTHEBEST", [System.Text.Encoding]::ASCII)'
+    - ps: '[System.IO.File]::WriteAllText("C:\Windows\System32\config\systemprofile\.erlang.cookie", "TRANSISTORISTHEBEST", [System.Text.Encoding]::ASCII)'
+
+    - echo Installing and starting RabbitMQ with default config...
+    - start /B /WAIT %rabbitmq_installer_path% /S
+    - ps: (Get-Service -Name RabbitMQ).Status
+
+    - echo RabbitMQ Service Registry Entry
+    - reg query HKLM\SOFTWARE\Ericsson\Erlang\ErlSrv\1.1\RabbitMQ
+
+    - echo Waiting for epmd to report that RabbitMQ has started...
+    - ps: D:\host\transistor\wait-epmd.ps1
+
+    - echo Waiting for RabbitMQ to start...
+    - ps: C:\projects\pika\testdata\wait-rabbitmq.ps1
+
+    - echo Getting RabbitMQ status...
+    - cmd: /c "C:\Program Files\RabbitMQ Server\rabbitmq_server-%rabbitmq_version%\sbin\rabbitmqctl.bat" status
+
+    #- ps: D:\host\transistor\appveyor\rabbitmq.ps1
     # Load the conda root environment, configure and install packages
     - cmd: conda config --set show_channel_urls true
     - cmd: conda config --set always_yes yes --set changeps1 no
