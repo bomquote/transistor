@@ -82,6 +82,9 @@ install:
     # see: https://ci.appveyor.com/project/appveyor-tests/docker-ce/build/1.0.29
     - ps: gcim Win32_Processor | % { "$($_.NumberOfCores) cores" }
     - ps: gcim Win32_OperatingSystem | % { "$([int]($_.TotalVisibleMemorySize/1mb)) Gb" }
+    # uninstall all versions of erlang
+    - echo Removing all existing versions of Erlang...
+    - ps: Get-ChildItem -Path 'C:\Program Files\erl*\Uninstall.exe' | %{ Start-Process -Wait -NoNewWindow -FilePath $_ -ArgumentList '/S' }
     - cmd: docker-switch-linux
     # start aquarium
     - ps: D:\host\transistor\appveyor\docker-compose-up.ps1
