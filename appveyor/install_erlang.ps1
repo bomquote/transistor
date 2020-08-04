@@ -1,27 +1,22 @@
-Write-Host "Uninstalling Erlang 9.2..." -ForegroundColor Cyan
-Write-Host "Uninstalling..."
-Remove-Path 'C:\Program Files\er9.2\bin'
-$uninstallErlang = "C:\Program Files\er9.2\Uninstall.exe | cmd"
-cmd /c start /wait $uninstallErlang
-# stuck here
-Write-Host "Installing Erlang 10.7..." -ForegroundColor Cyan
+Write-Host "Installing Erlang..." -ForegroundColor Cyan
+
 Write-Host "Downloading..."
-$exePath = "$($env:USERPROFILE)\otp_win64_22.3.exe"
-(New-Object Net.WebClient).DownloadFile('http://www.erlang.org/download/otp_win64_22.3.exe', $exePath)
+$exePath = "$($env:TEMP)\otp_win64.exe"
+(New-Object Net.WebClient).DownloadFile('http://erlang.org/download/otp_win64_22.3.exe', $exePath)
 
 Write-Host "Installing..."
 cmd /c start /wait $exePath /S
-del $exePath
+Remove-Item $exePath
 
-Remove-Path 'C:\Program Files\erl7.1\bin'
-Remove-Path 'C:\Program Files\erl7.3\bin'
-Remove-Path 'C:\Program Files\erl8.2\bin'
-Remove-Path 'C:\Program Files\erl8.3\bin'
+Remove-Path "${env:ProgramFiles}\erl7.1\bin"
+Remove-Path "${env:ProgramFiles}\erl7.3\bin"
+Remove-Path "${env:ProgramFiles}\erl8.2\bin"
+Remove-Path "${env:ProgramFiles}\erl8.3\bin"
 
-Add-Path 'C:\Program Files\erl10.7\bin'
-[Environment]::SetEnvironmentVariable('ERLANG_HOME', 'C:\Program Files\erl10.7', 'Machine')
+Add-Path "${env:ProgramFiles}\erl10.7\bin"
+[Environment]::SetEnvironmentVariable("ERLANG_HOME", "${env:ProgramFiles}\erl10.7", "Machine")
 
-# C:\Program Files\erl10.4
+# ${env:ProgramFiles}\erl10.7
 
 $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
 $x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
@@ -30,4 +25,4 @@ $x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\Current
     | Sort-Object -Property DisplayName `
     | Select-Object -Property DisplayName,DisplayVersion
 
-Write-Host "Installed Erlang 10.7" -ForegroundColor Green
+Write-Host "Installed Erlang" -ForegroundColor Green
