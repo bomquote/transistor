@@ -1,7 +1,7 @@
 Write-Host "Uninstalling Erlang 9.2..." -ForegroundColor Cyan
 Write-Host "Uninstalling..."
-Remove-Path 'C:\Program Files\erl9.2\bin'
-$uninstallErlang = "C:\Program Files\erl9.2\Uninstall.exe | cmd"
+Remove-Path 'C:\Program Files\er9.2\bin'
+$uninstallErlang = "C:\Program Files\er9.2\Uninstall.exe | cmd"
 cmd /c start /wait $uninstallErlang
 # stuck here
 Write-Host "Installing Erlang 10.7..." -ForegroundColor Cyan
