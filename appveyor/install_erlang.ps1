@@ -3,7 +3,7 @@ Write-Host "Uninstalling..."
 Remove-Path 'C:\Program Files\erl9.2\bin'
 $uninstallErlang = "C:\Program Files\erl9.2\Uninstall.exe | cmd"
 cmd /c start /wait $uninstallErlang
-
+# stuck here
 Write-Host "Installing Erlang 10.7..." -ForegroundColor Cyan
 Write-Host "Downloading..."
 $exePath = "$($env:USERPROFILE)\otp_win64_22.3.exe"
