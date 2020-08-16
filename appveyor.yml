@@ -101,9 +101,9 @@ install:
     - ps: D:\host\transistor\appveyor\redis.ps1
     # install erlang 22.3
     - ps: D:\host\transistor\appveyor\install_erlang.ps1
-    # install rabbitmq
+    # install erlang
     - echo Installing Erlang...
-    - start "" /B /WAIT %erlang_exe_path% /S /D=%erlang_home_dir%
+    - ps: D:\host\transistor\appveyor\cmd-a.ps1
     - set ERLANG_HOME=%erlang_home_dir%
 
     - echo Downloading RabbitMQ...
@@ -121,7 +121,7 @@ install:
     - ps: '[System.IO.File]::WriteAllText("C:\Windows\System32\config\systemprofile\.erlang.cookie", "TRANSISTORISTHEBEST", [System.Text.Encoding]::ASCII)'
 
     - echo Installing and starting RabbitMQ with default config...
-    - start "" /B /WAIT %rabbitmq_installer_path% /S
+    - ps: D:\host\transistor\appveyor\cmd-b.ps1
     - ps: (Get-Service -Name RabbitMQ).Status
 
     - echo RabbitMQ Service Registry Entry

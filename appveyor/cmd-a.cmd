@@ -1,0 +1,1 @@
+START "" /B /WAIT %erlang_exe_path% /S /D=%erlang_home_dir%
