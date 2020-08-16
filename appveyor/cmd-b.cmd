@@ -1,1 +1,0 @@
-START "" /B /WAIT %rabbitmq_installer_path% /S

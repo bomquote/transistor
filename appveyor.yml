@@ -98,22 +98,13 @@ install:
     - ps: D:\host\transistor\appveyor\redis.ps1
     # install erlang 22.3
     - ps: D:\host\transistor\appveyor\install_erlang.ps1
-    # install erlang
-    - echo Installing Erlang...
-    - ps: D:\host\transistor\appveyor\cmd-a.ps1
     - set ERLANG_HOME=%erlang_home_dir%
-
     - echo Installing RabbitMQ...
     - ps: D:\host\transistor\appveyor\rabbitmq.ps1
-
     - echo Waiting for epmd to report that RabbitMQ has started...
-    - ps: D:\host\transistor\wait-epmd.ps1
-
+    - ps: D:\host\transistor\appveyor\wait-epmd.ps1
     - echo Waiting for RabbitMQ to start...
-    - ps: C:\projects\pika\testdata\wait-rabbitmq.ps1
-
-    - echo Getting RabbitMQ status...
-    - cmd: /c "C:\Program Files\RabbitMQ Server\rabbitmq_server-%rabbitmq_version%\sbin\rabbitmqctl.bat" status
+    - ps: D:\host\transistor\appveyor\wait-rabbitmq.ps1
 
     # Load the conda root environment, configure and install packages
     - cmd: conda config --set show_channel_urls true
