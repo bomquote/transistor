@@ -1,6 +1,0 @@
-listeners.tcp.default = 5672
-num_acceptors.tcp = 10
-reverse_dns_lookups = false
-loopback_users.guest = true
-log.console = false
-log.console.level = debug
