@@ -120,7 +120,7 @@ install:
     - ps: '[System.IO.File]::WriteAllText("C:\Windows\System32\config\systemprofile\.erlang.cookie", "TRANSISTORISTHEBEST", [System.Text.Encoding]::ASCII)'
 
     - echo Installing and starting RabbitMQ with default config...
-    - start /B /WAIT %rabbitmq_installer_path% /S
+    - start "" /B /WAIT %rabbitmq_installer_path% /S
     - ps: (Get-Service -Name RabbitMQ).Status
 
     - echo RabbitMQ Service Registry Entry
