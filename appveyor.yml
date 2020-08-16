@@ -110,7 +110,7 @@ install:
     - ps: if (-Not (Test-Path "$env:rabbitmq_installer_path")) { $webclient.DownloadFile("$env:rabbitmq_installer_download_url", "$env:rabbitmq_installer_path") } else { Write-Host "Found" $env:rabbitmq_installer_path "in cache." }
 
     - echo Creating directory %AppData%\RabbitMQ...
-    - ps: New-Item -ItemType Directory -ErrorAction Continue -Path "$env:AppData/RabbitMQ"
+    - ps: New-Item -ItemType Directory -ErrorAction Continue -Path "$env:AppData/RabbitMQ"rabbitmq_installer
 
     - echo Creating RabbitMQ configuration file in %AppData%\RabbitMQ...
     - ps: Get-Content D:/host/transistor/appveyor/rabbitmq.conf.in | %{ $_ -replace 'TRANSISTOR_DIR', 'D:/host/transistor' } | Set-Content -Path "$env:AppData/RabbitMQ/rabbitmq.conf"
