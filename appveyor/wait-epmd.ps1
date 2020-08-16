@@ -1,4 +1,3 @@
-
 $running = $false
 [int]$count = 1
 

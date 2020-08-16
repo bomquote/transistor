@@ -38,6 +38,7 @@ environment:
   rabbitmq_installer_download_url: "https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.0/rabbitmq-server-3.8.0.exe"
   rabbitmq_installer_path: "C:\\Users\\appveyor\\rabbitmq-server-3.8.0.exe"
   erlang_home_dir: "C:\\Users\\appveyor\\erlang"
+  erlang_erts_version: "erts-10.7"
 
   matrix:
   - TARGET_ARCH: x64
@@ -102,7 +103,7 @@ install:
     - ps: D:\host\transistor\appveyor\install_erlang.ps1
     # install rabbitmq
     - echo Installing Erlang...
-    - start /B /WAIT %erlang_exe_path% /S /D=%erlang_home_dir%
+    - start "" /B /WAIT %erlang_exe_path% /S /D=%erlang_home_dir%
     - set ERLANG_HOME=%erlang_home_dir%
 
     - echo Downloading RabbitMQ...
