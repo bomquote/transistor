@@ -9,7 +9,7 @@ lxml>=4.2.5,<5.0
 lz4>=2.1.2,<4.0
 openpyxl>=2.5.0,<4.0
 pyexcel>=0.5.15,<0.7.0
-pyexcel-io>=0.5.10,<0.6.0
+pyexcel-io==0.6.2
 pyexcel-ods3>=0.5.3,<0.6.0
 pyexcel-webio>=0.1.4,<0.2.0
 pyexcel-xls>=0.5.8,<0.6.0
