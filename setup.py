@@ -64,7 +64,7 @@ test_requirements = [
 # What packages are optional?
 EXTRAS = {
     'newt.db': [
-        'RelStorage[postgresql]==2.1.1',
+        'RelStorage[postgresql]==3.4.0',
         'newt.db>=0.9.0',
         'zodbpickle>=1.0.2',
         'persistent>=4.4.3',
