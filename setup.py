@@ -51,7 +51,7 @@ REQUIRED = [
     'cssselect>=1.0.3,<2.0',
     'w3lib>=1.19.0,<2.0',
     'pycryptodome>=3.7.2,<4.0',
-    'gevent>=1.3.7,<21.0',
+    'gevent>=1.3.7,<22.0',
 ]
 
 test_requirements = [
