@@ -14,7 +14,7 @@ pyexcel-ods3>=0.5.3,<0.6.0
 pyexcel-webio>=0.1.4,<0.2.0
 pyexcel-xls>=0.5.8,<0.6.0
 pyexcel-xlsx>=0.5.7,<0.6.0
-cookiecutter>=1.6.0,<2.0
+cookiecutter==2.1.1
 cssselect>=1.0.3,<2.0
 w3lib>=1.19.0,<2.0
 pycryptodome>=3.7.2,<4.0
